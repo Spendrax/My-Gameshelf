@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>My Gameshelf</title>
+<meta name="description" content="Your games, on the rack: ratings, notes, hours played, stats and goals.">
+<meta name="theme-color" content="#0e0b18">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="top">
+  <h1 class="neon">GAMESHELF</h1>
+  <button id="btnSettings" class="icon" aria-label="Settings">⚙</button>
+</header>
+
+<main>
+  <!-- The room: wall rack of game cases, desk with the monitor and the buddy -->
+  <section id="view-room" class="view on">
+    <div class="led"></div>
+    <div class="decor">
+      <div class="poster" aria-hidden="true"></div>
+      <div class="sign" aria-hidden="true">P<span>L</span>AY</div>
+    </div>
+    <div class="toolbar">
+      <input id="q" type="search" placeholder="Find a game" autocomplete="off">
+      <select id="sort" aria-label="Sort">
+        <option value="added">Newest</option>
+        <option value="title">A–Z</option>
+        <option value="rating">Rating</option>
+        <option value="hours">Hours</option>
+      </select>
+    </div>
+    <div class="chips" id="chips"></div>
+    <div id="rack" class="rack"></div>
+    <div class="desk-area" id="deskArea">
+      <button class="monitor" id="monitor" aria-label="Now playing"><div class="screen" id="screen"></div></button>
+      <div class="mstand"></div>
+      <div class="desk"></div>
+      <div class="console"><i></i></div>
+      <div class="pad"></div>
+      <div class="mug"><b></b></div>
+      <div id="pet" class="pet" role="button" aria-label="Your buddy">
+        <div class="pv"><div class="pb">
+          <span class="ant"></span><span class="body"></span>
+          <span class="eye l"></span><span class="eye r"></span><span class="cheek l"></span><span class="cheek r"></span>
+          <span class="feet"></span>
+        </div></div>
+        <span class="zzz">z<i>z</i><b>z</b></span>
+        <span class="bubble" id="bubble"></span>
+      </div>
+    </div>
+  </section>
+
+  <section id="view-stats" class="view wall"></section>
+  <section id="view-goals" class="view wall"></section>
+</main>
+
+<nav class="tabs">
+  <button data-view="room" class="on"><span>▦</span>Room</button>
+  <button data-view="stats"><span>▮▮</span>Stats</button>
+  <button id="btnAdd" class="add" aria-label="Add a game">+</button>
+  <button data-view="goals"><span>◎</span>Goals</button>
+</nav>
+
+<!-- Add: search RAWG or add by hand -->
+<dialog id="dlgAdd" class="sheet">
+  <div class="sheet-h"><h2>Add a game</h2><button class="x" data-close aria-label="Close">✕</button></div>
+  <div id="keyBox" class="note">
+    Game search uses the free RAWG database. <a href="https://rawg.io/apidocs" target="_blank" rel="noopener">Get a free key</a>, then paste it here once:
+    <div class="row"><input id="keyIn" placeholder="RAWG API key" autocomplete="off"><button id="keySave" class="btn primary">Save</button></div>
+  </div>
+  <input id="addQ" type="search" placeholder="Search a game…" autocomplete="off" enterkeyhint="search">
+  <div id="results" class="results"></div>
+  <button id="addManual" class="btn ghost wide">Add it by hand</button>
+  <p class="dim small">Game info and pictures from <a href="https://rawg.io" target="_blank" rel="noopener">RAWG</a></p>
+</dialog>
+
+<!-- A game's card -->
+<dialog id="dlgGame" class="sheet"><div id="gBody"></div></dialog>
+
+<!-- Add / edit form -->
+<dialog id="dlgEdit" class="sheet">
+  <form id="fEdit">
+    <div class="sheet-h"><h2 id="editH">Game</h2><button type="button" class="x" data-close aria-label="Close">✕</button></div>
+    <div class="cover-pick">
+      <div id="eCover"></div>
+      <div class="col">
+        <label class="btn ghost">Choose picture<input type="file" accept="image/*" id="eFile" hidden></label>
+        <button type="button" class="btn ghost" id="eNoCover">Remove picture</button>
+      </div>
+    </div>
+    <label>Title<input name="title" required maxlength="120"></label>
+    <label>Platform<input name="platform" list="platList" maxlength="40"></label>
+    <datalist id="platList"></datalist>
+    <label>Status</label><div class="seg" id="eStatus"></div>
+    <label>Rating <b id="eRateTxt"></b></label><div class="pips" id="eRate"></div>
+    <div class="two">
+      <label>Hours played<input name="hours" type="number" min="0" step="0.5" inputmode="decimal"></label>
+      <label>Release year<input name="year" inputmode="numeric" maxlength="4"></label>
+    </div>
+    <div class="two">
+      <label>Started<input name="started" type="date"></label>
+      <label>Finished<input name="finished" type="date"></label>
+    </div>
+    <label>Genres<input name="genres" placeholder="Action, RPG"></label>
+    <label>Notes<textarea name="notes" rows="4" placeholder="What did you think?"></textarea></label>
+    <div class="actions">
+      <button type="button" id="eDel" class="btn danger">Delete</button>
+      <button class="btn primary">Save</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Settings -->
+<dialog id="dlgSet" class="sheet">
+  <div class="sheet-h"><h2>Settings</h2><button class="x" data-close aria-label="Close">✕</button></div>
+  <label>Your buddy's name<input id="sPet" maxlength="16"></label>
+  <label>LED color</label><div class="swatches" id="sLed"></div>
+  <label>RAWG key (for game search)<input id="sKey" autocomplete="off"></label>
+  <h3>Backup</h3>
+  <p class="dim">Your games live only on this phone. Save a backup now and then.</p>
+  <div class="row">
+    <button class="btn" id="sExport">Save backup</button>
+    <label class="btn">Load backup<input type="file" id="sImport" accept=".json,application/json" hidden></label>
+  </div>
+  <button class="btn ghost wide" id="sInstall" hidden>Install the app</button>
+  <p class="dim small">My Gameshelf v<span id="ver"></span> · Game info from <a href="https://rawg.io" target="_blank" rel="noopener">RAWG</a> · <a href="privacy.html">Privacy</a></p>
+</dialog>
+
+<div id="toast" role="status"></div>
+
+<script src="js/01-core.js"></script>
+<script src="js/02-room.js"></script>
+<script src="js/03-pet.js"></script>
+<script src="js/04-walls.js"></script>
+<script src="js/05-install.js"></script>
+</body>
+</html>
