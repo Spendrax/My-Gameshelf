@@ -1,0 +1,460 @@
+/* THE BUDDY — the creature on the desk: body, eyes, moods (blink, sleep, walk, hop…), speech bubble,
+   hearts, confetti, and the hats from Customize. His colour is --pk (your pick, or the LED colour). */
+
+/* .pv flips him to face the way he walks; .pb does the bouncing */
+.pv {
+  position: absolute;
+  inset: 0;
+}
+.pb {
+  position: absolute;
+  inset: 0;
+  transform-origin: 50% 100%;
+  animation: bob 2.4s ease-in-out infinite;
+}
+
+
+.pet {
+  --pk: var(--pet, var(--led));
+  position: absolute;
+  bottom: 84px;
+  left: var(--x, 20%);
+  width: 54px;
+  height: 54px;
+  transition: left 1.8s ease-in-out;
+  z-index: 5;
+  cursor: pointer;
+}
+
+.pet.flip .pv {
+  transform: scaleX(-1);
+}
+
+@keyframes bob {
+  50% {
+    transform: scale(1.04, 0.95);
+  }
+}
+
+.pet .body {
+  position: absolute;
+  left: 5px;
+  right: 5px;
+  top: 14px;
+  bottom: 4px;
+  border-radius: 50% 50% 44% 44%/58% 58% 42% 42%;
+  background:
+    radial-gradient(circle at 32% 28%, #ffffffa0 0 7%, transparent 8%),
+    linear-gradient(color-mix(in srgb, var(--pk) 85%, #fff), color-mix(in srgb, var(--pk) 60%, #000));
+  box-shadow:
+    0 0 14px color-mix(in srgb, var(--pk) 45%, transparent),
+    inset 0 -5px 0 #0003;
+}
+
+.pet .ant {
+  position: absolute;
+  left: 50%;
+  top: 2px;
+  width: 2px;
+  height: 14px;
+  margin-left: -1px;
+  background: color-mix(in srgb, var(--pk) 60%, #000);
+}
+
+.pet .ant::after {
+  content: '';
+  position: absolute;
+  left: -3px;
+  top: -4px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow:
+    0 0 8px var(--pk),
+    0 0 3px #fff;
+}
+
+.pet .eye {
+  position: absolute;
+  top: 27px;
+  width: 7px;
+  height: 10px;
+  border-radius: 50%;
+  background: #140d22;
+  transition:
+    height 0.08s,
+    top 0.08s;
+}
+
+.pet .eye.l {
+  left: 17px;
+}
+
+.pet .eye.r {
+  right: 17px;
+}
+
+.pet .eye::after {
+  content: '';
+  position: absolute;
+  left: 1px;
+  top: 1px;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #fff;
+}
+
+.pet .cheek {
+  position: absolute;
+  top: 37px;
+  width: 7px;
+  height: 4px;
+  border-radius: 50%;
+  background: #ff7ab866;
+}
+
+.pet .cheek.l {
+  left: 11px;
+}
+
+.pet .cheek.r {
+  right: 11px;
+}
+
+.pet .feet {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 0;
+  height: 6px;
+  background:
+    radial-gradient(circle at 20% 50%, color-mix(in srgb, var(--pk) 50%, #000) 0 40%, transparent 42%),
+    radial-gradient(circle at 80% 50%, color-mix(in srgb, var(--pk) 50%, #000) 0 40%, transparent 42%);
+}
+
+.pet.blink .eye,
+.pet.sleep .eye {
+  height: 2px;
+  top: 32px;
+}
+
+.pet.sleep .eye::after {
+  display: none;
+}
+
+.pet.sleep .pb {
+  animation: breathe 3.6s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  50% {
+    transform: scale(1.06, 0.9);
+  }
+}
+
+.pet.walk .pb {
+  animation: waddle 0.3s ease-in-out infinite alternate;
+}
+
+@keyframes waddle {
+  from {
+    transform: rotate(-6deg);
+  }
+  to {
+    transform: rotate(6deg) translateY(-2px);
+  }
+}
+
+.pet.hop .pb {
+  animation: hop 0.5s cubic-bezier(0.3, 0.7, 0.4, 1);
+}
+
+@keyframes hop {
+  40% {
+    transform: translateY(-26px) scale(0.95, 1.08);
+  }
+  80% {
+    transform: translateY(0) scale(1.1, 0.88);
+  }
+}
+
+.pet.cheer .pb {
+  animation: hop 0.5s 3 cubic-bezier(0.3, 0.7, 0.4, 1);
+}
+
+.pet.spin .pb {
+  animation: spin 0.8s ease-in-out;
+}
+
+@keyframes spin {
+  50% {
+    transform: translateY(-30px) rotate(180deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.pet.wake .pb {
+  animation: stretch 0.9s ease-in-out;
+}
+
+@keyframes stretch {
+  40% {
+    transform: scale(0.92, 1.15);
+  }
+}
+
+.zzz {
+  position: absolute;
+  right: -8px;
+  top: -8px;
+  display: none;
+  font: 700 12px var(--hd);
+  color: var(--dim);
+}
+
+.pet.sleep .zzz {
+  display: block;
+}
+
+.zzz,
+.zzz i,
+.zzz b {
+  animation: zz 2.4s infinite;
+}
+
+.zzz i,
+.zzz b {
+  font-style: normal;
+  font-weight: 700;
+  position: relative;
+}
+
+.zzz i {
+  animation-delay: 0.4s;
+  top: -6px;
+}
+
+.zzz b {
+  animation-delay: 0.8s;
+  top: -12px;
+}
+
+@keyframes zz {
+  0%,
+  100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.bubble {
+  position: absolute;
+  bottom: 62px;
+  left: 50%;
+  transform: translateX(-50%) scale(0.6);
+  opacity: 0;
+  pointer-events: none;
+  transition: 0.2s;
+  background: #fff;
+  color: #1a1230;
+  font:
+    600 12px/1.3 Inter,
+    sans-serif;
+  padding: 6px 10px;
+  border-radius: 12px;
+  width: max-content;
+  max-width: 190px;
+  text-align: center;
+  box-shadow: 0 4px 12px #0007;
+}
+
+.bubble::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  margin-left: -5px;
+  border: 5px solid transparent;
+  border-top-color: #fff;
+}
+
+.bubble.show {
+  opacity: 1;
+  transform: translateX(-50%) scale(1);
+}
+
+.heart {
+  position: fixed;
+  z-index: 30;
+  pointer-events: none;
+  font-size: 18px;
+  animation: float 1s ease-out forwards;
+}
+
+@keyframes float {
+  to {
+    transform: translateY(-50px) scale(1.4);
+    opacity: 0;
+  }
+}
+
+.cf {
+  position: fixed;
+  top: -12px;
+  z-index: 60;
+  width: 8px;
+  height: 12px;
+  pointer-events: none;
+  animation: fall linear forwards;
+}
+
+@keyframes fall {
+  to {
+    transform: translateY(105vh) rotate(720deg);
+  }
+}
+
+.pet .hat {
+  position: absolute;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.pet .hat::before,
+.pet .hat::after {
+  content: '';
+  position: absolute;
+}
+
+.hat.crown ~ .ant,
+.hat.cap ~ .ant,
+.hat.tophat ~ .ant {
+  display: none;
+}
+
+/* hats are drawn to sit on the buddy's head (body top is at 14px, 44px wide) */
+.hat.crown {
+  left: 16px;
+  top: 5px;
+  width: 22px;
+  height: 12px;
+  background: linear-gradient(#ffe27a, #e0a314);
+  clip-path: polygon(0 100%, 0 15%, 25% 55%, 50% 0, 75% 55%, 100% 15%, 100% 100%);
+}
+
+.hat.crown::after {
+  left: 9px;
+  top: 6px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #ff3fa4;
+}
+
+.hat.headset {
+  left: 3px;
+  top: 9px;
+  width: 48px;
+  height: 24px;
+  border: 4px solid #23202e;
+  border-bottom: 0;
+  border-radius: 24px 24px 0 0;
+}
+
+.hat.headset::before,
+.hat.headset::after {
+  top: 12px;
+  width: 9px;
+  height: 14px;
+  border-radius: 5px;
+  background: #23202e;
+  box-shadow: inset 0 0 0 2px #3a3650;
+}
+
+.hat.headset::before {
+  left: -8px;
+}
+
+.hat.headset::after {
+  right: -8px;
+  background: radial-gradient(circle, var(--led) 0 2px, #23202e 3px);
+}
+
+.hat.cap {
+  left: 11px;
+  top: 9px;
+  width: 32px;
+  height: 11px;
+  border-radius: 16px 16px 3px 3px;
+  background: linear-gradient(#ff5a5f, #d62839);
+  transform: rotate(-6deg);
+}
+
+.hat.cap::before {
+  left: 14px;
+  top: -2px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #d62839;
+}
+
+.hat.cap::after {
+  right: -11px;
+  bottom: 0;
+  width: 15px;
+  height: 4px;
+  border-radius: 0 6px 6px 0;
+  background: #b81f2e;
+}
+
+.hat.bow {
+  left: 30px;
+  top: 12px;
+  width: 20px;
+  height: 12px;
+  background: #ff5fa8;
+  clip-path: polygon(0 0, 50% 38%, 100% 0, 100% 100%, 50% 62%, 0 100%);
+  transform: rotate(18deg);
+}
+
+.hat.bow::after {
+  left: 7px;
+  top: 3px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #e23d8b;
+}
+
+.hat.tophat {
+  left: 11px;
+  top: 13px;
+  width: 32px;
+  height: 4px;
+  border-radius: 2px;
+  background: #15121c;
+}
+
+.hat.tophat::before {
+  left: 6px;
+  bottom: 3px;
+  width: 20px;
+  height: 17px;
+  border-radius: 2px 2px 0 0;
+  background: linear-gradient(#2a2633, #15121c);
+}
+
+.hat.tophat::after {
+  left: 6px;
+  bottom: 3px;
+  width: 20px;
+  height: 4px;
+  background: var(--led);
+}

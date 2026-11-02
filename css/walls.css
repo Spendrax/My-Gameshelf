@@ -1,0 +1,295 @@
+/* WALLS — the three walls turning round a hexagon, the + button, wall dots, Update button,
+   and the Stats and Goals walls. */
+
+/* the three walls stand round a hexagon; each wall scrolls on its own */
+.view {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: calc(54px + env(safe-area-inset-top));
+  bottom: 0;
+  overflow: hidden auto;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+  backface-visibility: hidden;
+  padding-bottom: calc(84px + env(safe-area-inset-bottom));
+}
+
+body:not(.turning) .view.away {
+  visibility: hidden;
+}
+
+body.snap .view {
+  transition: transform 0.38s cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+
+.upd {
+  position: fixed;
+  z-index: 30;
+  left: 50%;
+  transform: translateX(-50%);
+  top: calc(64px + env(safe-area-inset-top));
+  padding: 9px 18px;
+  border-radius: 99px;
+  font: 700 14px var(--hd);
+  letter-spacing: 0.06em;
+  color: #0b0814;
+  background: var(--led);
+  box-shadow: 0 0 20px var(--led);
+  animation: up 0.3s;
+}
+
+/* floating add button and wall dots */
+.fab {
+  position: fixed;
+  z-index: 20;
+  right: 18px;
+  bottom: calc(18px + env(safe-area-inset-bottom));
+  width: 58px;
+  height: 58px;
+  border-radius: 18px;
+  font: 700 30px/1 var(--hd);
+  color: #0b0814;
+  background: var(--led);
+  box-shadow:
+    0 0 0 4px #0e0b18,
+    0 0 24px var(--led);
+}
+
+.dots {
+  position: fixed;
+  z-index: 20;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: calc(14px + env(safe-area-inset-bottom));
+  display: flex;
+  gap: 4px;
+  padding: 6px 8px;
+  border-radius: 99px;
+  background: #0e0b18aa;
+  backdrop-filter: blur(6px);
+}
+
+.dots button {
+  width: 22px;
+  height: 18px;
+  display: grid;
+  place-items: center;
+}
+
+.dots button::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ffffff40;
+  transition: 0.2s;
+}
+
+.dots button.on::before {
+  width: 18px;
+  border-radius: 4px;
+  background: var(--led);
+  box-shadow: 0 0 8px var(--led);
+}
+
+/* walls (stats, goals) */
+.wall {
+  padding: 16px 14px calc(84px + env(safe-area-inset-bottom));
+  background: linear-gradient(#17122b, #0e0b18);
+}
+
+.wall h2 {
+  font-size: 20px;
+  margin: 4px 2px 12px;
+  letter-spacing: 0.06em;
+}
+
+.card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 14px;
+  margin-bottom: 12px;
+}
+
+.card h3 {
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  color: var(--dim);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.kpis {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.kpi {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 12px 14px;
+}
+
+.kpi b {
+  display: block;
+  font: 700 28px var(--hd);
+  color: #fff;
+  text-shadow: 0 0 12px var(--glow);
+}
+
+.kpi span {
+  font-size: 12px;
+  color: var(--dim);
+}
+
+.bar {
+  display: grid;
+  grid-template-columns: 96px 1fr 34px;
+  gap: 8px;
+  align-items: center;
+  font-size: 13px;
+  margin: 6px 0;
+}
+
+.bar span:first-child {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bar i {
+  display: block;
+  height: 10px;
+  border-radius: 5px;
+  background: linear-gradient(90deg, var(--led), color-mix(in srgb, var(--led) 50%, #fff));
+  box-shadow: 0 0 8px var(--glow);
+  min-width: 4px;
+}
+
+.bar span:last-child {
+  text-align: right;
+  color: var(--dim);
+}
+
+.dist {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 80px;
+}
+
+.dist div {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  font-size: 11px;
+  color: var(--dim);
+  height: 100%;
+  justify-content: flex-end;
+}
+
+.dist i {
+  width: 100%;
+  border-radius: 4px 4px 0 0;
+  background: var(--led);
+  box-shadow: 0 0 8px var(--glow);
+  min-height: 2px;
+}
+
+.list .lrow {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 6px 0;
+  text-align: left;
+  border-bottom: 1px solid #ffffff0c;
+}
+
+.list .lrow:last-child {
+  border: 0;
+}
+
+.list .case {
+  --cw: 34px;
+}
+
+.list .case .pb,
+.list .case .fb {
+  font-size: 0;
+}
+
+.list .case .dot {
+  display: none;
+}
+
+.list em {
+  margin-left: auto;
+  font-style: normal;
+  font: 700 15px var(--hd);
+  color: #fff;
+}
+
+.ring {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.ring svg {
+  flex: none;
+}
+
+.ring b {
+  font: 700 30px var(--hd);
+}
+
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.stepper button {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: #ffffff12;
+  font-size: 18px;
+}
+
+.mini {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.mini .case {
+  --cw: 56px;
+}
+
+.pick {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  margin-top: 12px;
+}
+
+.pick h4 {
+  margin: 0 0 8px;
+  font: 700 17px var(--hd);
+}
+
+body.looking #view-room {
+  padding-bottom: 52vh;
+}

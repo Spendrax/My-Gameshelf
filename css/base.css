@@ -1,0 +1,147 @@
+/* BASE — colours (the LED colour is --led), fonts, the top bar and form fields used everywhere. */
+
+:root {
+  --led: #b05cff;
+  --glow: color-mix(in srgb, var(--led) 45%, transparent);
+  --ink: #ece9ff;
+  --dim: #9c97c0;
+  --panel: #1b1631;
+  --line: #2e2852;
+  --field: #0f0c1d;
+  --hd: 'Chakra Petch', system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  background: #0e0b18;
+  color: var(--ink);
+  font:
+    15px/1.45 Inter,
+    system-ui,
+    sans-serif;
+  color-scheme: dark;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior-y: none;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+a {
+  color: color-mix(in srgb, var(--led) 70%, #fff);
+}
+
+h2,
+h3 {
+  font-family: var(--hd);
+  margin: 0;
+}
+
+.dim {
+  color: var(--dim);
+}
+
+.small {
+  font-size: 12px;
+}
+
+/* top bar */
+.top {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 20;
+  height: calc(54px + env(safe-area-inset-top));
+  padding: env(safe-area-inset-top) 14px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(14, 11, 24, 0.82);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid #ffffff10;
+}
+
+.neon {
+  font: 700 21px var(--hd);
+  letter-spacing: 0.12em;
+  margin: 0;
+  color: #fff;
+  text-shadow:
+    0 0 3px #fff,
+    0 0 10px var(--led),
+    0 0 24px var(--led);
+}
+
+.icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  font-size: 20px;
+  display: grid;
+  place-items: center;
+  background: #ffffff0d;
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  font: inherit;
+  color: var(--ink);
+  background: var(--field);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 9px 12px;
+  outline: none;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--led);
+  box-shadow: 0 0 0 3px var(--glow);
+}
+
+textarea {
+  resize: vertical;
+}
+
+@keyframes up {
+  from {
+    transform: translateY(40%);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01s !important;
+    transition-duration: 0.01s !important;
+  }
+}
+
+/* customize */
+.hbtns {
+  display: flex;
+  gap: 8px;
+}

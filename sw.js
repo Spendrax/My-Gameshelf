@@ -1,7 +1,25 @@
 // Offline copy. Bump V on every release.
-const V = 'gs-v6';
+const V = 'gs-v7';
 const IMG = 'gs-img';
-const SHELL = ['./', 'index.html', 'css/style.css', 'js/01-core.js', 'js/02-room.js', 'js/03-pet.js', 'js/04-walls.js', 'js/05-install.js', 'js/06-customize.js', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png'];
+const SHELL = [
+  './', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png',
+  'css/base.css',
+  'css/room.css',
+  'css/buddy.css',
+  'css/walls.css',
+  'css/sheets.css',
+  'js/01-core.js',
+  'js/02-search.js',
+  'js/03-edit-form.js',
+  'js/04-game-card.js',
+  'js/05-room.js',
+  'js/06-turning-walls.js',
+  'js/07-buddy.js',
+  'js/08-stats-goals.js',
+  'js/09-customize.js',
+  'js/10-settings-backup.js',
+  'js/11-install-update.js',
+];
 
 self.addEventListener('install', e => e.waitUntil(caches.open(V).then(c => c.addAll(SHELL.map(u => new Request(u, { cache: 'reload' }))))));
 // the page's "Update now" button asks the new version to take over
