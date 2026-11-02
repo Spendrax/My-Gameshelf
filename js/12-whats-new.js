@@ -40,7 +40,8 @@ function showNews(since) {
 
 // Brand-new installs (no games, never saw a version) skip the card
 if (!set.seen && games.length) set.seen = '1.0';
-if (set.seen && newer(VERSION, set.seen)) setTimeout(() => showNews(set.seen), 900);
+const lastSeen = set.seen; // read before it's updated below
+if (lastSeen && newer(VERSION, lastSeen)) setTimeout(() => showNews(lastSeen), 900);
 set.seen = VERSION;
 saveSet();
 
