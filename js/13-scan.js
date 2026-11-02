@@ -6,7 +6,7 @@
 // Either way, the title it finds goes into the search box and RAWG shows the matching games to pick from.
 
 // Address of your Cloudflare helper for barcode lookups. Empty = only Open Products Facts (knows few games).
-const BARCODE_HELPER = '';
+const BARCODE_HELPER = 'https://gameshelf-barcode.spendraxapp.workers.dev';
 
 const BARCODE_LIB = 'https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js';
 const OCR_LIB = 'https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js';
