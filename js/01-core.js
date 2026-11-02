@@ -1,6 +1,6 @@
 'use strict';
 // Core: saving games, helpers, the add / search / edit / game card windows, settings and backups.
-const VERSION = '1.4';
+const VERSION = '1.5';
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 
@@ -12,6 +12,9 @@ const STATUS = {
   wishlist: { label: 'Wishlist', color: '#6ac8ff' },
 };
 const PLATFORMS = ['PC', 'PlayStation 5', 'PlayStation 4', 'Xbox Series S/X', 'Xbox One', 'Nintendo Switch', 'Nintendo Switch 2', 'Steam Deck', 'iOS', 'Android', 'Retro'];
+// The app's shared RAWG key, so search works right after install. A key pasted in Settings overrides it.
+const RAWG_KEY = '';
+const rawgKey = () => set.key || RAWG_KEY;
 const LEDS = ['#b05cff', '#00e5ff', '#ff3fa4', '#39ff88', '#ffb020', '#ff4646'];
 
 const load = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch { return d; } };
@@ -70,10 +73,10 @@ function applyLed() {
 const smallImg = u => u && !/\/media\/(resize|crop)\//.test(u) ? u.replace('/media/', '/media/resize/420/-/') : u;
 
 function openAdd() {
-  $('#keyBox').hidden = !!set.key;
+  $('#keyBox').hidden = !!rawgKey();
   $('#addQ').value = ''; $('#results').innerHTML = '';
   $('#dlgAdd').showModal();
-  if (set.key) $('#addQ').focus();
+  if (rawgKey()) $('#addQ').focus();
 }
 $('#btnAdd').onclick = openAdd;
 $('#keySave').onclick = () => {
@@ -82,23 +85,27 @@ $('#keySave').onclick = () => {
 };
 
 let searchT, lastResults = [];
+const found = new Map(); // remembers searches so the same words don't use another request
 $('#addQ').addEventListener('input', e => {
   clearTimeout(searchT);
   const q = e.target.value.trim();
-  if (q.length < 2) { $('#results').innerHTML = ''; return; }
-  searchT = setTimeout(() => search(q), 400);
+  if (q.length < 3) { $('#results').innerHTML = ''; return; }
+  searchT = setTimeout(() => search(q), 700);
 });
 
 async function search(q) {
-  if (!set.key) { $('#keyBox').hidden = false; return; }
-  const box = $('#results');
+  if (!rawgKey()) { $('#keyBox').hidden = false; return; }
+  const box = $('#results'), k = q.toLowerCase();
   box.innerHTML = '<p class="dim">Searching…</p>';
   try {
-    const r = await fetch(`https://api.rawg.io/api/games?key=${encodeURIComponent(set.key)}&search=${encodeURIComponent(q)}&page_size=10`);
-    if (r.status === 401 || r.status === 403) { box.innerHTML = '<p class="dim">That RAWG key doesn\'t work. Check it in Settings.</p>'; return; }
-    const data = await r.json();
+    if (!found.has(k)) {
+      const r = await fetch(`https://api.rawg.io/api/games?key=${encodeURIComponent(rawgKey())}&search=${encodeURIComponent(q)}&page_size=10`);
+      if (r.status === 401 || r.status === 403) { box.innerHTML = '<p class="dim">The search key doesn\'t work. Check it in Settings, or add the game by hand.</p>'; return; }
+      if (r.status === 429) { box.innerHTML = '<p class="dim">Game search is full for this month. Add your own free RAWG key in Settings, or add the game by hand.</p>'; return; }
+      found.set(k, (await r.json()).results || []);
+    }
     if (q !== $('#addQ').value.trim()) return;
-    lastResults = data.results || [];
+    lastResults = found.get(k);
     box.innerHTML = lastResults.length ? lastResults.reduce((h, g, i) => h + `<button class="res" data-i="${i}">`
       + (g.background_image ? `<img src="${esc(smallImg(g.background_image))}" alt="" loading="lazy">` : '<span class="ph"></span>')
       + `<div><b>${esc(g.name)}</b><span>${esc([(g.released || '').slice(0, 4), (g.platforms || []).slice(0, 3).map(p => p.platform.name).join(', ')].filter(Boolean).join(' · '))}</span></div></button>`, '')
@@ -231,6 +238,7 @@ function openGame(id) {
     </div>
     ${g.genres?.length ? `<div class="tags">${g.genres.reduce((h, x) => h + `<span>${esc(x)}</span>`, '')}</div>` : ''}
     ${g.notes ? `<div class="notes">${esc(g.notes)}</div>` : ''}
+    ${g.rawg ? `<p class="dim small">Game info from <a href="https://rawg.io/games/${+g.rawg}" target="_blank" rel="noopener">RAWG</a></p>` : ''}
     <div class="quick">
       ${g.status !== 'playing' ? '<button class="btn" data-q="playing">▶ Playing</button>' : ''}
       ${g.status !== 'finished' ? '<button class="btn" data-q="finished">🏆 Finished</button>' : ''}
