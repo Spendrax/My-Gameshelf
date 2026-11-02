@@ -3,7 +3,7 @@
 //   • the game list and settings, and saving them on the phone (localStorage)
 //   • a tiny event system: emit('change') after any edit, other files listen with on('change', …)
 //   • small helpers ($, esc, today, …) and caseHTML(), which draws one game case
-const VERSION = '1.7';
+const VERSION = '1.8';
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 
@@ -28,7 +28,7 @@ const PLATFORMS = [
   'Retro',
 ];
 // The app's shared RAWG key, so search works right after install. A key pasted in Settings overrides it.
-const RAWG_KEY = '';
+const RAWG_KEY = '7f3923520cce4d189f06b7a59ab3c8c1';
 const rawgKey = () => set.key || RAWG_KEY;
 const LEDS = ['#b05cff', '#00e5ff', '#ff3fa4', '#39ff88', '#ffb020', '#ff4646'];
 
