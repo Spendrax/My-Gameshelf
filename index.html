@@ -149,6 +149,11 @@
 <dialog id="dlgSet" class="sheet">
   <div class="sheet-h"><h2>Settings</h2><button class="x" data-close aria-label="Close">✕</button></div>
   <label>Your own RAWG key (optional)<input id="sKey" autocomplete="off"></label>
+  <h3>Steam</h3>
+  <p class="dim">Bring in the games you own on Steam, with their hours. Your Steam profile's “Game details” must be Public.</p>
+  <label>Steam profile (name, ID or link)<input id="sSteam" autocomplete="off" placeholder="steamcommunity.com/id/…"></label>
+  <label class="check"><input type="checkbox" id="sSteamAll"> Also add games I never played</label>
+  <button class="btn primary wide" id="sSteamSync">Sync with Steam</button>
   <h3>Backup</h3>
   <p class="dim">Your games live only on this phone. Save a backup now and then.</p>
   <div class="row">
@@ -175,5 +180,6 @@
 <script src="js/11-install-update.js"></script>
 <script src="js/12-whats-new.js"></script>
 <script src="js/13-scan.js"></script>
+<script src="js/14-steam-sync.js"></script>
 </body>
 </html>

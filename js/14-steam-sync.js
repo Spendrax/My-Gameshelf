@@ -1,0 +1,103 @@
+'use strict';
+// STEAM SYNC — Settings → Steam brings in the games you own on Steam, with their playtime.
+// It asks your Cloudflare helper (HELPER/steam), which holds the Steam key as a secret.
+// Rules: it never lowers hours you typed yourself and never changes the status of a game you already have.
+// It syncs again by itself, quietly, when you open the app and the last sync is over 12 hours old.
+
+// Steam's tall "library" picture of a game (some games don't have one; the case then shows the title)
+const steamCover = (appid) => `https://cdn.akamai.steamstatic.com/steam/apps/${appid}/library_600x900.jpg`;
+
+// Lets "Hollow Knight" on the rack match "Hollow Knight" from Steam, ignoring case and punctuation
+const sameTitle = (t) => t.toLowerCase().replace(/[^a-z0-9]/g, '');
+
+// Accepts a profile link (…/id/name or …/profiles/7656…), a profile name, or a 17-digit Steam ID
+const steamIdFrom = (text) => (text.match(/steamcommunity\.com\/(?:id|profiles)\/([^/?#]+)/i)?.[1] || text).trim();
+
+const STEAM_ERRORS = {
+  private: 'Your Steam “Game details” are private. Set them to Public in your Steam privacy settings.',
+  'not-found': 'Steam profile not found. Check the name, or paste your profile link.',
+  'no-key': 'The helper is missing its Steam key (STEAM_KEY in Cloudflare).',
+};
+
+async function steamSync(quiet) {
+  if (!set.steam) return;
+  if (!quiet) toast('Syncing with Steam…');
+  let data;
+  try {
+    data = await (await fetch(`${HELPER}/steam?id=${encodeURIComponent(steamIdFrom(set.steam))}`)).json();
+  } catch {
+    if (!quiet) toast('Couldn’t reach Steam. Check your connection.');
+    return;
+  }
+  if (data.error || !data.games) {
+    if (!quiet) toast(STEAM_ERRORS[data.error] || 'Steam sync didn’t work. Try again later.');
+    return;
+  }
+
+  // Games already on the rack: linked to Steam before, or a PC game with the same title
+  const linked = new Map(games.reduce((a, g) => (g.steam ? a.concat([[g.steam, g]]) : a), []));
+  const byTitle = new Map(
+    games.reduce((a, g) => (!g.steam && (!g.platform || /pc|steam/i.test(g.platform)) ? a.concat([[sameTitle(g.title), g]]) : a), []),
+  );
+  const twoWeeksAgo = Date.now() / 1000 - 14 * 86400;
+  let added = 0;
+  let updated = 0;
+
+  for (const s of data.games) {
+    const hours = Math.round(s.minutes / 6) / 10; // minutes → hours with one decimal
+    const g = linked.get(s.appid) || byTitle.get(sameTitle(s.name));
+    if (g) {
+      g.steam = s.appid;
+      if (hours > (+g.hours || 0)) {
+        g.hours = hours;
+        g.updated = Date.now();
+        updated++;
+      }
+    } else if (s.minutes > 0 || set.steamAll) {
+      games.push({
+        id: uid(),
+        title: s.name,
+        platform: 'PC',
+        status: s.last > twoWeeksAgo ? 'playing' : 'backlog', // played in the last 2 weeks = playing
+        rating: 0,
+        hours,
+        genres: [],
+        notes: '',
+        cover: steamCover(s.appid),
+        steam: s.appid,
+        added: Date.now(),
+        updated: Date.now(),
+      });
+      added++;
+    }
+  }
+
+  set.steamSynced = Date.now();
+  saveSet();
+  if (added || updated) save();
+  if (!quiet || added || updated) toast(`Steam: ${added} games added, ${updated} hours updated`);
+}
+
+/* ---------- Settings ---------- */
+
+$('#btnSettings').addEventListener('click', () => {
+  $('#sSteam').value = set.steam || '';
+  $('#sSteamAll').checked = !!set.steamAll;
+});
+$('#sSteam').onchange = (e) => {
+  set.steam = e.target.value.trim();
+  saveSet();
+};
+$('#sSteamAll').onchange = (e) => {
+  set.steamAll = e.target.checked;
+  saveSet();
+};
+$('#sSteamSync').onclick = () => {
+  set.steam = $('#sSteam').value.trim();
+  saveSet();
+  if (!set.steam) return toast('Type your Steam profile name first');
+  steamSync(false);
+};
+
+// Quiet daily top-up of the hours
+if (set.steam && Date.now() - (set.steamSynced || 0) > 12 * 3600e3) setTimeout(() => steamSync(true), 3000);

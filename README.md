@@ -31,7 +31,8 @@ Live at https://spendrax.github.io/My-Gameshelf/
 | `js/11-install-update.js` | Offline copy, "Update now" button, Install button |
 | `js/12-whats-new.js` | The "What's new" card: add an entry to `NEWS` for each important update |
 | `js/13-scan.js` | Scanning a game case: barcode on the back, or reading the title on the front cover |
-| `tools/barcode-helper.js` | Optional Cloudflare Worker for barcode lookups (paste into Cloudflare, then set `BARCODE_HELPER`) |
+| `js/14-steam-sync.js` | Steam sync: adds your Steam games and keeps their hours up to date |
+| `tools/cloudflare-helper.js` | The Cloudflare Worker (`HELPER` in 01-core.js): barcode lookups and Steam, holds the Steam key as a secret |
 | `sw.js` | Offline copy (bump `V` on every release) |
 | `privacy.html` | Privacy policy |
 

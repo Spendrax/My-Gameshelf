@@ -507,3 +507,14 @@ label textarea {
   font-weight: 600;
   min-height: 2.9em;
 }
+
+/* a checkbox with its text on the same line */
+label.check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+label.check input {
+  width: auto;
+  margin: 0;
+}

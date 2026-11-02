@@ -1,12 +1,12 @@
 'use strict';
 // SCAN A GAME CASE — the 📷 button in the + sheet opens the camera.
 //   1. It looks for the barcode on the back. A barcode is just a number, so it's looked up to get the title:
-//      first through your own helper (BARCODE_HELPER, see tools/barcode-helper.js), then Open Products Facts.
+//      first through your own helper (BARCODE_HELPER, see tools/cloudflare-helper.js), then Open Products Facts.
 //   2. If no barcode is found (or it's unknown), it reads the title printed on the front cover (OCR).
 // Either way, the title it finds goes into the search box and RAWG shows the matching games to pick from.
 
 // Address of your Cloudflare helper for barcode lookups. Empty = only Open Products Facts (knows few games).
-const BARCODE_HELPER = 'https://gameshelf-barcode.spendraxapp.workers.dev';
+const BARCODE_HELPER = HELPER; // set in 01-core.js
 
 const BARCODE_LIB = 'https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js';
 const OCR_LIB = 'https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js';

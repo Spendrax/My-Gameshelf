@@ -5,6 +5,10 @@
 
 const NEWS = [
   {
+    v: '2.0',
+    items: ['Steam sync: bring in your Steam games and their hours (Settings \u2192 Steam)', 'Barcode scanning now recognises most games'],
+  },
+  {
     v: '1.9',
     items: [
       '\u{1F4F7} Scan a game case to add it: the barcode on the back, or the title on the front cover',
