@@ -5,7 +5,11 @@
 const smallImg = (u) =>
   u && !/\/media\/(resize|crop)\//.test(u) ? u.replace('/media/', '/media/resize/420/-/') : u;
 
+// Set by a scan (13-scan.js) when the case shows the platform, e.g. PS5
+let scanPlatform = '';
+
 function openAdd() {
+  scanPlatform = '';
   $('#keyBox').hidden = !!rawgKey();
   $('#addQ').value = '';
   $('#results').innerHTML = '';
@@ -104,7 +108,7 @@ $('#results').addEventListener('click', (e) => {
     genres: (r.genres || []).map((x) => x.name),
     rawg: r.id,
     platforms: plats,
-    platform: plats.length === 1 ? plats[0] : '',
+    platform: scanPlatform || (plats.length === 1 ? plats[0] : ''),
   });
 });
 $('#addManual').onclick = () => {

@@ -14,8 +14,8 @@ function openGame(id) {
       ? Math.max(1, Math.round((new Date(g.finished) - new Date(g.started)) / 864e5) + 1)
       : 0;
   $('#gBody').innerHTML = `
+    <button class="x gx" data-close aria-label="Close">✕</button>
     <div class="g-top" style="--img:${g.cover ? `url('${g.cover.replace(/'/g, '%27')}')` : 'none'}">
-      <button class="x" data-close aria-label="Close">✕</button>
       ${caseHTML(g, 'big')}
       <div><h2>${esc(g.title)}</h2>${sub ? `<div class="dim">${esc(sub)}</div>` : ''}<span class="pill" style="--sc:${s.color}">${s.label}</span></div>
     </div>

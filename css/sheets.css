@@ -40,8 +40,8 @@ dialog::backdrop {
 }
 
 .x {
-  width: 34px;
-  height: 34px;
+  width: 40px;
+  height: 40px;
   border-radius: 10px;
   background: #ffffff10;
   flex: none;
@@ -270,10 +270,21 @@ label textarea {
   z-index: 1;
 }
 
-.g-top .x {
-  position: absolute;
-  top: 12px;
-  right: 12px;
+/* the card's close button stays pinned at the top while you scroll the card */
+.gx {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: grid;
+  place-items: center;
+  margin: -4px -4px -40px auto;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  font-size: 18px;
+  background: #000000aa;
+  backdrop-filter: blur(6px);
+  box-shadow: 0 0 0 1px #ffffff26;
 }
 
 .g-top h2 {
@@ -426,4 +437,73 @@ label textarea {
 }
 .news li {
   margin: 4px 0;
+}
+
+/* Scanner */
+.scanbtn {
+  margin: 0 0 10px;
+}
+#dlgScan {
+  width: 100vw;
+  height: 100dvh;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: #000;
+  color: #fff;
+}
+#dlgScan video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.scan-frame {
+  position: absolute;
+  inset: 16% 9% 30%;
+  border: 3px solid var(--led);
+  border-radius: 18px;
+  box-shadow: 0 0 0 100vmax #0008, 0 0 22px var(--led);
+  overflow: hidden;
+}
+/* the moving "laser" line */
+.scan-frame i {
+  position: absolute;
+  left: 6%;
+  right: 6%;
+  height: 2px;
+  background: var(--led);
+  box-shadow: 0 0 10px var(--led);
+  animation: laser 2.2s ease-in-out infinite alternate;
+}
+@keyframes laser {
+  from {
+    top: 8%;
+  }
+  to {
+    top: 92%;
+  }
+}
+.scan-x {
+  position: absolute;
+  top: calc(14px + env(safe-area-inset-top));
+  right: 14px;
+  background: #000a;
+}
+.scan-bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 16px 16px calc(20px + env(safe-area-inset-bottom));
+  background: linear-gradient(transparent, #000d 30%);
+  text-align: center;
+}
+.scan-bar p {
+  margin: 0 0 4px;
+  font-weight: 600;
+  min-height: 2.9em;
 }

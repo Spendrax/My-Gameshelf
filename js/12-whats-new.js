@@ -4,6 +4,13 @@
 // Small fixes don't need an entry. The card is also in Settings → "What's new".
 
 const NEWS = [
+  {
+    v: '1.9',
+    items: [
+      '\u{1F4F7} Scan a game case to add it: the barcode on the back, or the title on the front cover',
+      'Bigger close button on the game card that stays at the top',
+    ],
+  },
   { v: '1.4', items: ['Hats now fit the buddy’s head and turn with him'] },
   {
     v: '1.3',

@@ -78,6 +78,7 @@
     Game search uses the free RAWG database. <a href="https://rawg.io/apidocs" target="_blank" rel="noopener">Get a free key</a>, then paste it here once:
     <div class="row"><input id="keyIn" placeholder="RAWG API key" autocomplete="off"><button id="keySave" class="btn primary">Save</button></div>
   </div>
+  <button id="scanBtn" class="btn primary wide scanbtn">📷 Scan the game case</button>
   <input id="addQ" type="search" placeholder="Search a game…" autocomplete="off" enterkeyhint="search">
   <div id="results" class="results"></div>
   <button id="addManual" class="btn ghost wide">Add it by hand</button>
@@ -133,6 +134,17 @@
   <button class="btn primary wide" data-close>Got it</button>
 </dialog>
 
+<!-- Scanner: full-screen camera. Reads the barcode, or the title on the front cover -->
+<dialog id="dlgScan">
+  <video id="scanVideo" playsinline muted></video>
+  <div class="scan-frame"><i></i></div>
+  <button class="x scan-x" data-close aria-label="Close">✕</button>
+  <div class="scan-bar">
+    <p id="scanMsg"></p>
+    <button id="scanCover" class="btn ghost wide">🔤 Read the front cover now</button>
+  </div>
+</dialog>
+
 <!-- Settings -->
 <dialog id="dlgSet" class="sheet">
   <div class="sheet-h"><h2>Settings</h2><button class="x" data-close aria-label="Close">✕</button></div>
@@ -162,5 +174,6 @@
 <script src="js/10-settings-backup.js"></script>
 <script src="js/11-install-update.js"></script>
 <script src="js/12-whats-new.js"></script>
+<script src="js/13-scan.js"></script>
 </body>
 </html>
