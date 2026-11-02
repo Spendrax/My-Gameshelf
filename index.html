@@ -62,12 +62,8 @@
   <section id="view-goals" class="view wall"></section>
 </main>
 
-<nav class="tabs">
-  <button data-view="room" class="on"><span>▦</span>Room</button>
-  <button data-view="stats"><span>▮▮</span>Stats</button>
-  <button id="btnAdd" class="add" aria-label="Add a game">+</button>
-  <button data-view="goals"><span>◎</span>Goals</button>
-</nav>
+<div class="dots"><button data-k="-1" aria-label="Goals"></button><button data-k="0" class="on" aria-label="Room"></button><button data-k="1" aria-label="Stats"></button></div>
+<button id="btnAdd" class="fab" aria-label="Add a game">+</button>
 
 <!-- Add: search RAWG or add by hand -->
 <dialog id="dlgAdd" class="sheet">

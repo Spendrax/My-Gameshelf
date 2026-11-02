@@ -84,6 +84,7 @@ function spinBacklog() {
   }, 90);
 }
 
-const renderWall = () => view === 'stats' ? renderStats() : view === 'goals' ? renderGoals() : 0;
-on('view', renderWall);
-on('change', renderWall);
+// both walls stay drawn so they're ready while you turn
+const renderWalls = () => { renderStats(); renderGoals(); };
+on('change', renderWalls);
+renderWalls();
