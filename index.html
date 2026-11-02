@@ -17,7 +17,7 @@
 <body>
 <header class="top">
   <h1 class="neon">GAMESHELF</h1>
-  <button id="btnSettings" class="icon" aria-label="Settings">⚙</button>
+  <div class="hbtns"><button id="btnLook" class="icon" aria-label="Customize">🎨</button><button id="btnSettings" class="icon" aria-label="Settings">⚙</button></div>
 </header>
 
 <main>
@@ -46,9 +46,10 @@
       <div class="console"><i></i></div>
       <div class="pad"></div>
       <div class="mug"><b></b></div>
+      <div class="plant"><b></b></div>
       <div id="pet" class="pet" role="button" aria-label="Your buddy">
         <div class="pv"><div class="pb">
-          <span class="ant"></span><span class="body"></span>
+          <span class="hat" id="hat"></span><span class="ant"></span><span class="body"></span>
           <span class="eye l"></span><span class="eye r"></span><span class="cheek l"></span><span class="cheek r"></span>
           <span class="feet"></span>
         </div></div>
@@ -115,11 +116,15 @@
   </form>
 </dialog>
 
+<!-- Customize: short sheet so the room stays in view -->
+<dialog id="dlgLook" class="sheet">
+  <div class="sheet-h"><h2>Customize</h2><button class="x" data-close aria-label="Close">✕</button></div>
+  <div id="cBody"></div>
+</dialog>
+
 <!-- Settings -->
 <dialog id="dlgSet" class="sheet">
   <div class="sheet-h"><h2>Settings</h2><button class="x" data-close aria-label="Close">✕</button></div>
-  <label>Your buddy's name<input id="sPet" maxlength="16"></label>
-  <label>LED color</label><div class="swatches" id="sLed"></div>
   <label>RAWG key (for game search)<input id="sKey" autocomplete="off"></label>
   <h3>Backup</h3>
   <p class="dim">Your games live only on this phone. Save a backup now and then.</p>
@@ -138,5 +143,6 @@
 <script src="js/03-pet.js"></script>
 <script src="js/04-walls.js"></script>
 <script src="js/05-install.js"></script>
+<script src="js/06-customize.js"></script>
 </body>
 </html>

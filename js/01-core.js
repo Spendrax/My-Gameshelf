@@ -1,6 +1,6 @@
 'use strict';
 // Core: saving games, helpers, the add / search / edit / game card windows, settings and backups.
-const VERSION = '1.2';
+const VERSION = '1.3';
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 
@@ -252,17 +252,10 @@ $('#gBody').addEventListener('click', e => {
 
 /* ---------- Settings & backup ---------- */
 $('#btnSettings').onclick = () => {
-  $('#sPet').value = set.pet; $('#sKey').value = set.key; $('#ver').textContent = VERSION;
-  $('#sLed').innerHTML = LEDS.reduce((h, c) => h + `<button data-c="${c}" style="--c:${c}" class="${c === set.led ? 'on' : ''}" aria-label="LED colour"></button>`, '');
+  $('#sKey').value = set.key; $('#ver').textContent = VERSION;
   $('#dlgSet').showModal();
 };
-$('#sPet').onchange = e => { set.pet = e.target.value.trim() || 'Byte'; saveSet(); emit('pet'); };
 $('#sKey').onchange = e => { set.key = e.target.value.trim(); saveSet(); };
-$('#sLed').onclick = e => {
-  const c = e.target.dataset.c; if (!c) return;
-  set.led = c; saveSet(); applyLed();
-  $$('#sLed button').forEach(b => b.classList.toggle('on', b.dataset.c === c));
-};
 $('#sExport').onclick = () => {
   const blob = new Blob([JSON.stringify({ app: 'my-gameshelf', version: VERSION, saved: new Date().toISOString(), settings: { ...set, key: '' }, games }, null, 1)], { type: 'application/json' });
   const a = Object.assign(document.createElement('a'), { href: URL.createObjectURL(blob), download: `gameshelf-backup-${today()}.json` });

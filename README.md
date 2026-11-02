@@ -12,6 +12,7 @@ Live at https://spendrax.github.io/My-Gameshelf/
 | `js/03-pet.js` | The buddy on the desk: wandering, blinking, naps, chatter, cheering, confetti |
 | `js/04-walls.js` | The stats wall and the goals wall (yearly challenge, backlog roulette) |
 | `js/05-install.js` | Offline copy and the Install button |
+| `js/06-customize.js` | The Customize sheet: LED, wall, shelves, poster, neon sign, desk items, the buddy's name, colour and hat |
 | `sw.js` | Offline copy (bump `V` on every release) |
 | `privacy.html` | Privacy policy |
 
