@@ -1,6 +1,6 @@
 'use strict';
 // Core: saving games, helpers, the add / search / edit / game card windows, settings and backups.
-const VERSION = '1.1';
+const VERSION = '1.2';
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 

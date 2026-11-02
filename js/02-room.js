@@ -76,10 +76,11 @@ function camSet(c) {
   cam = c;
   wallEls.forEach(([el, k]) => { el.style.transform = hexT((c - k) * 60); el.style.visibility = Math.abs(k - c) < 1.5 ? '' : 'hidden'; });
 }
-function go(k) {
-  document.body.classList.add('snap');
+function go(k, now) {
+  document.body.classList.toggle('snap', !now);
   camSet(k);
-  wallEls.forEach(([el, kk]) => el.inert = kk !== k);
+  wallEls.forEach(([el, kk]) => { el.inert = kk !== k; el.classList.toggle('away', kk !== k); });
+  clearTimeout(go.t); go.t = setTimeout(() => document.body.classList.remove('turning'), now ? 0 : 400);
   $$('.dots button').forEach(b => b.classList.toggle('on', +b.dataset.k === k));
   const v = Object.keys(WALLS).find(w => WALLS[w] === k);
   if (v !== view) { view = v; emit('view', v); }
@@ -96,7 +97,8 @@ addEventListener('pointermove', e => {
     if (Math.abs(dy) > 14 && Math.abs(dy) > Math.abs(dx)) { sw = null; return; }
     if (!(Math.abs(dx) > 14 && Math.abs(dx) > Math.abs(dy) * 1.3)) return;
     sw.on = true; sw.x = e.clientX;
-    document.body.classList.remove('snap');
+    clearTimeout(go.t);
+    document.body.classList.remove('snap'); document.body.classList.add('turning');
     wallEls.forEach(([el]) => el.inert = false);
   }
   const now = performance.now();
@@ -127,4 +129,4 @@ addEventListener('resize', () => camSet(cam));
 
 on('change', renderRoom);
 renderRoom();
-go(0);
+go(0, true);

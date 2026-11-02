@@ -1,9 +1,11 @@
 // Offline copy. Bump V on every release.
-const V = 'gs-v2';
+const V = 'gs-v3';
 const IMG = 'gs-img';
 const SHELL = ['./', 'index.html', 'css/style.css', 'js/01-core.js', 'js/02-room.js', 'js/03-pet.js', 'js/04-walls.js', 'js/05-install.js', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png'];
 
-self.addEventListener('install', e => { e.waitUntil(caches.open(V).then(c => c.addAll(SHELL))); self.skipWaiting(); });
+self.addEventListener('install', e => e.waitUntil(caches.open(V).then(c => c.addAll(SHELL.map(u => new Request(u, { cache: 'reload' }))))));
+// the page's "Update now" button asks the new version to take over
+self.addEventListener('message', e => { if (e.data === 'skip') self.skipWaiting(); });
 self.addEventListener('activate', e => {
   e.waitUntil(caches.keys().then(ks => Promise.all(ks.reduce((a, k) => k !== V && k !== IMG ? a.concat(caches.delete(k)) : a, []))));
   self.clients.claim();
