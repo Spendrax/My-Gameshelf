@@ -2,11 +2,12 @@
 // Customize: LED colour, wall, shelves, poster, neon sign, desk items, and the buddy's name, colour and hat.
 const LOOK = { wall: 'night', shelf: 'glow', poster: 'synth', sign: 'PLAY', signColor: '#ff3fa4', petColor: '', hat: '', hide: [] };
 set.look = Object.assign({}, LOOK, set.look);
+set.look.hat = { '👑': 'crown', '🎧': 'headset', '🧢': 'cap', '🎀': 'bow', '🎩': 'tophat' }[set.look.hat] ?? set.look.hat;
 const OPTS = {
   wall: [['night', 'Night'], ['blue', 'Midnight'], ['charcoal', 'Charcoal'], ['synth', 'Synthwave'], ['forest', 'Forest']],
   shelf: [['glow', 'LED'], ['wood', 'Wood'], ['metal', 'Metal']],
   poster: [['synth', 'Sunset'], ['space', 'Space'], ['retro', '1UP'], ['none', 'None']],
-  hat: [['', 'None'], ['👑', '👑 Crown'], ['🎧', '🎧 Headset'], ['🧢', '🧢 Cap'], ['🎀', '🎀 Bow'], ['🎩', '🎩 Top hat']],
+  hat: [['', 'None'], ['crown', '👑 Crown'], ['headset', '🎧 Headset'], ['cap', '🧢 Cap'], ['bow', '🎀 Bow'], ['tophat', '🎩 Top hat']],
   desk: [['mug', 'Mug'], ['plant', 'Plant'], ['pad', 'Controller'], ['console', 'Console']],
 };
 
@@ -18,7 +19,7 @@ function applyLook() {
   if (l.petColor) r.setProperty('--pet', l.petColor); else r.removeProperty('--pet');
   const t = l.sign || 'PLAY';
   $('.sign').innerHTML = esc(t[0]) + `<span>${esc(t.slice(1, 2))}</span>` + esc(t.slice(2));
-  $('#hat').textContent = l.hat;
+  $('#hat').className = 'hat ' + l.hat;
   OPTS.desk.forEach(([k]) => b.classList.toggle('no-' + k, l.hide.includes(k)));
 }
 

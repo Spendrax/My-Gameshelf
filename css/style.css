@@ -270,5 +270,21 @@ body.looking #view-room{padding-bottom:52vh}
 .plant::before{content:"";position:absolute;left:0;right:0;bottom:0;height:20px;background:#c2683f;clip-path:polygon(0 0,100% 0,85% 100%,15% 100%)}
 .plant b{position:absolute;left:-8px;bottom:16px;width:38px;height:32px;
   background:radial-gradient(ellipse at 28% 62%,#3fa35b 0 30%,transparent 32%),radial-gradient(ellipse at 72% 58%,#2f8a4a 0 30%,transparent 32%),radial-gradient(ellipse at 50% 30%,#4cc06a 0 28%,transparent 30%)}
-.pet .hat{position:absolute;left:50%;top:-4px;transform:translateX(-50%);font-size:20px;line-height:1;z-index:2}
-.pet .hat:not(:empty)~.ant{display:none}
+.pet .hat{position:absolute;z-index:2;pointer-events:none}
+.pet .hat::before,.pet .hat::after{content:"";position:absolute}
+.hat.crown~.ant,.hat.cap~.ant,.hat.tophat~.ant{display:none}
+/* hats are drawn to sit on the buddy's head (body top is at 14px, 44px wide) */
+.hat.crown{left:16px;top:5px;width:22px;height:12px;background:linear-gradient(#ffe27a,#e0a314);clip-path:polygon(0 100%,0 15%,25% 55%,50% 0,75% 55%,100% 15%,100% 100%)}
+.hat.crown::after{left:9px;top:6px;width:4px;height:4px;border-radius:50%;background:#ff3fa4}
+.hat.headset{left:3px;top:9px;width:48px;height:24px;border:4px solid #23202e;border-bottom:0;border-radius:24px 24px 0 0}
+.hat.headset::before,.hat.headset::after{top:12px;width:9px;height:14px;border-radius:5px;background:#23202e;box-shadow:inset 0 0 0 2px #3a3650}
+.hat.headset::before{left:-8px}
+.hat.headset::after{right:-8px;background:radial-gradient(circle,var(--led) 0 2px,#23202e 3px)}
+.hat.cap{left:11px;top:9px;width:32px;height:11px;border-radius:16px 16px 3px 3px;background:linear-gradient(#ff5a5f,#d62839);transform:rotate(-6deg)}
+.hat.cap::before{left:14px;top:-2px;width:4px;height:4px;border-radius:50%;background:#d62839}
+.hat.cap::after{right:-11px;bottom:0;width:15px;height:4px;border-radius:0 6px 6px 0;background:#b81f2e}
+.hat.bow{left:30px;top:12px;width:20px;height:12px;background:#ff5fa8;clip-path:polygon(0 0,50% 38%,100% 0,100% 100%,50% 62%,0 100%);transform:rotate(18deg)}
+.hat.bow::after{left:7px;top:3px;width:6px;height:6px;border-radius:50%;background:#e23d8b}
+.hat.tophat{left:11px;top:13px;width:32px;height:4px;border-radius:2px;background:#15121c}
+.hat.tophat::before{left:6px;bottom:3px;width:20px;height:17px;border-radius:2px 2px 0 0;background:linear-gradient(#2a2633,#15121c)}
+.hat.tophat::after{left:6px;bottom:3px;width:20px;height:4px;background:var(--led)}
