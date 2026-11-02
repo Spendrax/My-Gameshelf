@@ -126,6 +126,13 @@
   <div id="cBody"></div>
 </dialog>
 
+<!-- What's new -->
+<dialog id="dlgNews" class="sheet">
+  <div class="sheet-h"><h2>What’s new</h2><button class="x" data-close aria-label="Close">✕</button></div>
+  <div id="newsBody" class="news"></div>
+  <button class="btn primary wide" data-close>Got it</button>
+</dialog>
+
 <!-- Settings -->
 <dialog id="dlgSet" class="sheet">
   <div class="sheet-h"><h2>Settings</h2><button class="x" data-close aria-label="Close">✕</button></div>
@@ -136,6 +143,7 @@
     <button class="btn" id="sExport">Save backup</button>
     <label class="btn">Load backup<input type="file" id="sImport" accept=".json,application/json" hidden></label>
   </div>
+  <button class="btn ghost wide" id="sNews">What’s new</button>
   <button class="btn ghost wide" id="sInstall" hidden>Install the app</button>
   <p class="dim small">My Gameshelf v<span id="ver"></span> · Game info from <a href="https://rawg.io" target="_blank" rel="noopener">RAWG</a> · <a href="privacy.html">Privacy</a></p>
 </dialog>
@@ -153,5 +161,6 @@
 <script src="js/09-customize.js"></script>
 <script src="js/10-settings-backup.js"></script>
 <script src="js/11-install-update.js"></script>
+<script src="js/12-whats-new.js"></script>
 </body>
 </html>

@@ -1,0 +1,50 @@
+'use strict';
+// WHAT'S NEW — after an important update, a card lists what changed (newest first).
+// To announce an update: add an entry at the top of NEWS with the new VERSION.
+// Small fixes don't need an entry. The card is also in Settings → "What's new".
+
+const NEWS = [
+  { v: '1.4', items: ['Hats now fit the buddy’s head and turn with him'] },
+  {
+    v: '1.3',
+    items: [
+      '\u{1F3A8} Customize: LED colour, wall, shelves, poster, neon sign, desk items, the buddy’s colour and hat',
+    ],
+  },
+  { v: '1.2', items: ['An “Update now” button shows up when a new version is ready'] },
+  { v: '1.1', items: ['Swipe round the room: Goals ← Room → Stats'] },
+];
+
+// Compares versions number by number, so 1.10 comes after 1.9
+const newer = (a, b) => {
+  const x = a.split('.').map(Number);
+  const y = b.split('.').map(Number);
+  for (let i = 0; i < Math.max(x.length, y.length); i++) {
+    if ((x[i] || 0) !== (y[i] || 0)) return (x[i] || 0) > (y[i] || 0);
+  }
+  return false;
+};
+
+function showNews(since) {
+  const list = NEWS.reduce(
+    (h, n) =>
+      !since || newer(n.v, since)
+        ? h + `<h3>Version ${n.v}</h3><ul>${n.items.reduce((li, t) => li + `<li>${esc(t)}</li>`, '')}</ul>`
+        : h,
+    '',
+  );
+  if (!list) return;
+  $('#newsBody').innerHTML = list;
+  $('#dlgNews').showModal();
+}
+
+// Brand-new installs (no games, never saw a version) skip the card
+if (!set.seen && games.length) set.seen = '1.0';
+if (set.seen && newer(VERSION, set.seen)) setTimeout(() => showNews(set.seen), 900);
+set.seen = VERSION;
+saveSet();
+
+$('#sNews').onclick = () => {
+  $('#dlgSet').close();
+  showNews();
+};

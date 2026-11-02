@@ -29,6 +29,7 @@ Live at https://spendrax.github.io/My-Gameshelf/
 | `js/09-customize.js` | The 🎨 sheet: LED, wall, shelves, poster, sign, desk items, buddy name/colour/hat |
 | `js/10-settings-backup.js` | Settings: your own RAWG key, saving and loading backups |
 | `js/11-install-update.js` | Offline copy, "Update now" button, Install button |
+| `js/12-whats-new.js` | The "What's new" card: add an entry to `NEWS` for each important update |
 | `sw.js` | Offline copy (bump `V` on every release) |
 | `privacy.html` | Privacy policy |
 

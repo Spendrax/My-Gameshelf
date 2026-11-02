@@ -415,3 +415,15 @@ label textarea {
   height: 100%;
   padding: 0;
 }
+
+/* What's new card */
+.news h3 {
+  color: var(--led);
+}
+.news ul {
+  margin: 6px 0 0;
+  padding-left: 20px;
+}
+.news li {
+  margin: 4px 0;
+}
