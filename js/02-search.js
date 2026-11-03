@@ -42,16 +42,20 @@ $('#addQ').addEventListener('input', (e) => {
 // Asks RAWG straight from the phone, giving up after 6 seconds. If RAWG can't be reached, asks your
 // Cloudflare helper (HELPER/search), which asks RAWG from its side, or the Steam store if RAWG is down.
 // Returns { results } or { error: 'key' | 'full' | 'offline' }.
+let rawgDownUntil = 0; // when RAWG didn't answer, skip it for 10 minutes and ask the helper straight away
 async function findGames(q) {
-  try {
-    const r = await fetch(
-      `https://api.rawg.io/api/games?key=${encodeURIComponent(rawgKey())}&search=${encodeURIComponent(q)}&page_size=10`,
-      { signal: AbortSignal.timeout(6000) },
-    );
-    if (r.status === 401 || r.status === 403) return { error: 'key' };
-    if (r.status === 429) return { error: 'full' };
-    if (r.ok) return { results: (await r.json()).results || [] };
-  } catch {} // no answer in time, or blocked: try the helper
+  if (Date.now() > rawgDownUntil)
+    try {
+      const r = await fetch(
+        `https://api.rawg.io/api/games?key=${encodeURIComponent(rawgKey())}&search=${encodeURIComponent(q)}&page_size=10`,
+        { signal: AbortSignal.timeout(6000) },
+      );
+      if (r.status === 401 || r.status === 403) return { error: 'key' };
+      if (r.status === 429) return { error: 'full' };
+      if (r.ok) return { results: (await r.json()).results || [] };
+    } catch {
+      rawgDownUntil = Date.now() + 10 * 60e3; // no answer in time, or blocked: try the helper
+    }
   try {
     const r = await fetch(
       `${HELPER}/search?key=${encodeURIComponent(rawgKey())}&q=${encodeURIComponent(q)}`,

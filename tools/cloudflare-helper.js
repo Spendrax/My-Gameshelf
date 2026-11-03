@@ -20,7 +20,7 @@ export default {
       try {
         const r = await fetch(
           `https://api.rawg.io/api/games?key=${encodeURIComponent(key)}&search=${encodeURIComponent(q)}&page_size=10`,
-          { cf: { cacheTtl: 86400, cacheEverything: true } }, // same search again today = instant
+          { cf: { cacheTtl: 86400, cacheEverything: true }, signal: AbortSignal.timeout(4000) }, // cached a day; 4 s max
         );
         if (r.ok) {
           const d = await r.json();
@@ -28,7 +28,9 @@ export default {
         }
       } catch {}
       // RAWG down: the Steam store's search (PC games only)
-      const s = await fetch(`https://store.steampowered.com/api/storesearch/?term=${encodeURIComponent(q)}&cc=CA&l=english`)
+      const s = await fetch(
+        `https://store.steampowered.com/api/storesearch/?term=${encodeURIComponent(q)}&cc=CA&l=english`,
+      )
         .then((r) => r.json())
         .catch(() => ({}));
       return reply({
@@ -60,7 +62,12 @@ export default {
       if (!list) return reply({ error: 'private' }, 403); // "Game details" not public (or no games)
       return reply({
         steamid: id,
-        games: list.map((g) => ({ appid: g.appid, name: g.name, minutes: g.playtime_forever, last: g.rtime_last_played || 0 })),
+        games: list.map((g) => ({
+          appid: g.appid,
+          name: g.name,
+          minutes: g.playtime_forever,
+          last: g.rtime_last_played || 0,
+        })),
       });
     }
 
