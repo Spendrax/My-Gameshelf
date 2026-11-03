@@ -746,6 +746,7 @@
 }
 /* curtains tied back on each side, hanging from a rod */
 .window .rod {
+  z-index: 2;
   left: -18px;
   right: -18px;
   top: -8px;
@@ -766,7 +767,7 @@
 }
 .window .curtain.l {
   left: -16px;
-  clip-path: polygon(0 0, 100% 0, 55% 55%, 75% 100%, 0 100%);
+  clip-path: polygon(0 0, 100% 0, 55% 55%, 75% 100%, 0 100%); /* tied back */
 }
 .window .curtain.r {
   right: -16px;
@@ -907,15 +908,25 @@
   pointer-events: none;
 }
 
-/* curtains follow the same taps: drawn closed, tied back, or pushed to the sides */
+/* curtains follow the same taps: drawn closed, tied back, or pushed to the sides.
+   Every state uses the same 5-point shape so the shape slides smoothly along with the width. */
 .window .curtain {
-  transition: width 0.4s ease;
+  z-index: 1; /* in front of the sill */
+  transition:
+    width 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+    clip-path 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 [data-shade='closed'] .window .curtain {
   width: 74px;
-  clip-path: none;
 }
 [data-shade='open'] .window .curtain {
   width: 14px;
-  clip-path: none;
+}
+[data-shade='closed'] .window .curtain.l,
+[data-shade='open'] .window .curtain.l {
+  clip-path: polygon(0 0, 100% 0, 100% 55%, 100% 100%, 0 100%);
+}
+[data-shade='closed'] .window .curtain.r,
+[data-shade='open'] .window .curtain.r {
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 0 55%);
 }
