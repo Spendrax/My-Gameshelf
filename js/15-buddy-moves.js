@@ -13,6 +13,7 @@
 const topEdge = (b) => [b.x + 6, b.x + b.w - 6, b.y];
 const SURFACES = {
   room: [
+    ['.window', (b) => [b.x - 4, b.x + b.w + 4, b.y + b.h]], // the windowsill
     ['.shelf', (b) => [b.x + 12, b.x + b.w - 12, b.y + b.h]], // the board under the cases
     ['.monitor', topEdge],
     ['.desk', (b) => [b.x + 4, b.x + b.w - 4, b.y + 8]],

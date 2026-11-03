@@ -552,52 +552,210 @@
 
 /* ---------- The bedroom: window, floor and furniture ---------- */
 
-/* a window with half-open blinds: night sky, moon and the city lights */
+/* ---------- The window: frame, sill, glass panes with the view, and blinds or curtains ----------
+   The view is chosen in Customize (body[data-sky]); "Real time" follows the clock (09-customize.js). */
 .window {
   position: relative;
-  width: 92px;
-  height: 74px;
-  overflow: hidden;
-  border: 5px solid #2c2440;
-  border-radius: 3px;
-  background:
-    linear-gradient(90deg, transparent 47%, #2c2440 47% 53%, transparent 53%),
-    linear-gradient(transparent 62%, #0a0812 62%) 0 0 / 100% 100%,
-    linear-gradient(#0d1a3d, #3b2667);
+  width: 112px;
+  height: 88px;
+  border-radius: 4px;
+  background: #3a2f55; /* the frame */
   box-shadow:
-    inset 0 0 12px #0008,
-    0 4px 10px #0007;
+    inset 0 0 0 2px #ffffff14,
+    0 6px 14px #0008;
 }
-/* the skyline: little lit windows on dark buildings */
+/* the sill: the buddy can sit on it */
 .window::after {
   content: '';
   position: absolute;
+  left: -8px;
+  right: -8px;
+  bottom: -8px;
+  height: 8px;
+  border-radius: 2px;
+  background: linear-gradient(#6a5a8c, #2e2342);
+  box-shadow: 0 4px 6px #0007;
+}
+.pane {
+  /* the view (night city by default) */
+  --sky: linear-gradient(#0d1a3d, #3b2667);
+  --disc: #fff6d8; /* moon or sun */
+  --lit: #ffd56a; /* lights in the buildings */
+  --bld: #120e1f; /* buildings */
+  position: absolute;
+  inset: 6px;
+  overflow: hidden;
+  border-radius: 2px;
+  background: var(--sky);
+}
+.pane i {
+  position: absolute;
+}
+.pane .disc {
+  right: 12px;
+  top: 9px;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: var(--disc);
+  box-shadow: 0 0 12px var(--disc);
+}
+.pane .city {
   left: 0;
   right: 0;
   bottom: 0;
-  height: 40%;
+  height: 42%;
   background:
-    radial-gradient(#ffd56a 0 1px, transparent 1.5px) 3px 4px / 9px 7px,
-    linear-gradient(90deg, #120e1f 0 18%, transparent 18% 24%, #161226 24% 52%, transparent 52% 58%, #120e1f 58% 82%, transparent 82%);
-  clip-path: polygon(0 30%, 18% 30%, 18% 0, 52% 0, 52% 20%, 82% 20%, 82% 45%, 100% 45%, 100% 100%, 0 100%);
+    radial-gradient(var(--lit) 0 1px, transparent 1.5px) 3px 4px / 9px 7px,
+    var(--bld);
+  clip-path: polygon(
+    0 30%,
+    18% 30%,
+    18% 0,
+    40% 0,
+    40% 22%,
+    52% 22%,
+    52% 8%,
+    70% 8%,
+    70% 40%,
+    84% 40%,
+    84% 18%,
+    100% 18%,
+    100% 100%,
+    0 100%
+  );
 }
-.window .moon {
+.pane .sky-fx {
+  inset: 0;
+}
+/* the window bars and a light reflection on the glass */
+.pane .glass {
+  inset: 0;
+  background:
+    linear-gradient(
+      90deg,
+      transparent calc(50% - 2px),
+      #3a2f55 calc(50% - 2px) calc(50% + 2px),
+      transparent calc(50% + 2px)
+    ),
+    linear-gradient(
+      transparent calc(52% - 2px),
+      #3a2f55 calc(52% - 2px) calc(52% + 2px),
+      transparent calc(52% + 2px)
+    ),
+    linear-gradient(
+      125deg,
+      transparent 22%,
+      #ffffff26 22% 30%,
+      transparent 30% 36%,
+      #ffffff17 36% 40%,
+      transparent 40%
+    );
+}
+
+/* the views */
+[data-sky='stars'] .pane {
+  --sky: linear-gradient(#05060f, #171139);
+  --bld: #07060d;
+  --lit: transparent;
+}
+[data-sky='stars'] .sky-fx {
+  background:
+    radial-gradient(#fff 0 0.8px, transparent 1.2px) 2px 3px / 13px 11px,
+    radial-gradient(#fffbe0 0 0.6px, transparent 1px) 7px 8px / 17px 14px;
+  animation: twinkle 3s ease-in-out infinite alternate;
+}
+@keyframes twinkle {
+  to {
+    opacity: 0.45;
+  }
+}
+[data-sky='sunset'] .pane {
+  --sky: linear-gradient(#3b1d5e, #ff6a5c 65%, #ffb35c);
+  --disc: #ffd56a;
+  --bld: #2a1230;
+}
+[data-sky='sunset'] .disc {
+  top: 36%;
+  right: 40%;
+  width: 22px;
+  height: 22px;
+}
+[data-sky='rain'] .pane {
+  --sky: linear-gradient(#1c2333, #3a465e);
+  --disc: transparent;
+  --bld: #141824;
+}
+[data-sky='rain'] .sky-fx {
+  z-index: 1;
+  background: repeating-linear-gradient(105deg, transparent 0 6px, #cfe3ff40 6px 7px) 0 0 / 22px 22px;
+  animation: rain 0.5s linear infinite;
+}
+@keyframes rain {
+  to {
+    background-position: -6px 22px;
+  }
+}
+[data-sky='day'] .pane {
+  --sky: linear-gradient(#4aa3f5, #bfe3ff);
+  --disc: #fff3a0;
+  --lit: transparent;
+  --bld: #5d6a8a;
+}
+[data-sky='day'] .sky-fx {
+  background:
+    radial-gradient(ellipse 18px 6px at 30% 30%, #fff 60%, transparent 62%),
+    radial-gradient(ellipse 14px 5px at 38% 25%, #fff 60%, transparent 62%),
+    radial-gradient(ellipse 16px 5px at 72% 48%, #ffffffd0 60%, transparent 62%);
+}
+
+/* blinds, half down */
+.window .blinds,
+.window .rod,
+.window .curtain {
   position: absolute;
-  right: 10px;
-  top: 9px;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: #fff6d8;
-  box-shadow: 0 0 12px #fff6d8;
+  display: none;
 }
 .window .blinds {
-  position: absolute;
-  inset: 0 0 auto;
+  left: 6px;
+  right: 6px;
+  top: 6px;
   height: 38%;
-  z-index: 1;
   background: repeating-linear-gradient(#c9c2dd 0 4px, #8e86a8 4px 5px);
   box-shadow: 0 2px 4px #0006;
+}
+[data-dress='blinds'] .window .blinds,
+[data-dress='curtains'] .window .rod,
+[data-dress='curtains'] .window .curtain {
+  display: block;
+}
+/* curtains tied back on each side, hanging from a rod */
+.window .rod {
+  left: -18px;
+  right: -18px;
+  top: -8px;
+  height: 4px;
+  border-radius: 2px;
+  background: #1a1426;
+}
+.window .curtain {
+  top: -6px;
+  bottom: -14px;
+  width: 28px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--curtain, #8a3a5c) 0 5px,
+    color-mix(in srgb, var(--curtain, #8a3a5c) 70%, #000) 5px 9px
+  );
+  box-shadow: 0 4px 8px #0006;
+}
+.window .curtain.l {
+  left: -16px;
+  clip-path: polygon(0 0, 100% 0, 55% 55%, 75% 100%, 0 100%);
+}
+.window .curtain.r {
+  right: -16px;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 25% 100%, 45% 55%);
 }
 
 /* the floor at the bottom of every wall: wooden planks with the LED glow on them */
@@ -606,8 +764,7 @@
   height: calc(120px + env(safe-area-inset-bottom));
   border-top: 6px solid #2b2240;
   background:
-    linear-gradient(#0000, #0007),
-    repeating-linear-gradient(90deg, transparent 0 68px, #00000045 68px 70px),
+    linear-gradient(#0000, #0007), repeating-linear-gradient(90deg, transparent 0 68px, #00000045 68px 70px),
     linear-gradient(#3b2b3f, #21172a);
   box-shadow:
     0 -1px 0 #ffffff14,
@@ -627,7 +784,12 @@
   top: 14px;
   height: 46px;
   border-radius: 50%;
-  background: radial-gradient(closest-side, color-mix(in srgb, var(--led) 35%, #1a1426) 60%, color-mix(in srgb, var(--led) 18%, #120e1c) 61% 80%, transparent 82%);
+  background: radial-gradient(
+    closest-side,
+    color-mix(in srgb, var(--led) 35%, #1a1426) 60%,
+    color-mix(in srgb, var(--led) 18%, #120e1c) 61% 80%,
+    transparent 82%
+  );
 }
 .beanbag {
   position: absolute;
@@ -696,8 +858,7 @@
   height: 42px;
   border-radius: 3px;
   background:
-    linear-gradient(transparent 48%, #0004 48% 52%, transparent 52%),
-    linear-gradient(#5a4470, #3a2c4d);
+    linear-gradient(transparent 48%, #0004 48% 52%, transparent 52%), linear-gradient(#5a4470, #3a2c4d);
 }
 /* a lamp with a warm glow */
 .nightstand .lamp {

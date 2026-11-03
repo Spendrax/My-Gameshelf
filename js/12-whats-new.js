@@ -5,6 +5,10 @@
 
 const NEWS = [
   {
+    v: '2.4',
+    items: ['A real window with a sill your buddy can sit on', '\u{1F3A8} Choose the view (real time, city night, stars, sunset, rain, sunny day) and blinds or curtains'],
+  },
+  {
     v: '2.3',
     items: ['Carry your buddy to another wall: hold him at the edge of the screen', 'At night he goes to bed and sleeps under the blanket \u{1F319}'],
   },

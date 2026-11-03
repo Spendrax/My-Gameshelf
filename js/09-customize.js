@@ -8,6 +8,9 @@ const LOOK = {
   signColor: '#ff3fa4',
   petColor: '',
   hat: '',
+  sky: 'auto', // the view out of the window
+  dress: 'blinds', // blinds, curtains or nothing
+  curtain: '#8a3a5c',
   hide: [],
 };
 set.look = Object.assign({}, LOOK, set.look);
@@ -32,6 +35,19 @@ const OPTS = {
     ['retro', '1UP'],
     ['none', 'None'],
   ],
+  sky: [
+    ['auto', '\u{1F552} Real time'],
+    ['city', 'City night'],
+    ['stars', 'Starry sky'],
+    ['sunset', 'Sunset'],
+    ['rain', 'Rain'],
+    ['day', 'Sunny day'],
+  ],
+  dress: [
+    ['blinds', 'Blinds'],
+    ['curtains', 'Curtains'],
+    ['none', 'Nothing'],
+  ],
   hat: [
     ['', 'None'],
     ['crown', '👑 Crown'],
@@ -48,13 +64,28 @@ const OPTS = {
   ],
 };
 
+// "Real time": the window shows what the sky looks like right now
+function windowView(sky) {
+  if (sky !== 'auto') return sky;
+  const h = new Date().getHours();
+  return h >= 8 && h < 18 ? 'day' : h >= 6 && h < 20 ? 'sunset' : 'city';
+}
+setInterval(() => set.look.sky === 'auto' && (document.body.dataset.sky = windowView('auto')), 5 * 60e3);
+
 function applyLook() {
   const l = set.look,
     b = document.body,
     r = document.documentElement.style;
-  Object.assign(b.dataset, { wall: l.wall, shelf: l.shelf, poster: l.poster });
+  Object.assign(b.dataset, {
+    wall: l.wall,
+    shelf: l.shelf,
+    poster: l.poster,
+    sky: windowView(l.sky),
+    dress: l.dress,
+  });
   r.setProperty('--led', set.led);
   r.setProperty('--sign', l.signColor);
+  r.setProperty('--curtain', l.curtain);
   if (l.petColor) r.setProperty('--pet', l.petColor);
   else r.removeProperty('--pet');
   const t = l.sign || 'PLAY';
@@ -81,6 +112,9 @@ function drawLook() {
     <label>LED colour</label>${swatches('led', set.led)}
     <label>Wall</label>${chips('wall', OPTS.wall, l.wall)}
     <label>Shelves</label>${chips('shelf', OPTS.shelf, l.shelf)}
+    <label>Window view</label>${chips('sky', OPTS.sky, l.sky)}
+    <label>On the window</label>${chips('dress', OPTS.dress, l.dress)}
+    ${l.dress === 'curtains' ? `<label>Curtain colour</label>${swatches('curtain', l.curtain)}` : ''}
     <label>Poster</label>${chips('poster', OPTS.poster, l.poster)}
     <label>Neon sign<input id="cSign" maxlength="8" value="${esc(l.sign)}"></label>
     ${swatches('signColor', l.signColor)}
