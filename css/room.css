@@ -633,6 +633,7 @@
 }
 /* the window bars and a light reflection on the glass */
 .pane .glass {
+  z-index: 2; /* bars and glass are in front of the view, rain included */
   inset: 0;
   background:
     linear-gradient(
