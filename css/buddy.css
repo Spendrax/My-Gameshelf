@@ -530,3 +530,24 @@
 .pet.climb .pb {
   animation: waddle 0.22s ease-in-out infinite alternate;
 }
+
+/* asleep in bed: sunk into the mattress with the blanket pulled up over him */
+.pet.tucked .pv {
+  transform: translateY(4px);
+}
+.pet.tucked.flip .pv {
+  transform: translateY(4px) scaleX(-1);
+}
+/* the bump of blanket over his body; his head stays out */
+.pet.tucked::after {
+  content: '';
+  position: absolute;
+  left: -2px;
+  right: -8px;
+  bottom: -3px;
+  height: 13px;
+  border-radius: 50% 50% 4px 4px / 100% 100% 4px 4px;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 18px, #ffffff1a 18px 22px),
+    linear-gradient(color-mix(in srgb, var(--led) 80%, #fff), color-mix(in srgb, var(--led) 60%, #000));
+}

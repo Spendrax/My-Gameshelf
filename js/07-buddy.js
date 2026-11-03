@@ -34,7 +34,7 @@ function sleep() {
 }
 function wake() {
   pet.sleeping = false;
-  pet.el.classList.remove('sleep');
+  pet.el.classList.remove('sleep', 'tucked');
   petClass('wake', 900);
   pet.lastTouch = Date.now();
 }
@@ -103,7 +103,8 @@ setInterval(() => {
   const now = Date.now(),
     h = new Date().getHours();
   const napAfter = h >= 23 || h < 6 ? 20e3 : 50e3;
-  if (!pet.sleeping && !pet.moving && now - pet.lastTouch > napAfter && now > pet.busy) return sleep();
+  if (!pet.sleeping && !pet.moving && now - pet.lastTouch > napAfter && now > pet.busy)
+    return night() ? goToBed() : sleep();
   if (pet.sleeping) return;
   settle();
   if (Math.random() < 0.25) {
@@ -113,7 +114,8 @@ setInterval(() => {
   if (now < nextAct || now < pet.busy || pet.moving) return;
   nextAct = now + 5000 + Math.random() * 6000;
   const r = Math.random();
-  if (r < 0.5) wander();
+  if (r < 0.5)
+    night() && Math.random() < 0.3 ? goToBed() : wander(); // at night he sometimes heads to bed
   else if (r < 0.68) chatter();
   else if (r < 0.8) petClass('hop', 500);
 }, 1000);

@@ -5,6 +5,10 @@
 
 const NEWS = [
   {
+    v: '2.3',
+    items: ['Carry your buddy to another wall: hold him at the edge of the screen', 'At night he goes to bed and sleeps under the blanket \u{1F319}'],
+  },
+  {
     v: '2.2',
     items: [
       'Your buddy roams the whole bedroom: shelves, desk, monitor, bed, beanbag\u2026 and visits the other walls',

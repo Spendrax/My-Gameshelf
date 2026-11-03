@@ -28,7 +28,10 @@ const SURFACES = {
   goals: [
     ['.board', topEdge],
     ['.board .card', topEdge],
-    ['.bed', (b) => [b.x + 16, b.x + b.w, b.y + 38]],
+    // the bed has three heights: pillow, mattress, blanket (he sinks in a little)
+    ['.bed .pillow', (b) => [b.x + 4, b.x + b.w - 4, b.y + 6]],
+    ['.bed .mattress', (b) => [b.x + 4, b.x + (b.w + 10) * 0.34 - 4, b.y + 2]], // only the bit between pillow and blanket
+    ['.bed .blanket', (b) => [b.x + 6, b.x + b.w - 2, b.y + 3]],
     ['.nightstand', topEdge],
     ['.floor', (b) => [0, b.w, b.y + 34]],
   ],
@@ -251,6 +254,22 @@ function petHome() {
   putOnDesk();
 }
 
+/* ---------- Bedtime ---------- */
+
+const night = () => {
+  const h = new Date().getHours();
+  return h >= 21 || h < 7;
+};
+// He walks to the bed, lies down with his head by the pillow, and sleeps tucked under the blanket
+async function goToBed() {
+  const blanket = surfaces().find((s) => s.sel === '.bed .blanket');
+  if (!blanket || !(await travel(blanket, blanket.x0 + 6))) return;
+  face(true); // head towards the pillow
+  pet.el.classList.add('tucked');
+  sleep();
+  say(rand(['Good night… 🌙', '*yawn* Bedtime.', 'Sweet dreams, player one.']), 2500);
+}
+
 /* ---------- Dragging him ---------- */
 
 const pointIn = (wall, e) => {
@@ -261,11 +280,34 @@ let press = null;
 
 pet.el.addEventListener('pointerdown', (e) => {
   e.stopPropagation();
-  press = { id: e.pointerId, x: e.clientX, y: e.clientY };
-  pet.el.setPointerCapture(e.pointerId);
+  press = { id: e.pointerId, x: e.clientX, y: e.clientY, edge: 0, armed: true };
 });
-pet.el.addEventListener('pointermove', (e) => {
+
+// Holding him at the left or right edge of the screen for a moment carries him to the next wall
+const EDGE = 28; // px from the screen edge
+function edgeCheck(e) {
+  const side = e.clientX < EDGE ? 'left' : e.clientX > innerWidth - EDGE ? 'right' : '';
+  if (!side) {
+    clearTimeout(press.edge);
+    press.edge = 0;
+    press.armed = true; // finger left the edge: it can carry him again
+    return;
+  }
+  const next = NEXT_WALL[pet.wall][side];
+  if (!next || press.edge || !press.armed) return;
+  press.edge = setTimeout(() => {
+    if (!press || !pet.held) return;
+    press.edge = 0;
+    press.armed = false; // must leave the edge before going on to another wall
+    go(WALLS[next]);
+    const [x, y] = pointIn(next, press.last);
+    put(next, clamp(x, 20, wallOf(next).clientWidth - 20), y + 26);
+  }, 450);
+}
+
+addEventListener('pointermove', (e) => {
   if (!press || e.pointerId !== press.id) return;
+  press.last = e;
   if (!pet.held && Math.hypot(e.clientX - press.x, e.clientY - press.y) < 8) return;
   if (!pet.held) {
     pet.held = true;
@@ -279,11 +321,13 @@ pet.el.addEventListener('pointermove', (e) => {
   const [x, y] = pointIn(pet.wall, e);
   const w = wallOf(pet.wall).clientWidth;
   put(pet.wall, clamp(x, 20, w - 20), y + 26); // you hold him by the middle
+  edgeCheck(e);
 });
 const letGo = async (e) => {
   if (!press || e.pointerId !== press.id) return;
+  clearTimeout(press.edge);
   press = null;
-  if (!pet.held) return petTap(e); // a tap, not a drag
+  if (!pet.held) return e.type === 'pointerup' && e.target.closest?.('.pet') && petTap(e); // a tap, not a drag
   pet.held = false;
   pet.el.classList.remove('held');
   pet.lastTouch = Date.now();
@@ -292,8 +336,8 @@ const letGo = async (e) => {
   await jump(clamp(pet.x, s.x0 + 14, s.x1 - 14), s.y, job);
   if (job === pet.job) petClass('hop', 500);
 };
-pet.el.addEventListener('pointerup', letGo);
-pet.el.addEventListener('pointercancel', letGo);
+addEventListener('pointerup', letGo);
+addEventListener('pointercancel', letGo);
 
 /* ---------- Food bowls ---------- */
 
