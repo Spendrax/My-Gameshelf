@@ -29,8 +29,9 @@
 .poster {
   position: relative;
   display: flex;
-  width: 50px;
-  height: 68px;
+  flex: none;
+  width: 64px;
+  height: 88px;
   overflow: hidden;
   border: 3px solid #0a0812;
   border-radius: 3px;
@@ -49,8 +50,8 @@
 
 .sign {
   /* shrinks for longer words so it never runs into the window: --n is the number of letters (09-customize.js);
-     about 120px is free beside the poster and window on a phone, more on wider screens */
-  font: 700 clamp(12px, calc((100vw - 270px) / var(--n, 4) / 0.95), 30px) var(--hd);
+     about 105px is free beside the poster and window on a phone, more on wider screens */
+  font: 700 clamp(12px, calc((100vw - 284px) / var(--n, 4) / 0.95), 30px) var(--hd);
   letter-spacing: 0.18em;
   white-space: nowrap;
   color: #fff;
