@@ -4,6 +4,7 @@
 // Small fixes don't need an entry. The card is also in Settings → "What's new".
 
 const NEWS = [
+  { v: '3.1', items: ['\u{1F3A8} New buddies: cat, dog, fox, bunny, frog and penguin (Customize \u2192 Your buddy \u2192 Animal)'] },
   {
     v: '3.0',
     items: ['New status: On & off', '\u221E Never-ending games (battle royale, MMO\u2026) in the edit form', 'The monitor shows a wide screenshot of what you\u2019re playing'],

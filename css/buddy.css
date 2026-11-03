@@ -13,7 +13,6 @@
   animation: bob 2.4s ease-in-out infinite;
 }
 
-
 .pet {
   --pk: var(--pet, var(--led));
   /* placed by 15-buddy-moves.js with transform: translate(x, y) */
@@ -551,4 +550,258 @@
   background:
     repeating-linear-gradient(90deg, transparent 0 18px, #ffffff1a 18px 22px),
     linear-gradient(color-mix(in srgb, var(--led) 80%, #fff), color-mix(in srgb, var(--led) 60%, #000));
+}
+
+/* ---------- The animals (pet[data-kind], chosen in Customize) ----------
+   Every animal shares the body, eyes and cheeks; these add ears, a tail and a nose or beak.
+   --pk is the buddy's colour; the darker shade is for ears and tails. */
+.pet {
+  --pk2: color-mix(in srgb, var(--pk) 72%, #000);
+}
+.pet .ears,
+.pet .tail,
+.pet .snout {
+  position: absolute;
+  display: none;
+}
+.pet .ears::before,
+.pet .ears::after {
+  content: '';
+  position: absolute;
+}
+.pet:not([data-kind='blob']) .ant {
+  display: none; /* only the blob has an antenna */
+}
+.pet:not([data-kind='blob']) .body {
+  box-shadow: inset 0 -5px 0 #0003; /* no glow: real animals don't glow */
+}
+
+/* cat and fox: pointed ears */
+.pet[data-kind='cat'] .ears,
+.pet[data-kind='fox'] .ears {
+  display: block;
+  left: 8px;
+  right: 8px;
+  top: 5px;
+  height: 15px;
+}
+.pet[data-kind='cat'] .ears::before,
+.pet[data-kind='fox'] .ears::before,
+.pet[data-kind='cat'] .ears::after,
+.pet[data-kind='fox'] .ears::after {
+  top: 0;
+  width: 14px;
+  height: 15px;
+  background: linear-gradient(var(--pk2), var(--pk));
+}
+.pet[data-kind='cat'] .ears::before,
+.pet[data-kind='fox'] .ears::before {
+  left: 0;
+  clip-path: polygon(0 100%, 25% 0, 100% 100%);
+}
+.pet[data-kind='cat'] .ears::after,
+.pet[data-kind='fox'] .ears::after {
+  right: 0;
+  clip-path: polygon(0 100%, 75% 0, 100% 100%);
+}
+.pet[data-kind='fox'] .ears {
+  top: 2px;
+  height: 18px;
+}
+.pet[data-kind='fox'] .ears::before,
+.pet[data-kind='fox'] .ears::after {
+  height: 18px;
+}
+/* the fox's white cheeks */
+.pet[data-kind='fox'] .body {
+  background:
+    radial-gradient(ellipse 11px 8px at 26% 78%, #fff 95%, transparent 100%),
+    radial-gradient(ellipse 11px 8px at 74% 78%, #fff 95%, transparent 100%),
+    linear-gradient(var(--pk), var(--pk2));
+}
+
+/* dog: floppy ears */
+.pet[data-kind='dog'] .ears {
+  display: block;
+  inset: 0;
+}
+.pet[data-kind='dog'] .ears::before,
+.pet[data-kind='dog'] .ears::after {
+  top: 15px;
+  width: 12px;
+  height: 21px;
+  border-radius: 50%;
+  background: var(--pk2);
+  z-index: 1;
+}
+.pet[data-kind='dog'] .ears::before {
+  left: 2px;
+  transform: rotate(18deg);
+}
+.pet[data-kind='dog'] .ears::after {
+  right: 2px;
+  transform: rotate(-18deg);
+}
+
+/* bunny: long ears, pink inside */
+.pet[data-kind='bunny'] .ears {
+  display: block;
+  inset: 0;
+}
+.pet[data-kind='bunny'] .ears::before,
+.pet[data-kind='bunny'] .ears::after {
+  top: -12px;
+  width: 10px;
+  height: 30px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse 3px 10px at 50% 45%, #ffb3cc 90%, transparent 100%), var(--pk);
+  box-shadow: inset 0 -3px 0 #0001;
+}
+.pet[data-kind='bunny'] .ears::before {
+  left: 13px;
+  transform: rotate(-8deg);
+}
+.pet[data-kind='bunny'] .ears::after {
+  right: 13px;
+  transform: rotate(8deg);
+}
+
+/* frog: eyes on bumps on top of its head */
+.pet[data-kind='frog'] .ears {
+  display: block;
+  inset: 0;
+}
+.pet[data-kind='frog'] .ears::before,
+.pet[data-kind='frog'] .ears::after {
+  top: 10px;
+  width: 18px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--pk);
+}
+.pet[data-kind='frog'] .ears::before {
+  left: 8px;
+}
+.pet[data-kind='frog'] .ears::after {
+  right: 8px;
+}
+.pet[data-kind='frog'] .eye {
+  top: 15px;
+}
+.pet[data-kind='frog'] .eye.l {
+  left: 14px;
+}
+.pet[data-kind='frog'] .eye.r {
+  right: 14px;
+}
+.pet[data-kind='frog'].blink .eye,
+.pet[data-kind='frog'].sleep .eye {
+  top: 20px;
+}
+
+/* penguin: white tummy and an orange beak and feet */
+.pet[data-kind='penguin'] .body {
+  background:
+    radial-gradient(ellipse 13px 13px at 50% 72%, #fff 95%, transparent 100%),
+    linear-gradient(var(--pk), var(--pk2));
+}
+.pet[data-kind='penguin'] .feet {
+  background:
+    radial-gradient(circle at 20% 50%, #ffa630 0 40%, transparent 42%),
+    radial-gradient(circle at 80% 50%, #ffa630 0 40%, transparent 42%);
+}
+.pet[data-kind='penguin'] .cheek {
+  display: none;
+}
+
+/* noses and beak */
+.pet[data-kind='cat'] .snout,
+.pet[data-kind='dog'] .snout,
+.pet[data-kind='fox'] .snout,
+.pet[data-kind='bunny'] .snout,
+.pet[data-kind='penguin'] .snout {
+  display: block;
+  left: 50%;
+  top: 34px;
+  width: 6px;
+  height: 4px;
+  margin-left: -3px;
+  border-radius: 50% 50% 60% 60%;
+  background: #ff8fb0;
+}
+.pet[data-kind='dog'] .snout,
+.pet[data-kind='fox'] .snout {
+  width: 8px;
+  height: 5px;
+  margin-left: -4px;
+  background: #1a1020;
+}
+.pet[data-kind='penguin'] .snout {
+  top: 33px;
+  width: 8px;
+  height: 5px;
+  margin-left: -4px;
+  border-radius: 0;
+  background: #ffa630;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+}
+
+/* tails (on his back side: they flip with him) */
+.pet[data-kind='cat'] .tail,
+.pet[data-kind='dog'] .tail,
+.pet[data-kind='fox'] .tail,
+.pet[data-kind='bunny'] .tail {
+  display: block;
+}
+.pet[data-kind='cat'] .tail {
+  left: -2px;
+  bottom: 12px;
+  width: 5px;
+  height: 20px;
+  border-radius: 3px;
+  background: var(--pk2);
+  transform: rotate(-30deg);
+  transform-origin: bottom;
+  animation: swish 2.4s ease-in-out infinite alternate;
+}
+.pet[data-kind='dog'] .tail {
+  left: 0;
+  bottom: 14px;
+  width: 5px;
+  height: 13px;
+  border-radius: 3px;
+  background: var(--pk2);
+  transform-origin: bottom;
+  animation: wag 0.3s ease-in-out infinite alternate;
+}
+.pet[data-kind='fox'] .tail {
+  left: -12px;
+  bottom: 6px;
+  width: 22px;
+  height: 13px;
+  border-radius: 50%;
+  background: linear-gradient(90deg, #fff 0 28%, var(--pk) 28%);
+  transform: rotate(-28deg);
+}
+.pet[data-kind='bunny'] .tail {
+  left: 1px;
+  bottom: 8px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: inset -2px -2px 0 #0001;
+}
+@keyframes swish {
+  to {
+    transform: rotate(-12deg);
+  }
+}
+@keyframes wag {
+  from {
+    transform: rotate(-45deg);
+  }
+  to {
+    transform: rotate(-15deg);
+  }
 }

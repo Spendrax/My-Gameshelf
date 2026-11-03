@@ -5,6 +5,7 @@ const LOOK = {
   shelf: 'glow',
   sign: 'PLAY',
   signColor: '#ff3fa4',
+  kind: 'blob', // which animal the buddy is
   petColor: '',
   hat: '',
   scene: 'city', // the view out of the window (16-window-weather.js)
@@ -75,6 +76,15 @@ const OPTS = {
     ['curtains', 'Curtains'],
     ['none', 'Nothing'],
   ],
+  kind: [
+    ['blob', '\u{1F47E} Blob'],
+    ['cat', '\u{1F431} Cat'],
+    ['dog', '\u{1F436} Dog'],
+    ['fox', '\u{1F98A} Fox'],
+    ['bunny', '\u{1F430} Bunny'],
+    ['frog', '\u{1F438} Frog'],
+    ['penguin', '\u{1F427} Penguin'],
+  ],
   hat: [
     ['', 'None'],
     ['crown', '👑 Crown'],
@@ -91,6 +101,15 @@ const OPTS = {
   ],
 };
 
+const KIND_COLOR = {
+  cat: '#9aa0b5',
+  dog: '#c8955c',
+  fox: '#ff8a3d',
+  bunny: '#ece6f5',
+  frog: '#5cc46a',
+  penguin: '#2e3550',
+};
+
 function applyLook() {
   const l = set.look,
     b = document.body,
@@ -104,7 +123,10 @@ function applyLook() {
   r.setProperty('--led', set.led);
   r.setProperty('--sign', l.signColor);
   r.setProperty('--curtain', l.curtain);
-  if (l.petColor) r.setProperty('--pet', l.petColor);
+  // the buddy: your colour, else the animal's natural colour (the blob glows in the LED colour)
+  pet.el.dataset.kind = l.kind;
+  const petColor = l.petColor || KIND_COLOR[l.kind];
+  if (petColor) r.setProperty('--pet', petColor);
   else r.removeProperty('--pet');
   const t = l.sign || 'PLAY';
   $('.sign').innerHTML = esc(t[0]) + `<span>${esc(t.slice(1, 2))}</span>` + esc(t.slice(2));
@@ -140,8 +162,9 @@ function drawLook() {
     ${swatches('signColor', l.signColor)}
     <label>On the desk</label><div class="seg opt" data-k="desk">${OPTS.desk.reduce((h, [v, n]) => h + `<button data-v="${v}" class="${l.hide.includes(v) ? '' : 'on'}">${n}</button>`, '')}</div>
     <h3>Your buddy</h3>
+    <label>Animal</label>${chips('kind', OPTS.kind, l.kind)}
     <label>Name<input id="cPet" maxlength="16" value="${esc(set.pet)}"></label>
-    <label>Colour</label>${swatches('petColor', l.petColor, `<button data-v="" class="match ${l.petColor ? '' : 'on'}">Same as LED</button>`)}
+    <label>Colour</label>${swatches('petColor', l.petColor, `<button data-v="" class="match ${l.petColor ? '' : 'on'}">${l.kind === 'blob' ? 'Same as LED' : 'Natural'}</button>`)}
     <label>Hat</label>${chips('hat', OPTS.hat, l.hat)}
     <button class="btn ghost wide" id="cReset">Reset to default</button>`;
 }
@@ -160,7 +183,7 @@ function pickLook(k, v) {
 // Scroll the room above the sheet so you see what you're changing
 function showPart(k) {
   const vis = innerHeight * 0.5 - 60;
-  if (/^(petColor|hat|pet)$/.test(k)) {
+  if (/^(kind|petColor|hat|pet)$/.test(k)) {
     petHome(); // brings him to the room if he's on another wall
     $('#view-room').scrollTo({ top: pet.y - vis + 20, behavior: 'smooth' });
     return;
