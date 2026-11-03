@@ -1,5 +1,5 @@
-/* THE ROOM — LED strip, poster, neon sign, the rack of game cases, the desk and monitor,
-   and the wall / shelf / poster choices from Customize. */
+/* THE ROOM — LED strip, window, neon sign, the rack of game cases, the desk and monitor,
+   and the wall / shelf / window choices from Customize. */
 
 /* the room */
 /* every wall shares the same wallpaper (LED glow at the top, thin wall panels); Customize changes --w1/--w2 */
@@ -20,38 +20,15 @@
 
 .decor {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-evenly; /* the window and the sign share the row with even gaps */
   align-items: center;
   padding: 18px 22px 30px; /* room under the window for its sill and the curtains */
 }
 
-/* ---------- The poster on the wall (picture in .art; 09-customize.js can put a game on it) ---------- */
-.poster {
-  position: relative;
-  display: flex;
-  flex: none;
-  width: 64px;
-  height: 88px;
-  overflow: hidden;
-  border: 3px solid #0a0812;
-  border-radius: 3px;
-  box-shadow: 0 4px 10px #0008;
-  transform: rotate(-3deg);
-}
-.poster .art {
-  flex: 1;
-  background:
-    linear-gradient(transparent 62%, #2a0f45 62% 64%, transparent 64%),
-    radial-gradient(circle at 50% 60%, #ffcf4a 0 22%, transparent 23%),
-    linear-gradient(transparent 55%, #ff3fa4 55% 100%), linear-gradient(#2b1259, #ff6a5c);
-  background-size: cover;
-  background-position: center;
-}
-
 .sign {
   /* shrinks for longer words so it never runs into the window: --n is the number of letters (09-customize.js);
-     about 105px is free beside the poster and window on a phone, more on wider screens */
-  font: 700 clamp(12px, calc((100vw - 284px) / var(--n, 4) / 0.95), 30px) var(--hd);
+     about 120px is free beside the window and its curtains on a phone, more on wider screens */
+  font: 700 clamp(12px, calc((100vw - 270px) / var(--n, 4) / 0.95), 30px) var(--hd);
   letter-spacing: 0.18em;
   white-space: nowrap;
   color: #fff;
@@ -502,34 +479,7 @@
   box-shadow: 0 6px 12px -4px #0009;
 }
 
-[data-poster='none'] .poster {
-  visibility: hidden;
-}
 /* one of your games: its cover (set by 09-customize.js); tap it to open the game */
-[data-poster='game'] .poster {
-  cursor: pointer;
-}
-
-[data-poster='space'] .poster .art {
-  background:
-    radial-gradient(circle at 62% 40%, #6ac8ff 0 17%, transparent 18%),
-    radial-gradient(circle at 25% 75%, #fff 0 3%, transparent 4%),
-    radial-gradient(circle at 80% 85%, #fff 0 2%, transparent 3%),
-    radial-gradient(circle at 20% 20%, #fff 0 2%, transparent 3%), linear-gradient(#0b0f2a, #2a1660);
-}
-
-[data-poster='retro'] .poster .art {
-  background: #0a0a0a;
-  display: grid;
-  place-items: center;
-}
-
-[data-poster='retro'] .poster .art::after {
-  content: '1UP';
-  font: 700 14px var(--hd);
-  color: #39ff88;
-  text-shadow: 0 0 6px #39ff88;
-}
 
 .no-mug .mug,
 .no-plant .plant,
@@ -575,6 +525,7 @@
    The view is chosen in Customize: body[data-scene], [data-time] and [data-weather] (16-window-weather.js). */
 .window {
   position: relative;
+  margin: 0 18px; /* room for the curtains, which hang past the frame */
   width: 112px;
   height: 88px;
   border-radius: 4px;
@@ -981,7 +932,7 @@ body[data-scene='space'] .pane {
 }
 /* curtains tied back on each side, hanging from a rod */
 .window .rod {
-  z-index: 2;
+  z-index: 4;
   left: -18px;
   right: -18px;
   top: -8px;
@@ -1146,7 +1097,7 @@ body[data-scene='space'] .pane {
 /* curtains follow the same taps: drawn closed, tied back, or pushed to the sides.
    Every state uses the same 5-point shape so the shape slides smoothly along with the width. */
 .window .curtain {
-  z-index: 1; /* in front of the sill */
+  z-index: 3; /* in front of the sill and the temperature */
   transition:
     width 0.6s cubic-bezier(0.4, 0, 0.2, 1),
     clip-path 0.6s cubic-bezier(0.4, 0, 0.2, 1);

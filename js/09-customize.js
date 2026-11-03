@@ -1,9 +1,8 @@
 'use strict';
-// CUSTOMIZE — the 🎨 sheet: LED colour, wall, shelves, poster, neon sign, desk items, and the buddy's name, colour and hat.
+// CUSTOMIZE — the 🎨 sheet: LED colour, wall, shelves, window, neon sign, desk items, and the buddy's name, colour and hat.
 const LOOK = {
   wall: 'night',
   shelf: 'glow',
-  poster: 'synth',
   sign: 'PLAY',
   signColor: '#ff3fa4',
   petColor: '',
@@ -46,13 +45,6 @@ const OPTS = {
     ['glow', 'LED'],
     ['wood', 'Wood'],
     ['metal', 'Metal'],
-  ],
-  poster: [
-    ['synth', 'Sunset'],
-    ['space', 'Space'],
-    ['retro', '1UP'],
-    ['game', '\u{1F3AE} My game'],
-    ['none', 'None'],
   ],
   scene: [
     ['city', '\u{1F3D9} City'],
@@ -99,88 +91,6 @@ const OPTS = {
   ],
 };
 
-/* ---------- The poster ---------- */
-
-// The game on the poster: the one you picked, else the one you're playing, else your newest
-function posterGame() {
-  return (
-    byId(set.look.posterGame) ||
-    games.reduce((a, g) => a || (g.status === 'playing' && g.cover ? g : null), null) ||
-    games.reduce((a, g) => a || (g.cover ? g : null), null) ||
-    games[0]
-  );
-}
-// The picture chosen for a game's poster (set.look.posterImgs[game id]), or its cover
-const posterImg = (g) => (set.look.posterImgs || {})[g.id] || g.cover;
-
-function drawPoster() {
-  const g = set.look.poster === 'game' ? posterGame() : null;
-  const img = g && posterImg(g);
-  $('.poster .art').style.background = !g
-    ? ''
-    : img
-      ? `center / cover url('${img.replace(/'/g, '%27')}')`
-      : `linear-gradient(150deg, hsl(${hue(g.title)} 60% 38%), #111)`;
-}
-
-/* ---------- Choosing the poster in Customize: which game, then which picture ---------- */
-
-function posterPicker() {
-  if (!games.length) return '<p class="dim small">Add a game first, then pick it here.</p>';
-  const cur = posterGame();
-  setTimeout(() => fillPosterImgs(cur)); // the pictures load after the sheet is drawn
-  return `<div class="mini poster-pick">${games.reduce(
-    (h, g) =>
-      h +
-      `<button data-poster-id="${g.id}" class="${g === cur ? 'on' : ''}">${caseHTML({ ...g, id: '' })}</button>`,
-    '',
-  )}</div>
-    <label>Picture</label><div class="mini poster-imgs" id="posterImgs"><p class="dim small">Finding pictures…</p></div>`;
-}
-
-async function fillPosterImgs(g) {
-  const box = $('#posterImgs');
-  if (!box) return;
-  const list = await gamePictures(g);
-  if (!$('#posterImgs') || posterGame() !== g) return; // the sheet changed meanwhile
-  const cur = posterImg(g) && smallImg(posterImg(g));
-  $('#posterImgs').innerHTML = list.length
-    ? list.reduce(
-        (h, u) =>
-          h +
-          `<button data-poster-img="${esc(u)}" class="${u === cur ? 'on' : ''}" style="background-image:url('${esc(u).replace(/'/g, '%27')}')" aria-label="Use this picture"></button>`,
-        '',
-      )
-    : '<p class="dim small">No pictures found for this game.</p>';
-  // pictures that don't exist (some games have no Steam poster art) quietly disappear
-  $$('#posterImgs [data-poster-img]').forEach((b) => {
-    const test = new Image();
-    test.onerror = () => b.remove();
-    test.src = b.dataset.posterImg;
-  });
-}
-
-$('#cBody').addEventListener('click', (e) => {
-  const b = e.target.closest('[data-poster-id]');
-  if (b) {
-    set.look.posterGame = b.dataset.posterId;
-    saveSet();
-    drawPoster();
-    drawLook();
-    return;
-  }
-  const im = e.target.closest('[data-poster-img]');
-  if (!im) return;
-  set.look.posterImgs = { ...set.look.posterImgs, [posterGame().id]: im.dataset.posterImg };
-  saveSet();
-  drawPoster();
-  $$('#posterImgs button').forEach((x) => x.classList.toggle('on', x === im));
-});
-$('.poster').addEventListener('click', () => {
-  if (set.look.poster === 'game' && posterGame()) openGame(posterGame().id);
-});
-on('change', drawPoster); // a renamed, recovered or deleted game
-
 function applyLook() {
   const l = set.look,
     b = document.body,
@@ -188,7 +98,6 @@ function applyLook() {
   Object.assign(b.dataset, {
     wall: l.wall,
     shelf: l.shelf,
-    poster: l.poster,
     dress: l.dress,
     shade: l.shade,
   });
@@ -198,7 +107,6 @@ function applyLook() {
   if (l.petColor) r.setProperty('--pet', l.petColor);
   else r.removeProperty('--pet');
   const t = l.sign || 'PLAY';
-  drawPoster();
   $('.sign').innerHTML = esc(t[0]) + `<span>${esc(t.slice(1, 2))}</span>` + esc(t.slice(2));
   $('.sign').style.setProperty('--n', t.length);
   $('#hat').className = 'hat ' + l.hat;
@@ -228,8 +136,6 @@ function drawLook() {
     ${l.scene === 'space' ? '' : `<label>Time & weather</label>${chips('sky', OPTS.sky, l.sky)}${windowControls()}`}
     <label>On the window</label>${chips('dress', OPTS.dress, l.dress)}
     ${l.dress === 'curtains' ? `<label>Curtain colour</label>${swatches('curtain', l.curtain)}` : ''}
-    <label>Poster</label>${chips('poster', OPTS.poster, l.poster)}
-    ${l.poster === 'game' ? posterPicker() : ''}
     <label>Neon sign<input id="cSign" maxlength="8" value="${esc(l.sign)}"></label>
     ${swatches('signColor', l.signColor)}
     <label>On the desk</label><div class="seg opt" data-k="desk">${OPTS.desk.reduce((h, [v, n]) => h + `<button data-v="${v}" class="${l.hide.includes(v) ? '' : 'on'}">${n}</button>`, '')}</div>

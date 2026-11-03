@@ -153,7 +153,7 @@ $('#addManual').onclick = () => {
   openEdit({ title: t });
 };
 
-// Every picture we can find for a game (for its cover in the edit form, or the poster): its cover, Steam's
+// Every picture we can find for a game (for its cover in the edit form): its cover, Steam's
 // poster art, IGDB's box art, artwork and screenshots, and RAWG's
 const imgCache = new Map();
 async function gamePictures(g) {

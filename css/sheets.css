@@ -466,7 +466,9 @@ label textarea {
   inset: 16% 9% 30%;
   border: 3px solid var(--led);
   border-radius: 18px;
-  box-shadow: 0 0 0 100vmax #0008, 0 0 22px var(--led);
+  box-shadow:
+    0 0 0 100vmax #0008,
+    0 0 22px var(--led);
   overflow: hidden;
 }
 /* the moving "laser" line */
@@ -519,22 +521,7 @@ label.check input {
   margin: 0;
 }
 
-/* Customize: choosing the game for the poster */
-.poster-pick button {
-  flex: none;
-  padding: 3px;
-  border-radius: 8px;
-  border: 2px solid transparent;
-}
-.poster-pick button.on {
-  border-color: var(--led);
-  box-shadow: 0 0 10px var(--glow);
-}
-.poster-pick .case {
-  pointer-events: none; /* the button picks it; the case doesn't open the game */
-}
-
-/* Customize: the pictures to choose from for the poster (poster-shaped) */
+/* the cover art to choose from in the edit form (cover-shaped) */
 .poster-imgs button {
   flex: none;
   width: 54px;

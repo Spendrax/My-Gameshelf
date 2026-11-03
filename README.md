@@ -14,7 +14,7 @@ Live at https://spendrax.github.io/My-Gameshelf/
 |---|---|
 | `index.html` | The page: the room, the walls and every pop-up sheet |
 | `css/base.css` | Colours (the LED colour is `--led`), fonts, top bar, form fields |
-| `css/room.css` | LED strip, poster, neon sign, game cases on the rack, desk and monitor, Customize's room choices |
+| `css/room.css` | LED strip, window, neon sign, game cases on the rack, desk and monitor, Customize's room choices |
 | `css/buddy.css` | The buddy: body, moods, speech bubble, hearts, confetti, hats |
 | `css/walls.css` | Turning the walls, the + button, wall dots, Update button, Stats and Goals walls |
 | `css/sheets.css` | Pop-up sheets: add, edit form, game card, Customize, Settings; buttons; toast |
@@ -26,7 +26,7 @@ Live at https://spendrax.github.io/My-Gameshelf/
 | `js/06-turning-walls.js` | Swiping round the hexagon: Goals ← Room → Stats |
 | `js/07-buddy.js` | The buddy's life: wandering, naps, chatter, cheering, confetti |
 | `js/08-stats-goals.js` | The Stats wall and the Goals wall (yearly challenge, backlog roulette) |
-| `js/09-customize.js` | The 🎨 sheet: LED, wall, shelves, poster, sign, desk items, buddy name/colour/hat |
+| `js/09-customize.js` | The 🎨 sheet: LED, wall, shelves, window, sign, desk items, buddy name/colour/hat |
 | `js/10-settings-backup.js` | Settings: your own RAWG key, saving and loading backups |
 | `js/11-install-update.js` | Offline copy, "Update now" button, Install button |
 | `js/12-whats-new.js` | The "What's new" card: add an entry to `NEWS` for each important update |
