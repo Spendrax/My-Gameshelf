@@ -30,7 +30,7 @@ async function igdb(body, env) {
   return Array.isArray(list) ? list : [];
 }
 const igdbImg = (size, id) => `https://images.igdb.com/igdb/image/upload/${size}/${id}.jpg`;
-const quoted = (q) => `"${q.replace(/"/g, '\\"')}"`;
+const quoted = (q) => JSON.stringify(q); // the name in quotes, safely
 
 // Search results, shaped like RAWG's answer so the app reads both the same way
 async function igdbSearch(q, env) {
