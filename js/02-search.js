@@ -59,13 +59,17 @@ async function findGames(q) {
         signal: AbortSignal.timeout(9000),
       },
     );
-    if (r.ok) return { results: (await r.json()).results || [] };
+    const d = r.ok ? await r.json() : {};
+    if (Array.isArray(d.results)) return { results: d.results };
+    if (r.ok) return { error: 'helper' }; // an older helper that doesn't know /search yet
   } catch {}
   return { error: 'offline' };
 }
 const SEARCH_ERRORS = {
   key: "The search key doesn't work. Check it in Settings, or add the game by hand.",
   full: 'Game search is full for this month. Add your own free RAWG key in Settings, or add the game by hand.',
+  helper:
+    'Game search needs the newest Cloudflare helper code. Paste it into Cloudflare (tools/cloudflare-helper.js) and Deploy, or add the game by hand.',
   offline: "Game search isn't answering right now. Try again in a moment, or add the game by hand.",
 };
 
