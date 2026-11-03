@@ -35,10 +35,13 @@ const quoted = (q) => JSON.stringify(q); // the name in quotes, safely
 // Search results, shaped like RAWG's answer so the app reads both the same way
 async function igdbSearch(q, env) {
   const list = await igdb(
-    `search ${quoted(q)}; fields name,first_release_date,cover.image_id,platforms.name,genres.name; limit 10;`,
+    // only real games: no DLC, expansions, seasons or special editions (those have a parent game)
+    `search ${quoted(q)}; fields name,first_release_date,cover.image_id,platforms.name,genres.name,total_rating_count; where parent_game = null & version_parent = null; limit 30;`,
     env,
   );
-  return list.map((g) => ({
+  // the best-known games first (most ratings), then keep 10
+  list.sort((a, b) => (b.total_rating_count || 0) - (a.total_rating_count || 0));
+  return list.slice(0, 10).map((g) => ({
     name: g.name,
     igdb: g.id,
     released: g.first_release_date ? new Date(g.first_release_date * 1000).toISOString().slice(0, 10) : '',
