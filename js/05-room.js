@@ -84,11 +84,15 @@ function renderScreen() {
 // Covers are tall but the monitor is wide: find a wide picture of the game (a screenshot or artwork) once,
 // and keep it with the game (g.screen) for next time
 const lookedFor = new Set();
+// pictures picked by version 3.0 could be an IGDB artwork (often a white logo): look again
+games.forEach((g) => /t_screenshot_big\/ar/.test(g.screen || '') && delete g.screen);
 async function monitorPicture(g) {
   if (lookedFor.has(g.id)) return;
   lookedFor.add(g.id);
   const tall = /t_cover|library_600x900/;
-  const wide = (await gamePictures(g)).find((u, i) => i > 0 && !tall.test(u));
+  const list = (await gamePictures(g)).reduce((a, u, i) => (i > 0 && !tall.test(u) ? a.concat(u) : a), []);
+  // IGDB screenshots (ids start with "sc") first: IGDB "artworks" ("ar") are often logos on plain white
+  const wide = list.find((u) => /\/sc[^/]*\.jpg$/.test(u)) || list.find((u) => !/\/ar[^/]*\.jpg$/.test(u)) || list[0];
   if (!wide || !byId(g.id)) return;
   g.screen = wide;
   store('gr.games', games); // saved quietly: nothing else needs redrawing
