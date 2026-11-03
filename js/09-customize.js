@@ -11,6 +11,7 @@ const LOOK = {
   sky: 'auto', // the view out of the window
   dress: 'blinds', // blinds, curtains or nothing
   curtain: '#8a3a5c',
+  shade: 'half', // blinds/curtains: closed, half or open (tap the window)
   hide: [],
 };
 set.look = Object.assign({}, LOOK, set.look);
@@ -82,6 +83,7 @@ function applyLook() {
     poster: l.poster,
     sky: windowView(l.sky),
     dress: l.dress,
+    shade: l.shade,
   });
   r.setProperty('--led', set.led);
   r.setProperty('--sign', l.signColor);
@@ -188,6 +190,15 @@ $('#cBody').addEventListener('input', (e) => {
 });
 $('#cBody').addEventListener('change', (e) => {
   if (e.target.type === 'color') drawLook();
+});
+
+// Tapping the window: closed → half → open → closed…
+const NEXT_SHADE = { closed: 'half', half: 'open', open: 'closed' };
+$('.window').addEventListener('click', () => {
+  if (set.look.dress === 'none') return;
+  set.look.shade = NEXT_SHADE[set.look.shade] || 'closed';
+  saveSet();
+  applyLook();
 });
 
 applyLook();

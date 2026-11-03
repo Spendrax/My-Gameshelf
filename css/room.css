@@ -585,6 +585,7 @@
   position: absolute;
   inset: 6px;
   overflow: hidden;
+  isolation: isolate; /* the rain stays inside the glass, under the blinds */
   border-radius: 2px;
   background: var(--sky);
 }
@@ -723,6 +724,17 @@
   height: 38%;
   background: repeating-linear-gradient(#c9c2dd 0 4px, #8e86a8 4px 5px);
   box-shadow: 0 2px 4px #0006;
+  transition: height 0.4s ease;
+}
+/* tapping the window: closed → half → open (body[data-shade]) */
+[data-shade='closed'] .window .blinds {
+  height: calc(100% - 12px);
+}
+[data-shade='open'] .window .blinds {
+  height: 5px; /* rolled up at the top */
+}
+.window {
+  cursor: pointer;
 }
 [data-dress='blinds'] .window .blinds,
 [data-dress='curtains'] .window .rod,
@@ -890,4 +902,17 @@
   border-radius: 50%;
   background: radial-gradient(#ffcf7a40, transparent 65%);
   pointer-events: none;
+}
+
+/* curtains follow the same taps: drawn closed, tied back, or pushed to the sides */
+.window .curtain {
+  transition: width 0.4s ease;
+}
+[data-shade='closed'] .window .curtain {
+  width: 74px;
+  clip-path: none;
+}
+[data-shade='open'] .window .curtain {
+  width: 14px;
+  clip-path: none;
 }
