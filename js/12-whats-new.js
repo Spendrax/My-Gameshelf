@@ -5,6 +5,13 @@
 
 const NEWS = [
   {
+    v: '2.5',
+    items: [
+      'New window scenes: city, mountains, beach, forest and space',
+      'Pick the time of day and the weather, or go \u{1F30D} Live: your real sunrise, sunset, weather and temperature',
+    ],
+  },
+  {
     v: '2.4',
     items: ['A real window with a sill your buddy can sit on', '\u{1F3A8} Choose the view (real time, city night, stars, sunset, rain, sunny day) and blinds or curtains'],
   },

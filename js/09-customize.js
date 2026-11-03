@@ -8,13 +8,30 @@ const LOOK = {
   signColor: '#ff3fa4',
   petColor: '',
   hat: '',
-  sky: 'auto', // the view out of the window
+  scene: 'city', // the view out of the window (16-window-weather.js)
+  sky: 'live', // time & weather: 'live' (real life) or 'pick' (time and weather below)
+  time: 'night',
+  weather: 'clear',
+  loc: null, // { lat, lon, name } for the real weather
   dress: 'blinds', // blinds, curtains or nothing
   curtain: '#8a3a5c',
   shade: 'half', // blinds/curtains: closed, half or open (tap the window)
   hide: [],
 };
 set.look = Object.assign({}, LOOK, set.look);
+// Earlier versions had one "view" choice: turn it into time and weather
+const OLD_VIEW = {
+  auto: ['live'],
+  city: ['pick', 'night'],
+  stars: ['pick', 'night'],
+  sunset: ['pick', 'sunset'],
+  rain: ['pick', 'night', 'rain'],
+  day: ['pick', 'day'],
+};
+if (OLD_VIEW[set.look.sky]) {
+  const [sky, time = 'night', weather = 'clear'] = OLD_VIEW[set.look.sky];
+  Object.assign(set.look, { sky, time, weather });
+}
 set.look.hat =
   { '👑': 'crown', '🎧': 'headset', '🧢': 'cap', '🎀': 'bow', '🎩': 'tophat' }[set.look.hat] ?? set.look.hat;
 const OPTS = {
@@ -36,13 +53,29 @@ const OPTS = {
     ['retro', '1UP'],
     ['none', 'None'],
   ],
+  scene: [
+    ['city', '\u{1F3D9} City'],
+    ['mountains', '\u26F0 Mountains'],
+    ['beach', '\u{1F3D6} Beach'],
+    ['forest', '\u{1F332} Forest'],
+    ['space', '\u{1FA90} Space'],
+  ],
   sky: [
-    ['auto', '\u{1F552} Real time'],
-    ['city', 'City night'],
-    ['stars', 'Starry sky'],
+    ['live', '\u{1F30D} Live'],
+    ['pick', 'Choose'],
+  ],
+  time: [
+    ['dawn', 'Dawn'],
+    ['day', 'Day'],
     ['sunset', 'Sunset'],
-    ['rain', 'Rain'],
-    ['day', 'Sunny day'],
+    ['night', 'Night'],
+  ],
+  weather: [
+    ['clear', '\u2600 Clear'],
+    ['cloudy', '\u2601 Cloudy'],
+    ['rain', '\u{1F327} Rain'],
+    ['snow', '\u2744 Snow'],
+    ['storm', '\u26C8 Storm'],
   ],
   dress: [
     ['blinds', 'Blinds'],
@@ -65,14 +98,6 @@ const OPTS = {
   ],
 };
 
-// "Real time": the window shows what the sky looks like right now
-function windowView(sky) {
-  if (sky !== 'auto') return sky;
-  const h = new Date().getHours();
-  return h >= 8 && h < 18 ? 'day' : h >= 6 && h < 20 ? 'sunset' : 'city';
-}
-setInterval(() => set.look.sky === 'auto' && (document.body.dataset.sky = windowView('auto')), 5 * 60e3);
-
 function applyLook() {
   const l = set.look,
     b = document.body,
@@ -81,7 +106,6 @@ function applyLook() {
     wall: l.wall,
     shelf: l.shelf,
     poster: l.poster,
-    sky: windowView(l.sky),
     dress: l.dress,
     shade: l.shade,
   });
@@ -94,6 +118,7 @@ function applyLook() {
   $('.sign').innerHTML = esc(t[0]) + `<span>${esc(t.slice(1, 2))}</span>` + esc(t.slice(2));
   $('#hat').className = 'hat ' + l.hat;
   OPTS.desk.forEach(([k]) => b.classList.toggle('no-' + k, l.hide.includes(k)));
+  emit('look'); // the window view (16-window-weather.js) redraws itself
 }
 
 const chips = (k, list, cur) =>
@@ -114,7 +139,8 @@ function drawLook() {
     <label>LED colour</label>${swatches('led', set.led)}
     <label>Wall</label>${chips('wall', OPTS.wall, l.wall)}
     <label>Shelves</label>${chips('shelf', OPTS.shelf, l.shelf)}
-    <label>Window view</label>${chips('sky', OPTS.sky, l.sky)}
+    <label>Window scene</label>${chips('scene', OPTS.scene, l.scene)}
+    ${l.scene === 'space' ? '' : `<label>Time & weather</label>${chips('sky', OPTS.sky, l.sky)}${windowControls()}`}
     <label>On the window</label>${chips('dress', OPTS.dress, l.dress)}
     ${l.dress === 'curtains' ? `<label>Curtain colour</label>${swatches('curtain', l.curtain)}` : ''}
     <label>Poster</label>${chips('poster', OPTS.poster, l.poster)}

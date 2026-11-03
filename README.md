@@ -34,6 +34,7 @@ Live at https://spendrax.github.io/My-Gameshelf/
 | `js/14-steam-sync.js` | Steam sync: adds your Steam games and keeps their hours up to date |
 | `tools/cloudflare-helper.js` | The Cloudflare Worker (`HELPER` in 01-core.js): barcode lookups and Steam, holds the Steam key as a secret |
 | `js/15-buddy-moves.js` | How the buddy moves: walkable surfaces, walking and jumping, going to other walls, dragging, food bowls |
+| `js/16-window-weather.js` | The window view: scenes, time of day, weather, and Live mode (real weather from Open-Meteo) |
 | `sw.js` | Offline copy (bump `V` on every release) |
 | `privacy.html` | Privacy policy |
 
