@@ -16,14 +16,15 @@
 
 .pet {
   --pk: var(--pet, var(--led));
+  /* placed by 15-buddy-moves.js with transform: translate(x, y) */
   position: absolute;
-  bottom: 84px;
-  left: var(--x, 20%);
+  left: 0;
+  top: 0;
   width: 54px;
   height: 54px;
-  transition: left 1.8s ease-in-out;
-  z-index: 5;
-  cursor: pointer;
+  z-index: 6;
+  cursor: grab;
+  touch-action: none; /* dragging him doesn't scroll the wall */
 }
 
 .pet.flip .pv {
@@ -457,4 +458,75 @@
   width: 20px;
   height: 4px;
   background: var(--led);
+}
+
+/* being carried: he dangles from your finger */
+.pet.held {
+  cursor: grabbing;
+  z-index: 9;
+}
+.pet.held .pb {
+  transform-origin: 50% 0;
+  animation: dangle 0.5s ease-in-out infinite alternate;
+}
+@keyframes dangle {
+  from {
+    transform: rotate(-9deg);
+  }
+  to {
+    transform: rotate(9deg);
+  }
+}
+/* eating: head down into the bowl */
+.pet.eat .pb {
+  animation: nom 0.35s ease-in-out infinite alternate;
+}
+@keyframes nom {
+  to {
+    transform: translateY(4px) rotate(10deg) scale(1.03, 0.94);
+  }
+}
+
+/* the food bowl on each floor; tap it to fill it and call him */
+.bowl {
+  position: absolute;
+  z-index: 5;
+  left: 62%;
+  top: 20px;
+  width: 34px;
+  height: 14px;
+  border-radius: 3px 3px 14px 14px;
+  background: linear-gradient(#e9e4f2, #9d95b8);
+  box-shadow: 0 3px 4px #0007;
+}
+#view-goals .bowl {
+  left: 73%;
+}
+/* a bigger area to tap than the bowl itself */
+.bowl::after {
+  content: '';
+  position: absolute;
+  inset: -16px -10px -8px;
+}
+.bowl i {
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  top: -6px;
+  height: 9px;
+  border-radius: 50% 50% 0 0;
+  background:
+    radial-gradient(circle at 30% 60%, #c98a4a 0 2px, transparent 2.5px) 0 0 / 7px 6px,
+    #8a5a2b;
+  transform: scaleY(0);
+  transform-origin: bottom;
+  transition: transform 0.3s;
+}
+.bowl.full i {
+  transform: scaleY(1);
+}
+
+/* climbing up the side of something tall */
+.pet.climb .pb {
+  animation: waddle 0.22s ease-in-out infinite alternate;
 }

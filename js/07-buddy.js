@@ -1,6 +1,19 @@
 'use strict';
-// THE BUDDY — a little glowing creature that lives on the desk. It wanders, blinks, naps, talks, and cheers when you finish a game.
-const pet = { el: $('#pet'), x: 18, sleeping: false, lastTouch: Date.now(), taps: [], busy: 0 };
+// THE BUDDY — a little glowing creature that lives in your room. He blinks, naps, talks, wanders around,
+// and cheers when you finish a game. How he walks, jumps, gets dragged and eats is in 15-buddy-moves.js.
+const pet = {
+  el: $('#pet'),
+  wall: 'room', // which wall he's on
+  x: 0, // where his feet are on that wall (px)
+  y: 0,
+  job: 0, // goes up with every new move, so an older move knows to stop
+  moving: false,
+  held: false, // being dragged
+  sleeping: false,
+  lastTouch: Date.now(),
+  taps: [],
+  busy: 0,
+};
 
 function petClass(c, ms) {
   pet.el.classList.add(c);
@@ -13,13 +26,6 @@ function say(text, ms = 3600) {
   b.classList.add('show');
   clearTimeout(say.t);
   say.t = setTimeout(() => b.classList.remove('show'), ms);
-}
-function moveTo(x) {
-  x = Math.max(2, Math.min(80, x));
-  pet.el.classList.toggle('flip', x < pet.x);
-  pet.x = x;
-  pet.el.style.setProperty('--x', x + '%');
-  petClass('walk', 1800);
 }
 function sleep() {
   pet.sleeping = true;
@@ -36,7 +42,14 @@ function wake() {
 function chatter() {
   const n = (s) => games.reduce((c, g) => c + (g.status === s), 0);
   const playing = games.reduce((a, g) => (g.status === 'playing' ? a.concat(g) : a), []);
-  const lines = ['Ready, player one?', 'GG!', 'One more game?', `${set.pet} is here!`, 'Hydrate, gamer. 💧'];
+  const lines = [
+    'Hungry… tap my bowl? 🍖',
+    'Ready, player one?',
+    'GG!',
+    'One more game?',
+    `${set.pet} is here!`,
+    'Hydrate, gamer. 💧',
+  ];
   if (!games.length) lines.push('Tap + to add your first game!', 'This rack looks lonely…');
   if (playing.length)
     lines.push(`Still playing ${rand(playing).title}?`, `How's ${rand(playing).title} going?`);
@@ -66,8 +79,8 @@ function heart(e) {
   setTimeout(() => h.remove(), 1000);
 }
 
-pet.el.addEventListener('click', (e) => {
-  e.stopPropagation();
+// A tap (not a drag): pet him
+function petTap(e) {
   pet.lastTouch = Date.now();
   if (pet.sleeping) {
     wake();
@@ -81,25 +94,26 @@ pet.el.addEventListener('click', (e) => {
     petClass('spin', 800);
     say('COMBO x5! 🔥');
   } else petClass('hop', 500);
-});
+}
 
 // A small tick decides what the buddy does next
 let nextAct = Date.now() + 4000;
 setInterval(() => {
-  if (document.hidden || view !== 'room') return;
+  if (document.hidden || pet.held) return;
   const now = Date.now(),
     h = new Date().getHours();
   const napAfter = h >= 23 || h < 6 ? 20e3 : 50e3;
-  if (!pet.sleeping && now - pet.lastTouch > napAfter && now > pet.busy) return sleep();
+  if (!pet.sleeping && !pet.moving && now - pet.lastTouch > napAfter && now > pet.busy) return sleep();
   if (pet.sleeping) return;
+  settle();
   if (Math.random() < 0.25) {
     pet.el.classList.add('blink');
     setTimeout(() => pet.el.classList.remove('blink'), 140);
   }
-  if (now < nextAct || now < pet.busy) return;
+  if (now < nextAct || now < pet.busy || pet.moving) return;
   nextAct = now + 5000 + Math.random() * 6000;
   const r = Math.random();
-  if (r < 0.5) moveTo(pet.x + (Math.random() - 0.5) * 60);
+  if (r < 0.5) wander();
   else if (r < 0.68) chatter();
   else if (r < 0.8) petClass('hop', 500);
 }, 1000);
@@ -119,7 +133,6 @@ on('finished', (g) => {
 });
 on('pet', () => pet.el.setAttribute('aria-label', set.pet));
 pet.el.setAttribute('aria-label', set.pet);
-pet.el.style.setProperty('--x', pet.x + '%');
 setTimeout(
   () => say(games.length ? `Hey! ${set.pet} missed you.` : `Hi, I'm ${set.pet}! Tap + to add a game.`),
   1200,

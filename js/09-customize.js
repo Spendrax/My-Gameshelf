@@ -105,13 +105,15 @@ function pickLook(k, v) {
 }
 // Scroll the room above the sheet so you see what you're changing
 function showPart(k) {
-  const vis = innerHeight * 0.5 - 60,
-    d = $('#deskArea');
-  const top = /^(desk|petColor|hat|pet)$/.test(k)
-    ? d.offsetTop + d.offsetHeight - vis
-    : k === 'shelf'
-      ? $('#rack').offsetTop - 10
-      : 0;
+  const vis = innerHeight * 0.5 - 60;
+  if (/^(petColor|hat|pet)$/.test(k)) {
+    petHome(); // brings him to the room if he's on another wall
+    $('#view-room').scrollTo({ top: pet.y - vis + 20, behavior: 'smooth' });
+    return;
+  }
+  const d = $('#deskArea');
+  const top =
+    k === 'desk' ? d.offsetTop + d.offsetHeight - vis : k === 'shelf' ? $('#rack').offsetTop - 10 : 0;
   $('#view-room').scrollTo({ top, behavior: 'smooth' });
 }
 

@@ -4,6 +4,14 @@
 // Small fixes don't need an entry. The card is also in Settings → "What's new".
 
 const NEWS = [
+  {
+    v: '2.2',
+    items: [
+      'Your buddy roams the whole bedroom: shelves, desk, monitor, bed, beanbag\u2026 and visits the other walls',
+      'Drag him to put him anywhere',
+      'Tap a food bowl on the floor to call him for a snack \u{1F356}',
+    ],
+  },
   { v: '2.1', items: ['The room is a real bedroom now: a window, a floor, a trophy shelf on the Stats wall, a bed and a corkboard on the Goals wall'] },
   {
     v: '2.0',
