@@ -40,7 +40,7 @@ $('#addQ').addEventListener('input', (e) => {
 });
 
 // Asks RAWG straight from the phone, giving up after 6 seconds. If RAWG can't be reached, asks your
-// Cloudflare helper (HELPER/search), which asks RAWG from its side, or the Steam store if RAWG is down.
+// Cloudflare helper (HELPER/search), which asks RAWG from its side, then IGDB, then the Steam store.
 // Returns { results } or { error: 'key' | 'full' | 'offline' }.
 let rawgDownUntil = 0; // when RAWG didn't answer, skip it for 10 minutes and ask the helper straight away
 async function findGames(q) {
@@ -127,7 +127,9 @@ $('#results').addEventListener('click', (e) => {
   const b = e.target.closest('.res');
   if (!b) return;
   const r = lastResults[b.dataset.i];
-  const dup = games.find((g) => (r.id && g.rawg === r.id) || (r.steam && g.steam === r.steam));
+  const dup = games.find(
+    (g) => (r.id && g.rawg === r.id) || (r.igdb && g.igdb === r.igdb) || (r.steam && g.steam === r.steam),
+  );
   if (dup && !confirm(`"${r.name}" is already on your rack. Add it again (another platform)?`)) return;
   $('#dlgAdd').close();
   const plats = (r.platforms || []).map((p) => p.platform.name);
@@ -137,7 +139,8 @@ $('#results').addEventListener('click', (e) => {
     year: (r.released || '').slice(0, 4),
     genres: (r.genres || []).map((x) => x.name),
     rawg: r.id || undefined,
-    steam: r.steam, // results from the Steam store (when RAWG is down)
+    igdb: r.igdb, // results from IGDB or the Steam store (when RAWG is down)
+    steam: r.steam,
     platforms: plats,
     platform: scanPlatform || (plats.length === 1 ? plats[0] : ''),
   });

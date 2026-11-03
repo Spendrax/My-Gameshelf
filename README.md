@@ -32,7 +32,7 @@ Live at https://spendrax.github.io/My-Gameshelf/
 | `js/12-whats-new.js` | The "What's new" card: add an entry to `NEWS` for each important update |
 | `js/13-scan.js` | Scanning a game case: barcode on the back, or reading the title on the front cover |
 | `js/14-steam-sync.js` | Steam sync: adds your Steam games and keeps their hours up to date |
-| `tools/cloudflare-helper.js` | The Cloudflare Worker (`HELPER` in 01-core.js): barcode lookups and Steam, holds the Steam key as a secret |
+| `tools/cloudflare-helper.js` | The Cloudflare Worker (`HELPER` in 01-core.js): barcode lookups, Steam sync, and backup game search (IGDB, Steam store); holds the Steam and Twitch keys as secrets |
 | `js/15-buddy-moves.js` | How the buddy moves: walkable surfaces, walking and jumping, going to other walls, dragging, food bowls |
 | `js/16-window-weather.js` | The window view: scenes, time of day, weather, and Live mode (real weather from Open-Meteo) |
 | `sw.js` | Offline copy (bump `V` on every release) |

@@ -1,9 +1,40 @@
 // CLOUDFLARE HELPER — a free Cloudflare Worker that does the lookups a web page isn't allowed to do itself.
 //   /?upc=0123456789012     barcode → product name (UPCitemdb blocks calls straight from web pages)
-//   /search?q=NAME&key=…   game search: RAWG from here (when the phone can't reach it), or the Steam store
+//   /search?q=NAME&key=…   game search: RAWG, then IGDB (consoles too), then the Steam store (PC only)
 //   /steam?id=NAME_OR_ID    the Steam games someone owns, with playtime (needs the STEAM_KEY secret)
 // Set up: Cloudflare → Workers & Pages → gameshelf-barcode → Edit code → paste this file → Deploy.
 // Steam key: Settings → Variables and Secrets → Add → type "Secret", name STEAM_KEY, value = your key → Deploy.
+// IGDB (Twitch): two more secrets the same way, TWITCH_ID (Client ID) and TWITCH_SECRET (Client Secret).
+
+// IGDB needs a Twitch access token; it lasts about two months, so it's kept between requests
+let igdbToken = { value: '', until: 0 };
+async function igdbSearch(q, env) {
+  if (!env.TWITCH_ID || !env.TWITCH_SECRET) return [];
+  if (Date.now() > igdbToken.until) {
+    const t = await fetch(
+      `https://id.twitch.tv/oauth2/token?client_id=${env.TWITCH_ID}&client_secret=${env.TWITCH_SECRET}&grant_type=client_credentials`,
+      { method: 'POST' },
+    ).then((r) => r.json());
+    igdbToken = { value: t.access_token, until: Date.now() + (t.expires_in - 3600) * 1000 };
+  }
+  const list = await fetch('https://api.igdb.com/v4/games', {
+    method: 'POST',
+    headers: { 'Client-ID': env.TWITCH_ID, Authorization: `Bearer ${igdbToken.value}` },
+    body: `search "${q.replace(/"/g, '\\"')}"; fields name,first_release_date,cover.image_id,platforms.name,genres.name; limit 10;`,
+    signal: AbortSignal.timeout(5000),
+  }).then((r) => r.json());
+  // shaped like RAWG's answer, so the app reads both the same way
+  return (Array.isArray(list) ? list : []).map((g) => ({
+    name: g.name,
+    igdb: g.id,
+    released: g.first_release_date ? new Date(g.first_release_date * 1000).toISOString().slice(0, 10) : '',
+    background_image: g.cover
+      ? `https://images.igdb.com/igdb/image/upload/t_cover_big/${g.cover.image_id}.jpg`
+      : '',
+    platforms: (g.platforms || []).map((p) => ({ platform: { name: p.name } })),
+    genres: (g.genres || []).map((x) => ({ name: x.name })),
+  }));
+}
 
 export default {
   async fetch(request, env) {
@@ -27,7 +58,12 @@ export default {
           if (d.results?.length) return reply({ source: 'rawg', results: d.results });
         }
       } catch {}
-      // RAWG down: the Steam store's search (PC games only)
+      // RAWG down: IGDB (all platforms)
+      try {
+        const results = await igdbSearch(q, env);
+        if (results.length) return reply({ source: 'igdb', results });
+      } catch {}
+      // no IGDB either: the Steam store's search (PC games only)
       const s = await fetch(
         `https://store.steampowered.com/api/storesearch/?term=${encodeURIComponent(q)}&cc=CA&l=english`,
       )
