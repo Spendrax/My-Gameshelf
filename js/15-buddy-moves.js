@@ -32,7 +32,6 @@ const SURFACES = {
     ['.bed .pillow', (b) => [b.x + 4, b.x + b.w - 4, b.y + 6]],
     ['.bed .mattress', (b) => [b.x + 4, b.x + (b.w + 10) * 0.34 - 4, b.y + 2]], // only the bit between pillow and blanket
     ['.bed .blanket', (b) => [b.x + 6, b.x + b.w - 2, b.y + 3]],
-    ['.nightstand', topEdge],
     ['.floor', (b) => [0, b.w, b.y + 34]],
   ],
 };
@@ -129,7 +128,7 @@ function put(wall, x, y) {
   pet.wall = wall;
   pet.x = x;
   pet.y = y;
-  pet.el.style.transform = `translate(${x - 27}px, ${y - 54}px)`;
+  pet.el.style.transform = `translate(${x - 27}px, ${y - 50}px)`; // -50, not -54: his feet touch the surface
 }
 const face = (left) => pet.el.classList.toggle('flip', left);
 
@@ -351,8 +350,9 @@ $$('.bowl').forEach((bowl) =>
     say(rand(['Food?! 🍖', 'Coming!', 'Yum, on my way!']), 2000);
     const b = box(bowl, wallOf(wall));
     const floor = surfaces().find((s) => s.wall === wall && s.floor);
-    if (!(await travel(floor, b.x + b.w / 2 - 30))) return bowl.classList.remove('full');
-    face(false); // the bowl is on his right
+    const side = bowl.dataset.side === 'right' ? 1 : -1; // which side of the bowl he stands on
+    if (!(await travel(floor, b.x + b.w / 2 + side * 30))) return bowl.classList.remove('full');
+    face(side > 0); // facing the bowl
     petClass('eat', 3000);
     setTimeout(() => {
       bowl.classList.remove('full');

@@ -646,8 +646,8 @@
 .bed {
   position: absolute;
   left: 4%;
-  bottom: calc(66px + env(safe-area-inset-bottom));
-  width: 66%;
+  bottom: calc(86px + env(safe-area-inset-bottom)); /* = the floor line he walks on */
+  width: 58%;
   height: 74px;
 }
 .bed i {
@@ -691,7 +691,7 @@
 .nightstand {
   position: absolute;
   right: 6%;
-  bottom: calc(66px + env(safe-area-inset-bottom));
+  bottom: calc(86px + env(safe-area-inset-bottom)); /* = the floor line he walks on */
   width: 46px;
   height: 42px;
   border-radius: 3px;

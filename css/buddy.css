@@ -499,8 +499,9 @@
   background: linear-gradient(#e9e4f2, #9d95b8);
   box-shadow: 0 3px 4px #0007;
 }
+/* between the bed and the nightstand; he eats from its right side (data-side) */
 #view-goals .bowl {
-  left: 73%;
+  left: 62%;
 }
 /* a bigger area to tap than the bowl itself */
 .bowl::after {
