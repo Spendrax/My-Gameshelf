@@ -260,10 +260,12 @@
 }
 
 .monitor {
+  /* centred with margins, not a transform, so the buddy's walking strip on top lines up with it */
   position: absolute;
-  left: 50%;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
   bottom: 116px;
-  transform: translateX(-50%);
   width: min(62%, 330px);
   aspect-ratio: 16/10;
   background: #07060c;
