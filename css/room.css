@@ -20,15 +20,18 @@
 
 .decor {
   display: flex;
-  justify-content: space-evenly; /* the window and the sign share the row with even gaps */
+  /* the window on the left, the sign centred in all the space to its right */
+  justify-content: flex-start;
   align-items: center;
-  padding: 18px 22px 30px; /* room under the window for its sill and the curtains */
+  padding: 18px 12px 30px; /* room under the window for its sill and the curtains */
 }
 
 .sign {
+  flex: 1;
+  text-align: center;
   /* shrinks for longer words so it never runs into the window: --n is the number of letters (09-customize.js);
-     about 120px is free beside the window and its curtains on a phone, more on wider screens */
-  font: 700 clamp(12px, calc((100vw - 270px) / var(--n, 4) / 0.95), 30px) var(--hd);
+     about 190px is free beside the window and its curtains on a phone, more on wider screens */
+  font: 700 clamp(12px, calc((100vw - 200px) / var(--n, 4) / 0.95), 30px) var(--hd);
   letter-spacing: 0.18em;
   white-space: nowrap;
   color: #fff;
