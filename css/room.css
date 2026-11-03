@@ -25,39 +25,17 @@
   padding: 18px 22px 30px; /* room under the window for its sill and the curtains */
 }
 
-/* ---------- The poster: a printed sheet taped to the wall (picture in .art, title in .caption) ---------- */
+/* ---------- The poster on the wall (picture in .art; 09-customize.js can put a game on it) ---------- */
 .poster {
   position: relative;
   display: flex;
-  flex-direction: column;
-  width: 62px;
-  height: 88px;
-  padding: 4px 4px 0;
-  background: #f4f1ea; /* the white paper border */
-  border-radius: 1px;
+  width: 50px;
+  height: 68px;
+  overflow: hidden;
+  border: 3px solid #0a0812;
+  border-radius: 3px;
+  box-shadow: 0 4px 10px #0008;
   transform: rotate(-3deg);
-  box-shadow:
-    0 6px 12px #0009,
-    inset 0 -10px 12px -10px #0003; /* the paper curls a little at the bottom */
-}
-/* two pieces of tape at the top corners */
-.poster::before,
-.poster::after {
-  content: '';
-  position: absolute;
-  top: -5px;
-  width: 20px;
-  height: 9px;
-  background: #ffffffa8;
-  box-shadow: 0 1px 2px #0003;
-}
-.poster::before {
-  left: -6px;
-  transform: rotate(-35deg);
-}
-.poster::after {
-  right: -6px;
-  transform: rotate(35deg);
 }
 .poster .art {
   flex: 1;
@@ -67,16 +45,6 @@
     linear-gradient(transparent 55%, #ff3fa4 55% 100%), linear-gradient(#2b1259, #ff6a5c);
   background-size: cover;
   background-position: center;
-}
-.poster .caption {
-  height: 14px;
-  overflow: hidden;
-  font: 700 7px/14px var(--hd);
-  letter-spacing: 0.08em;
-  text-align: center;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  color: #2a2533;
 }
 
 .sign {

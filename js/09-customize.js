@@ -101,8 +101,6 @@ const OPTS = {
 
 /* ---------- The poster ---------- */
 
-const POSTER_NAMES = { synth: 'SUNSET', space: 'SPACE', retro: 'GAME OVER' };
-
 // The game on the poster: the one you picked, else the one you're playing, else your newest
 function posterGame() {
   return (
@@ -112,36 +110,102 @@ function posterGame() {
     games[0]
   );
 }
+// The picture chosen for a game's poster (set.look.posterImgs[game id]), or its cover
+const posterImg = (g) => (set.look.posterImgs || {})[g.id] || g.cover;
 
 function drawPoster() {
-  const art = $('.poster .art');
   const g = set.look.poster === 'game' ? posterGame() : null;
-  art.style.background = g
-    ? g.cover
-      ? `center / cover url('${g.cover.replace(/'/g, '%27')}')`
-      : `linear-gradient(150deg, hsl(${hue(g.title)} 60% 38%), #111)`
-    : '';
-  $('.poster .caption').textContent = g ? g.title.toUpperCase() : POSTER_NAMES[set.look.poster] || '';
+  const img = g && posterImg(g);
+  $('.poster .art').style.background = !g
+    ? ''
+    : img
+      ? `center / cover url('${img.replace(/'/g, '%27')}')`
+      : `linear-gradient(150deg, hsl(${hue(g.title)} 60% 38%), #111)`;
 }
 
-// In Customize: tap one of your games to put it on the poster
+/* ---------- Choosing the poster in Customize: which game, then which picture ---------- */
+
 function posterPicker() {
   if (!games.length) return '<p class="dim small">Add a game first, then pick it here.</p>';
   const cur = posterGame();
+  setTimeout(() => fillPosterImgs(cur)); // the pictures load after the sheet is drawn
   return `<div class="mini poster-pick">${games.reduce(
     (h, g) =>
       h +
       `<button data-poster-id="${g.id}" class="${g === cur ? 'on' : ''}">${caseHTML({ ...g, id: '' })}</button>`,
     '',
-  )}</div>`;
+  )}</div>
+    <label>Picture</label><div class="mini poster-imgs" id="posterImgs"><p class="dim small">Finding pictures…</p></div>`;
 }
+
+// Every picture we can find for a game: its cover, Steam's poster art, RAWG's artwork and screenshots
+const imgCache = new Map();
+async function posterChoices(g) {
+  if (imgCache.has(g.id)) return imgCache.get(g.id);
+  const list = [g.cover];
+  if (g.steam) {
+    const s = `https://cdn.akamai.steamstatic.com/steam/apps/${g.steam}`;
+    list.push(`${s}/library_600x900.jpg`, `${s}/library_hero.jpg`, `${s}/header.jpg`);
+  }
+  try {
+    const api = (path, extra = '') =>
+      fetch(`https://api.rawg.io/api/${path}?key=${encodeURIComponent(rawgKey())}${extra}`).then((r) =>
+        r.json(),
+      );
+    // games added by hand have no RAWG id: look the title up once
+    const id =
+      g.rawg || (await api('games', `&page_size=1&search=${encodeURIComponent(g.title)}`)).results?.[0]?.id;
+    if (id) {
+      const [info, shots] = await Promise.all([api(`games/${id}`), api(`games/${id}/screenshots`)]);
+      list.push(
+        info.background_image,
+        info.background_image_additional,
+        ...(shots.results || []).map((r) => r.image),
+      );
+    }
+  } catch {} // offline: just the cover (and Steam art)
+  const unique = [...new Set(list.reduce((a, u) => (u ? a.concat(smallImg(u)) : a), []))];
+  imgCache.set(g.id, unique);
+  return unique;
+}
+
+async function fillPosterImgs(g) {
+  const box = $('#posterImgs');
+  if (!box) return;
+  const list = await posterChoices(g);
+  if (!$('#posterImgs') || posterGame() !== g) return; // the sheet changed meanwhile
+  const cur = posterImg(g) && smallImg(posterImg(g));
+  $('#posterImgs').innerHTML = list.length
+    ? list.reduce(
+        (h, u) =>
+          h +
+          `<button data-poster-img="${esc(u)}" class="${u === cur ? 'on' : ''}" style="background-image:url('${esc(u).replace(/'/g, '%27')}')" aria-label="Use this picture"></button>`,
+        '',
+      )
+    : '<p class="dim small">No pictures found for this game.</p>';
+  // pictures that don't exist (some games have no Steam poster art) quietly disappear
+  $$('#posterImgs [data-poster-img]').forEach((b) => {
+    const test = new Image();
+    test.onerror = () => b.remove();
+    test.src = b.dataset.posterImg;
+  });
+}
+
 $('#cBody').addEventListener('click', (e) => {
   const b = e.target.closest('[data-poster-id]');
-  if (!b) return;
-  set.look.posterGame = b.dataset.posterId;
+  if (b) {
+    set.look.posterGame = b.dataset.posterId;
+    saveSet();
+    drawPoster();
+    drawLook();
+    return;
+  }
+  const im = e.target.closest('[data-poster-img]');
+  if (!im) return;
+  set.look.posterImgs = { ...set.look.posterImgs, [posterGame().id]: im.dataset.posterImg };
   saveSet();
   drawPoster();
-  drawLook();
+  $$('#posterImgs button').forEach((x) => x.classList.toggle('on', x === im));
 });
 $('.poster').addEventListener('click', () => {
   if (set.look.poster === 'game' && posterGame()) openGame(posterGame().id);

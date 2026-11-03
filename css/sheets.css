@@ -533,3 +533,17 @@ label.check input {
 .poster-pick .case {
   pointer-events: none; /* the button picks it; the case doesn't open the game */
 }
+
+/* Customize: the pictures to choose from for the poster (poster-shaped) */
+.poster-imgs button {
+  flex: none;
+  width: 54px;
+  height: 74px;
+  border-radius: 4px;
+  border: 2px solid transparent;
+  background: #ffffff10 center / cover;
+}
+.poster-imgs button.on {
+  border-color: var(--led);
+  box-shadow: 0 0 10px var(--glow);
+}
