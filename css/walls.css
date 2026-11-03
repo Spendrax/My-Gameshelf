@@ -12,7 +12,12 @@
   overscroll-behavior: contain;
   touch-action: pan-y;
   backface-visibility: hidden;
-  padding-bottom: calc(84px + env(safe-area-inset-bottom));
+  /* the floor is always the last thing on a wall, at the bottom even when the wall is short */
+  display: flex;
+  flex-direction: column;
+}
+.view > * {
+  flex-shrink: 0;
 }
 
 body:not(.turning) .view.away {
@@ -94,15 +99,22 @@ body.snap .view {
 }
 
 /* walls (stats, goals) */
-.wall {
-  padding: 16px 14px calc(84px + env(safe-area-inset-bottom));
-  background: linear-gradient(#17122b, #0e0b18);
+.wall-body {
+  flex: 1 0 auto;
+  padding: 10px 14px 26px;
 }
 
+/* the wall's name is a neon sign */
 .wall h2 {
-  font-size: 20px;
-  margin: 4px 2px 12px;
-  letter-spacing: 0.06em;
+  margin: 8px 0 18px;
+  text-align: center;
+  font-size: 28px;
+  letter-spacing: 0.2em;
+  color: #fff;
+  text-shadow:
+    0 0 2px #fff,
+    0 0 8px var(--led),
+    0 0 22px var(--led);
 }
 
 .card {
@@ -292,4 +304,127 @@ body.snap .view {
 
 body.looking #view-room {
   padding-bottom: 52vh;
+}
+
+/* ---------- Stats wall: trophy shelf, LED panels, framed screens, a beanbag ---------- */
+.trophies {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 8px;
+  min-height: 44px;
+  margin: 0 6px 18px;
+  padding: 0 10px 2px;
+  border-bottom: 8px solid #3a2f55;
+  box-shadow: 0 12px 18px -10px var(--led);
+  font: 700 14px var(--hd);
+}
+/* a gold cup on a little stand */
+.tro {
+  position: relative;
+  width: 20px;
+  height: 32px;
+}
+.tro::before {
+  content: '';
+  position: absolute;
+  left: 2px;
+  top: 0;
+  width: 16px;
+  height: 15px;
+  border-radius: 2px 2px 9px 9px;
+  background: linear-gradient(90deg, #b8860b, #ffe27a 45%, #d9a520);
+  box-shadow:
+    -4px 2px 0 -2px #d9a520,
+    4px 2px 0 -2px #d9a520;
+}
+.tro::after {
+  content: '';
+  position: absolute;
+  left: 3px;
+  bottom: 0;
+  width: 14px;
+  height: 17px;
+  background: linear-gradient(90deg, #a87810, #f5cf5a, #c8961a);
+  clip-path: polygon(38% 0, 62% 0, 62% 55%, 100% 72%, 100% 100%, 0 100%, 0 72%, 38% 55%);
+}
+
+/* the numbers are LED panels screwed to the wall */
+#statsBody .kpi {
+  text-align: center;
+  border: 2px solid #2a2440;
+  border-radius: 8px;
+  background:
+    radial-gradient(circle at 8px 8px, #ffffff30 0 1.5px, transparent 2px),
+    radial-gradient(circle at calc(100% - 8px) 8px, #ffffff30 0 1.5px, transparent 2px),
+    #07060c;
+  box-shadow:
+    inset 0 0 18px #000,
+    0 6px 14px #0008;
+}
+#statsBody .kpi b {
+  color: var(--led);
+  text-shadow: 0 0 10px var(--led);
+}
+
+/* the other cards are screens in a dark frame hanging on the wall */
+#statsBody .card {
+  background: #0b0a12;
+  border: 6px solid #16131f;
+  border-radius: 12px;
+  box-shadow:
+    0 0 0 1px #ffffff12,
+    0 12px 26px #0009,
+    0 0 30px -12px var(--led);
+}
+
+/* ---------- Goals wall: a corkboard with pinned paper notes, a bed and a nightstand ---------- */
+.board {
+  padding: 18px 12px 6px;
+  border: 10px solid #5b3a22;
+  border-radius: 6px;
+  background:
+    radial-gradient(#0000001f 1px, transparent 1.6px) 0 0 / 7px 7px,
+    radial-gradient(#ffffff17 1px, transparent 1.6px) 3px 4px / 9px 9px,
+    #b0804f;
+  box-shadow:
+    inset 0 0 22px #0007,
+    0 14px 28px #000a;
+}
+.board .card {
+  position: relative;
+  color: #2a2533;
+  background: #f6f1e4;
+  border: 0;
+  border-radius: 3px;
+  transform: rotate(-1deg);
+  box-shadow: 0 6px 12px #0006;
+}
+.board .card:nth-child(2) {
+  transform: rotate(1.2deg);
+}
+/* the pin */
+.board .card::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: -6px;
+  width: 14px;
+  height: 14px;
+  margin-left: -7px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #fff8 0 2px, var(--led) 3px);
+  box-shadow: 0 3px 4px #0006;
+}
+.board .card h3,
+.board .dim {
+  color: #6b6577;
+}
+.board circle:first-child {
+  stroke: #0000001a;
+}
+.board .stepper button,
+.board .btn:not(.primary) {
+  color: #2a2533;
+  background: #0000000f;
 }

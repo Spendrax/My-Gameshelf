@@ -30,6 +30,7 @@
     <div class="led"></div>
     <div class="decor">
       <div class="poster" aria-hidden="true"></div>
+      <div class="window" aria-hidden="true"><i class="moon"></i><i class="blinds"></i></div>
       <div class="sign" aria-hidden="true">P<span>L</span>AY</div>
     </div>
     <div class="toolbar">
@@ -61,10 +62,22 @@
         <span class="bubble" id="bubble"></span>
       </div>
     </div>
+    <div class="floor" aria-hidden="true"><i class="rug"></i></div>
   </section>
 
-  <section id="view-stats" class="view wall away"></section>
-  <section id="view-goals" class="view wall away"></section>
+  <section id="view-stats" class="view wall away">
+    <div class="led"></div>
+    <div id="statsBody" class="wall-body"></div>
+    <div class="floor" aria-hidden="true"><i class="beanbag"></i></div>
+  </section>
+  <section id="view-goals" class="view wall away">
+    <div class="led"></div>
+    <div id="goalsBody" class="wall-body"></div>
+    <div class="floor" aria-hidden="true">
+      <div class="bed"><i class="headboard"></i><i class="mattress"></i><i class="pillow"></i><i class="blanket"></i></div>
+      <div class="nightstand"><i class="lamp"></i></div>
+    </div>
+  </section>
 </main>
 
 <div class="dots"><button data-k="-1" aria-label="Goals"></button><button data-k="0" class="on" aria-label="Room"></button><button data-k="1" aria-label="Stats"></button></div>

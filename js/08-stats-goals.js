@@ -60,7 +60,10 @@ function renderStats() {
       .slice(0, 6),
   );
 
-  $('#view-stats').innerHTML = `<h2>STATS</h2>
+  $('#statsBody').innerHTML = `<h2>STATS</h2>
+    <div class="trophies" title="One trophy per finished game">${'<i class="tro"></i>'.repeat(Math.min(s.fin, 10))}${
+      s.fin > 10 ? `<b>+${s.fin - 10}</b>` : s.fin ? '' : '<span class="dim">Finish a game to win a trophy</span>'
+    }</div>
     <div class="kpis">
       <div class="kpi"><b>${games.length}</b><span>Games</span></div>
       <div class="kpi"><b>${s.fin}</b><span>Finished</span></div>
@@ -97,7 +100,7 @@ function renderGoals() {
           ? `${-diff} behind pace`
           : 'Right on pace';
 
-  $('#view-goals').innerHTML = `<h2>GOALS</h2>
+  $('#goalsBody').innerHTML = `<h2>GOALS</h2><div class="board">
     <div class="card"><h3>${year} challenge</h3>
       <div class="ring">
         <svg width="124" height="124" viewBox="0 0 124 124" aria-hidden="true">
@@ -114,7 +117,7 @@ function renderGoals() {
     <div class="card"><h3>Backlog roulette</h3>
       <p class="dim" style="margin:0">${backlog.length ? `${backlog.length} games waiting. Can't choose? Let ${esc(set.pet)} pick.` : 'Your backlog is empty. Nice!'}</p>
       ${backlog.length ? '<button class="btn primary wide" id="spin">🎲 Pick my next game</button><div id="picked"></div>' : ''}
-    </div>`;
+    </div></div>`;
 }
 
 $('#view-goals').addEventListener('click', (e) => {

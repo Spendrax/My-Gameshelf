@@ -2,9 +2,11 @@
    and the wall / shelf / poster choices from Customize. */
 
 /* the room */
-#view-room {
+/* every wall shares the same wallpaper (LED glow at the top, thin wall panels); Customize changes --w1/--w2 */
+.view {
   background:
     radial-gradient(110% 55% at 50% 0%, color-mix(in srgb, var(--led) 20%, transparent), transparent 65%),
+    repeating-linear-gradient(90deg, #ffffff06 0 1px, transparent 1px 56px),
     linear-gradient(var(--w1, #1b1533), var(--w2, #110d20) 75%);
 }
 
@@ -546,4 +548,185 @@
     radial-gradient(ellipse at 28% 62%, #3fa35b 0 30%, transparent 32%),
     radial-gradient(ellipse at 72% 58%, #2f8a4a 0 30%, transparent 32%),
     radial-gradient(ellipse at 50% 30%, #4cc06a 0 28%, transparent 30%);
+}
+
+/* ---------- The bedroom: window, floor and furniture ---------- */
+
+/* a window with half-open blinds: night sky, moon and the city lights */
+.window {
+  position: relative;
+  width: 92px;
+  height: 74px;
+  overflow: hidden;
+  border: 5px solid #2c2440;
+  border-radius: 3px;
+  background:
+    linear-gradient(90deg, transparent 47%, #2c2440 47% 53%, transparent 53%),
+    linear-gradient(transparent 62%, #0a0812 62%) 0 0 / 100% 100%,
+    linear-gradient(#0d1a3d, #3b2667);
+  box-shadow:
+    inset 0 0 12px #0008,
+    0 4px 10px #0007;
+}
+/* the skyline: little lit windows on dark buildings */
+.window::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 40%;
+  background:
+    radial-gradient(#ffd56a 0 1px, transparent 1.5px) 3px 4px / 9px 7px,
+    linear-gradient(90deg, #120e1f 0 18%, transparent 18% 24%, #161226 24% 52%, transparent 52% 58%, #120e1f 58% 82%, transparent 82%);
+  clip-path: polygon(0 30%, 18% 30%, 18% 0, 52% 0, 52% 20%, 82% 20%, 82% 45%, 100% 45%, 100% 100%, 0 100%);
+}
+.window .moon {
+  position: absolute;
+  right: 10px;
+  top: 9px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff6d8;
+  box-shadow: 0 0 12px #fff6d8;
+}
+.window .blinds {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 38%;
+  z-index: 1;
+  background: repeating-linear-gradient(#c9c2dd 0 4px, #8e86a8 4px 5px);
+  box-shadow: 0 2px 4px #0006;
+}
+
+/* the floor at the bottom of every wall: wooden planks with the LED glow on them */
+.floor {
+  position: relative;
+  height: calc(120px + env(safe-area-inset-bottom));
+  border-top: 6px solid #2b2240;
+  background:
+    linear-gradient(#0000, #0007),
+    repeating-linear-gradient(90deg, transparent 0 68px, #00000045 68px 70px),
+    linear-gradient(#3b2b3f, #21172a);
+  box-shadow:
+    0 -1px 0 #ffffff14,
+    inset 0 10px 18px -8px var(--glow);
+}
+/* in the room the desk stands right on the floor; the empty wall goes above it */
+#view-room .desk-area {
+  margin-top: auto;
+}
+#view-room .rack {
+  margin-bottom: 22px;
+}
+.rug {
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  top: 14px;
+  height: 46px;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--led) 35%, #1a1426) 60%, color-mix(in srgb, var(--led) 18%, #120e1c) 61% 80%, transparent 82%);
+}
+.beanbag {
+  position: absolute;
+  left: 8%;
+  top: -34px;
+  width: 104px;
+  height: 70px;
+  border-radius: 55% 45% 42% 48% / 62% 58% 42% 38%;
+  background:
+    radial-gradient(circle at 34% 30%, #ffffff30 0 10%, transparent 30%),
+    linear-gradient(color-mix(in srgb, var(--led) 55%, #222), color-mix(in srgb, var(--led) 30%, #0a0a0a));
+  box-shadow: 0 10px 14px -6px #000c;
+}
+
+/* the bed, seen from the side: headboard on the left, pillow, blanket in the LED colour */
+.bed {
+  position: absolute;
+  left: 4%;
+  bottom: calc(66px + env(safe-area-inset-bottom));
+  width: 66%;
+  height: 74px;
+}
+.bed i {
+  position: absolute;
+}
+.bed .headboard {
+  left: 0;
+  bottom: 0;
+  width: 14px;
+  height: 74px;
+  border-radius: 6px 6px 0 0;
+  background: linear-gradient(90deg, #4a3a5e, #2e2340);
+}
+.bed .mattress {
+  left: 10px;
+  right: 0;
+  bottom: 8px;
+  height: 22px;
+  border-radius: 4px;
+  background: #e9e4f2;
+  box-shadow: 0 8px 0 #2e2340; /* the frame under it */
+}
+.bed .pillow {
+  left: 18px;
+  bottom: 28px;
+  width: 44px;
+  height: 16px;
+  border-radius: 10px;
+  background: #fff;
+}
+.bed .blanket {
+  left: 34%;
+  right: -4px;
+  bottom: 12px;
+  height: 26px;
+  border-radius: 12px 6px 6px 4px;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 18px, #ffffff1a 18px 22px),
+    linear-gradient(color-mix(in srgb, var(--led) 80%, #fff), color-mix(in srgb, var(--led) 60%, #000));
+}
+.nightstand {
+  position: absolute;
+  right: 6%;
+  bottom: calc(66px + env(safe-area-inset-bottom));
+  width: 46px;
+  height: 42px;
+  border-radius: 3px;
+  background:
+    linear-gradient(transparent 48%, #0004 48% 52%, transparent 52%),
+    linear-gradient(#5a4470, #3a2c4d);
+}
+/* a lamp with a warm glow */
+.nightstand .lamp {
+  position: absolute;
+  left: 13px;
+  bottom: 100%;
+  width: 20px;
+  height: 30px;
+  background: linear-gradient(#ffcf7a, #ffcf7a) 9px 14px / 2px 16px no-repeat;
+}
+.nightstand .lamp::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 20px;
+  height: 14px;
+  background: #ffe2a8;
+  clip-path: polygon(22% 0, 78% 0, 100% 100%, 0 100%);
+  filter: drop-shadow(0 0 10px #ffcf7a);
+}
+.nightstand .lamp::after {
+  content: '';
+  position: absolute;
+  left: -30px;
+  top: -24px;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: radial-gradient(#ffcf7a40, transparent 65%);
+  pointer-events: none;
 }

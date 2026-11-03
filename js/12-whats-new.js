@@ -4,6 +4,7 @@
 // Small fixes don't need an entry. The card is also in Settings → "What's new".
 
 const NEWS = [
+  { v: '2.1', items: ['The room is a real bedroom now: a window, a floor, a trophy shelf on the Stats wall, a bed and a corkboard on the Goals wall'] },
   {
     v: '2.0',
     items: ['Steam sync: bring in your Steam games and their hours (Settings \u2192 Steam)', 'Barcode scanning now recognises most games'],
