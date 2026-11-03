@@ -17,7 +17,7 @@ function openGame(id) {
     <button class="x gx" data-close aria-label="Close">✕</button>
     <div class="g-top" style="--img:${g.cover ? `url('${g.cover.replace(/'/g, '%27')}')` : 'none'}">
       ${caseHTML(g, 'big')}
-      <div><h2>${esc(g.title)}</h2>${sub ? `<div class="dim">${esc(sub)}</div>` : ''}<span class="pill" style="--sc:${s.color}">${s.label}</span></div>
+      <div><h2>${esc(g.title)}</h2>${sub ? `<div class="dim">${esc(sub)}</div>` : ''}<span class="pill" style="--sc:${s.color}">${s.label}</span>${g.endless ? ' <span class="pill" style="--sc:#8ab4ff">\u221E Endless</span>' : ''}</div>
     </div>
     <div class="pips">${Array.from({ length: 10 }, (_, i) => `<i class="${i < g.rating ? 'on' : ''}"></i>`).join('')}</div>
     <div class="facts">
@@ -30,7 +30,7 @@ function openGame(id) {
     ${g.rawg ? `<p class="dim small">Game info from <a href="https://rawg.io/games/${+g.rawg}" target="_blank" rel="noopener">RAWG</a></p>` : ''}
     <div class="quick">
       ${g.status !== 'playing' ? '<button class="btn" data-q="playing">▶ Playing</button>' : ''}
-      ${g.status !== 'finished' ? '<button class="btn" data-q="finished">🏆 Finished</button>' : ''}
+      ${g.status !== 'finished' && !g.endless ? '<button class="btn" data-q="finished">🏆 Finished</button>' : ''}
       <button class="btn" data-q="hour">+1 h</button>
     </div>
     <div class="actions"><button class="btn primary" data-q="edit">Edit</button></div>`;

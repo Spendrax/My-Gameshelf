@@ -17,6 +17,7 @@ function openEdit(g) {
     (h, p) => h + `<option value="${esc(p)}">`,
     '',
   );
+  form.elements.endless.checked = !!draft.endless;
   drawEditBits();
   $('#eArt').hidden = true;
   $('#dlgEdit').showModal();
@@ -35,10 +36,14 @@ function drawCover() {
 }
 function drawEditBits() {
   drawCover();
+  // a never-ending game can't be finished
+  $('#eFinished').hidden = !!draft.endless;
   $('#eStatus').innerHTML = Object.entries(STATUS).reduce(
     (h, [k, s]) =>
-      h +
-      `<button type="button" data-s="${k}" style="--sc:${s.color}" class="${draft.status === k ? 'on' : ''}">${s.label}</button>`,
+      draft.endless && k === 'finished'
+        ? h
+        : h +
+          `<button type="button" data-s="${k}" style="--sc:${s.color}" class="${draft.status === k ? 'on' : ''}">${s.label}</button>`,
     '',
   );
   $('#eRate').innerHTML = Array.from(
@@ -48,6 +53,11 @@ function drawEditBits() {
   ).join('');
   $('#eRateTxt').textContent = draft.rating ? `${draft.rating}/10` : '';
 }
+form.elements.endless.onchange = (e) => {
+  draft.endless = e.target.checked;
+  if (draft.endless && draft.status === 'finished') draft.status = 'playing';
+  drawEditBits();
+};
 $('#eStatus').onclick = (e) => {
   const s = e.target.dataset.s;
   if (!s) return;
@@ -140,7 +150,8 @@ form.addEventListener('submit', (e) => {
     hours: Math.max(0, +v('hours') || 0),
     year: v('year'),
     started: v('started'),
-    finished: v('finished'),
+    finished: form.elements.endless.checked ? '' : v('finished'),
+    endless: form.elements.endless.checked,
     notes: v('notes'),
     genres: v('genres')
       .split(',')
@@ -148,6 +159,7 @@ form.addEventListener('submit', (e) => {
     updated: Date.now(),
   };
   delete g.platforms;
+  if (byId(g.id)?.cover !== g.cover) delete g.screen; // new cover: find a new wide picture
   if (!g.title) return;
   const isNew = !g.id;
   if (isNew) {

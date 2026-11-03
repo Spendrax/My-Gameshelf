@@ -70,11 +70,32 @@ function renderScreen() {
   const g = playing[screenI % playing.length];
   if ($('#monitor').dataset.id === g.id && scr.querySelector('img,.np')) return;
   $('#monitor').dataset.id = g.id;
+  const wide = g.screen; // a wide screenshot found for the monitor (see monitorPicture)
+  if (!wide && g.cover) monitorPicture(g);
   scr.innerHTML =
-    (g.cover
-      ? `<img src="${esc(g.cover)}" alt="" onerror="this.remove()">`
-      : `<div class="idle" style="animation:none;background:linear-gradient(150deg,hsl(${hue(g.title)} 60% 30%),#000)"></div>`) +
+    (wide
+      ? `<img src="${esc(wide)}" alt="" onerror="this.remove()">`
+      : g.cover
+        ? // a tall cover: the whole cover in the middle, on a blurred copy of itself
+          `<img class="blur" src="${esc(g.cover)}" alt=""><img class="whole" src="${esc(g.cover)}" alt="" onerror="this.remove()">`
+        : `<div class="idle" style="animation:none;background:linear-gradient(150deg,hsl(${hue(g.title)} 60% 30%),#000)"></div>`) +
     `<div class="np"><em>▶ NOW PLAYING</em> · ${esc(g.title)}</div>`;
+}
+// Covers are tall but the monitor is wide: find a wide picture of the game (a screenshot or artwork) once,
+// and keep it with the game (g.screen) for next time
+const lookedFor = new Set();
+async function monitorPicture(g) {
+  if (lookedFor.has(g.id)) return;
+  lookedFor.add(g.id);
+  const tall = /t_cover|library_600x900/;
+  const wide = (await gamePictures(g)).find((u, i) => i > 0 && !tall.test(u));
+  if (!wide || !byId(g.id)) return;
+  g.screen = wide;
+  store('gr.games', games); // saved quietly: nothing else needs redrawing
+  if ($('#monitor').dataset.id === g.id) {
+    $('#monitor').dataset.id = '';
+    renderScreen();
+  }
 }
 setInterval(() => {
   screenI++;

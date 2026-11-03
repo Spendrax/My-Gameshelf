@@ -4,6 +4,10 @@
 // Small fixes don't need an entry. The card is also in Settings → "What's new".
 
 const NEWS = [
+  {
+    v: '3.0',
+    items: ['New status: On & off', '\u221E Never-ending games (battle royale, MMO\u2026) in the edit form', 'The monitor shows a wide screenshot of what you\u2019re playing'],
+  },
   { v: '2.9', items: ['Game search now uses IGDB: every console, with real box art', 'More cover art and poster pictures to choose from'] },
   { v: '2.7', items: ['\u{1F5BC} Find cover art when you edit a game: pick from its covers, artwork, screenshots and Steam art'] },
   { v: '2.6', items: ['\u{1F3AE} Put one of your games on the poster (Customize \u2192 Poster \u2192 My game). Tap it to open the game.'] },
