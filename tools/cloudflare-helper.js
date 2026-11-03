@@ -1,6 +1,7 @@
 // CLOUDFLARE HELPER — a free Cloudflare Worker that does the lookups a web page isn't allowed to do itself.
 //   /?upc=0123456789012     barcode → product name (UPCitemdb blocks calls straight from web pages)
-//   /search?q=NAME&key=…   game search: RAWG, then IGDB (consoles too), then the Steam store (PC only)
+//   /search?q=NAME&key=…   game search: IGDB (every platform), then RAWG, then the Steam store (PC only)
+//   /pictures?igdb=ID or ?q=NAME   box art, artwork and screenshots of one game (IGDB)
 //   /steam?id=NAME_OR_ID    the Steam games someone owns, with playtime (needs the STEAM_KEY secret)
 // Set up: Cloudflare → Workers & Pages → gameshelf-barcode → Edit code → paste this file → Deploy.
 // Steam key: Settings → Variables and Secrets → Add → type "Secret", name STEAM_KEY, value = your key → Deploy.
@@ -8,8 +9,11 @@
 
 // IGDB needs a Twitch access token; it lasts about two months, so it's kept between requests
 let igdbToken = { value: '', until: 0 };
-async function igdbSearch(q, env) {
+
+// Asks IGDB (body = IGDB's query language). Needs the TWITCH_ID and TWITCH_SECRET secrets.
+async function igdb(body, env) {
   if (!env.TWITCH_ID || !env.TWITCH_SECRET) return [];
+  // the Twitch access token lasts about two months, so it's kept between requests
   if (Date.now() > igdbToken.until) {
     const t = await fetch(
       `https://id.twitch.tv/oauth2/token?client_id=${env.TWITCH_ID}&client_secret=${env.TWITCH_SECRET}&grant_type=client_credentials`,
@@ -20,20 +24,43 @@ async function igdbSearch(q, env) {
   const list = await fetch('https://api.igdb.com/v4/games', {
     method: 'POST',
     headers: { 'Client-ID': env.TWITCH_ID, Authorization: `Bearer ${igdbToken.value}` },
-    body: `search "${q.replace(/"/g, '\\"')}"; fields name,first_release_date,cover.image_id,platforms.name,genres.name; limit 10;`,
+    body,
     signal: AbortSignal.timeout(5000),
   }).then((r) => r.json());
-  // shaped like RAWG's answer, so the app reads both the same way
-  return (Array.isArray(list) ? list : []).map((g) => ({
+  return Array.isArray(list) ? list : [];
+}
+const igdbImg = (size, id) => `https://images.igdb.com/igdb/image/upload/${size}/${id}.jpg`;
+const quoted = (q) => `"${q.replace(/"/g, '\\"')}"`;
+
+// Search results, shaped like RAWG's answer so the app reads both the same way
+async function igdbSearch(q, env) {
+  const list = await igdb(
+    `search ${quoted(q)}; fields name,first_release_date,cover.image_id,platforms.name,genres.name; limit 10;`,
+    env,
+  );
+  return list.map((g) => ({
     name: g.name,
     igdb: g.id,
     released: g.first_release_date ? new Date(g.first_release_date * 1000).toISOString().slice(0, 10) : '',
-    background_image: g.cover
-      ? `https://images.igdb.com/igdb/image/upload/t_cover_big/${g.cover.image_id}.jpg`
-      : '',
+    background_image: g.cover ? igdbImg('t_cover_big', g.cover.image_id) : '',
     platforms: (g.platforms || []).map((p) => ({ platform: { name: p.name } })),
     genres: (g.genres || []).map((x) => ({ name: x.name })),
   }));
+}
+
+// Every picture of one game: box art, artwork, screenshots
+async function igdbPictures(id, title, env) {
+  const fields = 'fields cover.image_id,artworks.image_id,screenshots.image_id;';
+  const [g] = await igdb(
+    id ? `${fields} where id = ${+id};` : `search ${quoted(title)}; ${fields} limit 1;`,
+    env,
+  );
+  if (!g) return [];
+  return [
+    ...(g.cover ? [igdbImg('t_cover_big', g.cover.image_id)] : []),
+    ...(g.artworks || []).map((a) => igdbImg('t_screenshot_big', a.image_id)),
+    ...(g.screenshots || []).map((a) => igdbImg('t_screenshot_big', a.image_id)),
+  ];
 }
 
 export default {
@@ -48,6 +75,12 @@ export default {
     if (url.pathname === '/search') {
       const q = (url.searchParams.get('q') || '').slice(0, 100);
       const key = url.searchParams.get('key') || '';
+      // 1. IGDB: every platform, real box art
+      try {
+        const results = await igdbSearch(q, env);
+        if (results.length) return reply({ source: 'igdb', results });
+      } catch {}
+      // 2. RAWG
       try {
         const r = await fetch(
           `https://api.rawg.io/api/games?key=${encodeURIComponent(key)}&search=${encodeURIComponent(q)}&page_size=10`,
@@ -58,12 +91,7 @@ export default {
           if (d.results?.length) return reply({ source: 'rawg', results: d.results });
         }
       } catch {}
-      // RAWG down: IGDB (all platforms)
-      try {
-        const results = await igdbSearch(q, env);
-        if (results.length) return reply({ source: 'igdb', results });
-      } catch {}
-      // no IGDB either: the Steam store's search (PC games only)
+      // 3. the Steam store's search (PC games only)
       const s = await fetch(
         `https://store.steampowered.com/api/storesearch/?term=${encodeURIComponent(q)}&cc=CA&l=english`,
       )
@@ -78,6 +106,16 @@ export default {
           platforms: [{ platform: { name: 'PC' } }],
         })),
       });
+    }
+
+    if (url.pathname === '/pictures') {
+      try {
+        return reply({
+          pictures: await igdbPictures(url.searchParams.get('igdb'), url.searchParams.get('q') || '', env),
+        });
+      } catch {
+        return reply({ pictures: [] });
+      }
     }
 
     if (url.pathname === '/steam') {

@@ -39,12 +39,24 @@ $('#addQ').addEventListener('input', (e) => {
   searchT = setTimeout(() => search(q), 450);
 });
 
-// Asks RAWG straight from the phone, giving up after 6 seconds. If RAWG can't be reached, asks your
-// Cloudflare helper (HELPER/search), which asks RAWG from its side, then IGDB, then the Steam store.
-// Returns { results } or { error: 'key' | 'full' | 'offline' }.
-let rawgDownUntil = 0; // when RAWG didn't answer, skip it for 10 minutes and ask the helper straight away
+// Game search. First your Cloudflare helper (HELPER/search): it asks IGDB, then RAWG, then the Steam store.
+// If the helper can't be reached, RAWG straight from the phone (skipped for 10 minutes after it fails).
+// Returns { results } or { error: 'key' | 'full' | 'helper' | 'offline' }.
+let rawgDownUntil = 0;
 async function findGames(q) {
-  if (Date.now() > rawgDownUntil)
+  let helperOld = false;
+  try {
+    const r = await fetch(
+      `${HELPER}/search?key=${encodeURIComponent(rawgKey())}&q=${encodeURIComponent(q)}`,
+      {
+        signal: AbortSignal.timeout(9000),
+      },
+    );
+    const d = r.ok ? await r.json() : {};
+    if (Array.isArray(d.results) && (d.results.length || d.source)) return { results: d.results };
+    helperOld = r.ok; // an older helper that doesn't know /search yet
+  } catch {}
+  if (Date.now() > rawgDownUntil) {
     try {
       const r = await fetch(
         `https://api.rawg.io/api/games?key=${encodeURIComponent(rawgKey())}&search=${encodeURIComponent(q)}&page_size=10`,
@@ -54,20 +66,10 @@ async function findGames(q) {
       if (r.status === 429) return { error: 'full' };
       if (r.ok) return { results: (await r.json()).results || [] };
     } catch {
-      rawgDownUntil = Date.now() + 10 * 60e3; // no answer in time, or blocked: try the helper
+      rawgDownUntil = Date.now() + 10 * 60e3;
     }
-  try {
-    const r = await fetch(
-      `${HELPER}/search?key=${encodeURIComponent(rawgKey())}&q=${encodeURIComponent(q)}`,
-      {
-        signal: AbortSignal.timeout(9000),
-      },
-    );
-    const d = r.ok ? await r.json() : {};
-    if (Array.isArray(d.results)) return { results: d.results };
-    if (r.ok) return { error: 'helper' }; // an older helper that doesn't know /search yet
-  } catch {}
-  return { error: 'offline' };
+  }
+  return { error: helperOld ? 'helper' : 'offline' };
 }
 const SEARCH_ERRORS = {
   key: "The search key doesn't work. Check it in Settings, or add the game by hand.",
@@ -151,7 +153,8 @@ $('#addManual').onclick = () => {
   openEdit({ title: t });
 };
 
-// Every picture we can find for a game (for its cover in the edit form, or the poster): its cover, Steam's poster art, RAWG's artwork and screenshots
+// Every picture we can find for a game (for its cover in the edit form, or the poster): its cover, Steam's
+// poster art, IGDB's box art, artwork and screenshots, and RAWG's
 const imgCache = new Map();
 async function gamePictures(g) {
   const key = g.id || g.title; // a game being added has no id yet
@@ -161,11 +164,20 @@ async function gamePictures(g) {
     const s = `https://cdn.akamai.steamstatic.com/steam/apps/${g.steam}`;
     list.push(`${s}/library_600x900.jpg`, `${s}/library_hero.jpg`, `${s}/header.jpg`);
   }
+  // IGDB (through your helper): box art, artwork, screenshots
+  try {
+    const q = g.igdb ? `igdb=${g.igdb}` : `q=${encodeURIComponent(g.title)}`;
+    const d = await fetch(`${HELPER}/pictures?${q}`, { signal: AbortSignal.timeout(8000) }).then((r) =>
+      r.json(),
+    );
+    list.push(...(d.pictures || []));
+  } catch {}
+  // RAWG: more artwork and screenshots
   try {
     const api = (path, extra = '') =>
-      fetch(`https://api.rawg.io/api/${path}?key=${encodeURIComponent(rawgKey())}${extra}`).then((r) =>
-        r.json(),
-      );
+      fetch(`https://api.rawg.io/api/${path}?key=${encodeURIComponent(rawgKey())}${extra}`, {
+        signal: AbortSignal.timeout(5000),
+      }).then((r) => r.json());
     // games added by hand have no RAWG id: look the title up once
     const id =
       g.rawg || (await api('games', `&page_size=1&search=${encodeURIComponent(g.title)}`)).results?.[0]?.id;
