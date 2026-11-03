@@ -116,6 +116,7 @@ function applyLook() {
   else r.removeProperty('--pet');
   const t = l.sign || 'PLAY';
   $('.sign').innerHTML = esc(t[0]) + `<span>${esc(t.slice(1, 2))}</span>` + esc(t.slice(2));
+  $('.sign').style.setProperty('--n', t.length);
   $('#hat').className = 'hat ' + l.hat;
   OPTS.desk.forEach(([k]) => b.classList.toggle('no-' + k, l.hide.includes(k)));
   emit('look'); // the window view (16-window-weather.js) redraws itself
