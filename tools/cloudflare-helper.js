@@ -1,5 +1,6 @@
 // CLOUDFLARE HELPER — a free Cloudflare Worker that does the lookups a web page isn't allowed to do itself.
 //   /?upc=0123456789012     barcode → product name (UPCitemdb blocks calls straight from web pages)
+//   /search?q=NAME&key=…   game search: RAWG from here (when the phone can't reach it), or the Steam store
 //   /steam?id=NAME_OR_ID    the Steam games someone owns, with playtime (needs the STEAM_KEY secret)
 // Set up: Cloudflare → Workers & Pages → gameshelf-barcode → Edit code → paste this file → Deploy.
 // Steam key: Settings → Variables and Secrets → Add → type "Secret", name STEAM_KEY, value = your key → Deploy.
@@ -12,6 +13,34 @@ export default {
     };
     const reply = (data, status = 200) => new Response(JSON.stringify(data), { status, headers });
     const url = new URL(request.url);
+
+    if (url.pathname === '/search') {
+      const q = (url.searchParams.get('q') || '').slice(0, 100);
+      const key = url.searchParams.get('key') || '';
+      try {
+        const r = await fetch(
+          `https://api.rawg.io/api/games?key=${encodeURIComponent(key)}&search=${encodeURIComponent(q)}&page_size=10`,
+          { cf: { cacheTtl: 86400, cacheEverything: true } }, // same search again today = instant
+        );
+        if (r.ok) {
+          const d = await r.json();
+          if (d.results?.length) return reply({ source: 'rawg', results: d.results });
+        }
+      } catch {}
+      // RAWG down: the Steam store's search (PC games only)
+      const s = await fetch(`https://store.steampowered.com/api/storesearch/?term=${encodeURIComponent(q)}&cc=CA&l=english`)
+        .then((r) => r.json())
+        .catch(() => ({}));
+      return reply({
+        source: 'steam',
+        results: (s.items || []).map((i) => ({
+          name: i.name,
+          steam: i.id,
+          background_image: `https://cdn.akamai.steamstatic.com/steam/apps/${i.id}/header.jpg`,
+          platforms: [{ platform: { name: 'PC' } }],
+        })),
+      });
+    }
 
     if (url.pathname === '/steam') {
       if (!env.STEAM_KEY) return reply({ error: 'no-key' }, 500);

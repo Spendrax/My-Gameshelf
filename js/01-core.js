@@ -3,7 +3,7 @@
 //   • the game list and settings, and saving them on the phone (localStorage)
 //   • a tiny event system: emit('change') after any edit, other files listen with on('change', …)
 //   • small helpers ($, esc, today, …) and caseHTML(), which draws one game case
-const VERSION = '2.7';
+const VERSION = '2.7.1';
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 

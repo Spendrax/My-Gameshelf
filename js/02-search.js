@@ -36,8 +36,38 @@ $('#addQ').addEventListener('input', (e) => {
     $('#results').innerHTML = '';
     return;
   }
-  searchT = setTimeout(() => search(q), 700);
+  searchT = setTimeout(() => search(q), 450);
 });
+
+// Asks RAWG straight from the phone, giving up after 6 seconds. If RAWG can't be reached, asks your
+// Cloudflare helper (HELPER/search), which asks RAWG from its side, or the Steam store if RAWG is down.
+// Returns { results } or { error: 'key' | 'full' | 'offline' }.
+async function findGames(q) {
+  try {
+    const r = await fetch(
+      `https://api.rawg.io/api/games?key=${encodeURIComponent(rawgKey())}&search=${encodeURIComponent(q)}&page_size=10`,
+      { signal: AbortSignal.timeout(6000) },
+    );
+    if (r.status === 401 || r.status === 403) return { error: 'key' };
+    if (r.status === 429) return { error: 'full' };
+    if (r.ok) return { results: (await r.json()).results || [] };
+  } catch {} // no answer in time, or blocked: try the helper
+  try {
+    const r = await fetch(
+      `${HELPER}/search?key=${encodeURIComponent(rawgKey())}&q=${encodeURIComponent(q)}`,
+      {
+        signal: AbortSignal.timeout(9000),
+      },
+    );
+    if (r.ok) return { results: (await r.json()).results || [] };
+  } catch {}
+  return { error: 'offline' };
+}
+const SEARCH_ERRORS = {
+  key: "The search key doesn't work. Check it in Settings, or add the game by hand.",
+  full: 'Game search is full for this month. Add your own free RAWG key in Settings, or add the game by hand.',
+  offline: "Game search isn't answering right now. Try again in a moment, or add the game by hand.",
+};
 
 async function search(q) {
   if (!rawgKey()) {
@@ -49,20 +79,12 @@ async function search(q) {
   box.innerHTML = '<p class="dim">Searching…</p>';
   try {
     if (!found.has(k)) {
-      const r = await fetch(
-        `https://api.rawg.io/api/games?key=${encodeURIComponent(rawgKey())}&search=${encodeURIComponent(q)}&page_size=10`,
-      );
-      if (r.status === 401 || r.status === 403) {
-        box.innerHTML =
-          '<p class="dim">The search key doesn\'t work. Check it in Settings, or add the game by hand.</p>';
+      const d = await findGames(q);
+      if (d.error) {
+        if (q === $('#addQ').value.trim()) box.innerHTML = `<p class="dim">${SEARCH_ERRORS[d.error]}</p>`;
         return;
       }
-      if (r.status === 429) {
-        box.innerHTML =
-          '<p class="dim">Game search is full for this month. Add your own free RAWG key in Settings, or add the game by hand.</p>';
-        return;
-      }
-      found.set(k, (await r.json()).results || []);
+      found.set(k, d.results);
     }
     if (q !== $('#addQ').value.trim()) return;
     lastResults = found.get(k);
@@ -97,7 +119,7 @@ $('#results').addEventListener('click', (e) => {
   const b = e.target.closest('.res');
   if (!b) return;
   const r = lastResults[b.dataset.i];
-  const dup = games.find((g) => g.rawg === r.id);
+  const dup = games.find((g) => (r.id && g.rawg === r.id) || (r.steam && g.steam === r.steam));
   if (dup && !confirm(`"${r.name}" is already on your rack. Add it again (another platform)?`)) return;
   $('#dlgAdd').close();
   const plats = (r.platforms || []).map((p) => p.platform.name);
@@ -106,7 +128,8 @@ $('#results').addEventListener('click', (e) => {
     cover: smallImg(r.background_image) || '',
     year: (r.released || '').slice(0, 4),
     genres: (r.genres || []).map((x) => x.name),
-    rawg: r.id,
+    rawg: r.id || undefined,
+    steam: r.steam, // results from the Steam store (when RAWG is down)
     platforms: plats,
     platform: scanPlatform || (plats.length === 1 ? plats[0] : ''),
   });
