@@ -138,41 +138,10 @@ function posterPicker() {
     <label>Picture</label><div class="mini poster-imgs" id="posterImgs"><p class="dim small">Finding pictures…</p></div>`;
 }
 
-// Every picture we can find for a game: its cover, Steam's poster art, RAWG's artwork and screenshots
-const imgCache = new Map();
-async function posterChoices(g) {
-  if (imgCache.has(g.id)) return imgCache.get(g.id);
-  const list = [g.cover];
-  if (g.steam) {
-    const s = `https://cdn.akamai.steamstatic.com/steam/apps/${g.steam}`;
-    list.push(`${s}/library_600x900.jpg`, `${s}/library_hero.jpg`, `${s}/header.jpg`);
-  }
-  try {
-    const api = (path, extra = '') =>
-      fetch(`https://api.rawg.io/api/${path}?key=${encodeURIComponent(rawgKey())}${extra}`).then((r) =>
-        r.json(),
-      );
-    // games added by hand have no RAWG id: look the title up once
-    const id =
-      g.rawg || (await api('games', `&page_size=1&search=${encodeURIComponent(g.title)}`)).results?.[0]?.id;
-    if (id) {
-      const [info, shots] = await Promise.all([api(`games/${id}`), api(`games/${id}/screenshots`)]);
-      list.push(
-        info.background_image,
-        info.background_image_additional,
-        ...(shots.results || []).map((r) => r.image),
-      );
-    }
-  } catch {} // offline: just the cover (and Steam art)
-  const unique = [...new Set(list.reduce((a, u) => (u ? a.concat(smallImg(u)) : a), []))];
-  imgCache.set(g.id, unique);
-  return unique;
-}
-
 async function fillPosterImgs(g) {
   const box = $('#posterImgs');
   if (!box) return;
-  const list = await posterChoices(g);
+  const list = await gamePictures(g);
   if (!$('#posterImgs') || posterGame() !== g) return; // the sheet changed meanwhile
   const cur = posterImg(g) && smallImg(posterImg(g));
   $('#posterImgs').innerHTML = list.length

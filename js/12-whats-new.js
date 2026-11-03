@@ -4,6 +4,7 @@
 // Small fixes don't need an entry. The card is also in Settings → "What's new".
 
 const NEWS = [
+  { v: '2.7', items: ['\u{1F5BC} Find cover art when you edit a game: pick from its covers, artwork, screenshots and Steam art'] },
   { v: '2.6', items: ['\u{1F3AE} Put one of your games on the poster (Customize \u2192 Poster \u2192 My game). Tap it to open the game.'] },
   {
     v: '2.5',

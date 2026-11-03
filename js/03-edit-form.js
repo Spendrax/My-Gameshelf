@@ -18,6 +18,7 @@ function openEdit(g) {
     '',
   );
   drawEditBits();
+  $('#eArt').hidden = true;
   $('#dlgEdit').showModal();
 }
 
@@ -63,6 +64,34 @@ $('#eRate').onclick = (e) => {
 };
 form.elements.title.addEventListener('change', drawCover);
 form.elements.platform.addEventListener('change', drawCover);
+// "Find cover art": the game's cover, artwork, screenshots and Steam art; tap one to use it
+$('#eArtBtn').onclick = async () => {
+  const box = $('#eArt');
+  box.hidden = false;
+  box.innerHTML = '<p class="dim small">Finding pictures\u2026</p>';
+  const list = await gamePictures({ ...draft, title: form.elements.title.value.trim() || draft.title });
+  box.innerHTML = list.length
+    ? list.reduce(
+        (h, u) =>
+          h +
+          `<button type="button" data-art="${esc(u)}" class="${u === draft.cover ? 'on' : ''}" style="background-image:url('${esc(u).replace(/'/g, '%27')}')" aria-label="Use this picture"></button>`,
+        '',
+      )
+    : '<p class="dim small">No pictures found. Check the title, or use one of your photos.</p>';
+  // pictures that don't exist (some games have no Steam art) quietly disappear
+  $$('#eArt [data-art]').forEach((b) => {
+    const test = new Image();
+    test.onerror = () => b.remove();
+    test.src = b.dataset.art;
+  });
+};
+$('#eArt').onclick = (e) => {
+  const b = e.target.closest('[data-art]');
+  if (!b) return;
+  draft.cover = b.dataset.art;
+  drawCover();
+  $$('#eArt button').forEach((x) => x.classList.toggle('on', x === b));
+};
 $('#eNoCover').onclick = () => {
   draft.cover = '';
   drawCover();

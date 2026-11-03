@@ -113,10 +113,12 @@
     <div class="cover-pick">
       <div id="eCover"></div>
       <div class="col">
-        <label class="btn ghost">Choose picture<input type="file" accept="image/*" id="eFile" hidden></label>
+        <button type="button" class="btn ghost" id="eArtBtn">🖼 Find cover art</button>
+        <label class="btn ghost">📷 From my photos<input type="file" accept="image/*" id="eFile" hidden></label>
         <button type="button" class="btn ghost" id="eNoCover">Remove picture</button>
       </div>
     </div>
+    <div id="eArt" class="mini poster-imgs" hidden></div>
     <label>Title<input name="title" required maxlength="120"></label>
     <label>Platform<input name="platform" list="platList" maxlength="40"></label>
     <datalist id="platList"></datalist>

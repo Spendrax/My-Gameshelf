@@ -116,3 +116,35 @@ $('#addManual').onclick = () => {
   $('#dlgAdd').close();
   openEdit({ title: t });
 };
+
+// Every picture we can find for a game (for its cover in the edit form, or the poster): its cover, Steam's poster art, RAWG's artwork and screenshots
+const imgCache = new Map();
+async function gamePictures(g) {
+  const key = g.id || g.title; // a game being added has no id yet
+  if (imgCache.has(key)) return imgCache.get(key);
+  const list = [g.cover];
+  if (g.steam) {
+    const s = `https://cdn.akamai.steamstatic.com/steam/apps/${g.steam}`;
+    list.push(`${s}/library_600x900.jpg`, `${s}/library_hero.jpg`, `${s}/header.jpg`);
+  }
+  try {
+    const api = (path, extra = '') =>
+      fetch(`https://api.rawg.io/api/${path}?key=${encodeURIComponent(rawgKey())}${extra}`).then((r) =>
+        r.json(),
+      );
+    // games added by hand have no RAWG id: look the title up once
+    const id =
+      g.rawg || (await api('games', `&page_size=1&search=${encodeURIComponent(g.title)}`)).results?.[0]?.id;
+    if (id) {
+      const [info, shots] = await Promise.all([api(`games/${id}`), api(`games/${id}/screenshots`)]);
+      list.push(
+        info.background_image,
+        info.background_image_additional,
+        ...(shots.results || []).map((r) => r.image),
+      );
+    }
+  } catch {} // offline: just the cover (and Steam art)
+  const unique = [...new Set(list.reduce((a, u) => (u ? a.concat(smallImg(u)) : a), []))];
+  imgCache.set(key, unique);
+  return unique;
+}
