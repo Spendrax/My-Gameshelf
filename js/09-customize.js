@@ -51,6 +51,7 @@ const OPTS = {
     ['synth', 'Sunset'],
     ['space', 'Space'],
     ['retro', '1UP'],
+    ['game', '\u{1F3AE} My game'],
     ['none', 'None'],
   ],
   scene: [
@@ -98,6 +99,55 @@ const OPTS = {
   ],
 };
 
+/* ---------- The poster ---------- */
+
+const POSTER_NAMES = { synth: 'SUNSET', space: 'SPACE', retro: 'GAME OVER' };
+
+// The game on the poster: the one you picked, else the one you're playing, else your newest
+function posterGame() {
+  return (
+    byId(set.look.posterGame) ||
+    games.reduce((a, g) => a || (g.status === 'playing' && g.cover ? g : null), null) ||
+    games.reduce((a, g) => a || (g.cover ? g : null), null) ||
+    games[0]
+  );
+}
+
+function drawPoster() {
+  const art = $('.poster .art');
+  const g = set.look.poster === 'game' ? posterGame() : null;
+  art.style.background = g
+    ? g.cover
+      ? `center / cover url('${g.cover.replace(/'/g, '%27')}')`
+      : `linear-gradient(150deg, hsl(${hue(g.title)} 60% 38%), #111)`
+    : '';
+  $('.poster .caption').textContent = g ? g.title.toUpperCase() : POSTER_NAMES[set.look.poster] || '';
+}
+
+// In Customize: tap one of your games to put it on the poster
+function posterPicker() {
+  if (!games.length) return '<p class="dim small">Add a game first, then pick it here.</p>';
+  const cur = posterGame();
+  return `<div class="mini poster-pick">${games.reduce(
+    (h, g) =>
+      h +
+      `<button data-poster-id="${g.id}" class="${g === cur ? 'on' : ''}">${caseHTML({ ...g, id: '' })}</button>`,
+    '',
+  )}</div>`;
+}
+$('#cBody').addEventListener('click', (e) => {
+  const b = e.target.closest('[data-poster-id]');
+  if (!b) return;
+  set.look.posterGame = b.dataset.posterId;
+  saveSet();
+  drawPoster();
+  drawLook();
+});
+$('.poster').addEventListener('click', () => {
+  if (set.look.poster === 'game' && posterGame()) openGame(posterGame().id);
+});
+on('change', drawPoster); // a renamed, recovered or deleted game
+
 function applyLook() {
   const l = set.look,
     b = document.body,
@@ -115,6 +165,7 @@ function applyLook() {
   if (l.petColor) r.setProperty('--pet', l.petColor);
   else r.removeProperty('--pet');
   const t = l.sign || 'PLAY';
+  drawPoster();
   $('.sign').innerHTML = esc(t[0]) + `<span>${esc(t.slice(1, 2))}</span>` + esc(t.slice(2));
   $('.sign').style.setProperty('--n', t.length);
   $('#hat').className = 'hat ' + l.hat;
@@ -145,6 +196,7 @@ function drawLook() {
     <label>On the window</label>${chips('dress', OPTS.dress, l.dress)}
     ${l.dress === 'curtains' ? `<label>Curtain colour</label>${swatches('curtain', l.curtain)}` : ''}
     <label>Poster</label>${chips('poster', OPTS.poster, l.poster)}
+    ${l.poster === 'game' ? posterPicker() : ''}
     <label>Neon sign<input id="cSign" maxlength="8" value="${esc(l.sign)}"></label>
     ${swatches('signColor', l.signColor)}
     <label>On the desk</label><div class="seg opt" data-k="desk">${OPTS.desk.reduce((h, [v, n]) => h + `<button data-v="${v}" class="${l.hide.includes(v) ? '' : 'on'}">${n}</button>`, '')}</div>

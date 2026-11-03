@@ -518,3 +518,18 @@ label.check input {
   width: auto;
   margin: 0;
 }
+
+/* Customize: choosing the game for the poster */
+.poster-pick button {
+  flex: none;
+  padding: 3px;
+  border-radius: 8px;
+  border: 2px solid transparent;
+}
+.poster-pick button.on {
+  border-color: var(--led);
+  box-shadow: 0 0 10px var(--glow);
+}
+.poster-pick .case {
+  pointer-events: none; /* the button picks it; the case doesn't open the game */
+}
