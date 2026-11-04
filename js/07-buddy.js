@@ -53,6 +53,8 @@ function chatter() {
   if (!games.length) lines.push('Tap + to add your first game!', 'This rack looks lonely…');
   if (playing.length)
     lines.push(`Still playing ${rand(playing).title}?`, `How's ${rand(playing).title} going?`);
+  const paused = games.reduce((a, g) => (g.status === 'paused' ? a.concat(g) : a), []);
+  if (paused.length) lines.push(`Ready to get back to ${rand(paused).title}?`);
   if (n('backlog') > 4) lines.push(`${n('backlog')} games in the backlog… 👀`);
   if (n('finished')) lines.push(`${n('finished')} games beaten. Nice!`);
   const h = new Date().getHours();

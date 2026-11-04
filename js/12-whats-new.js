@@ -4,6 +4,7 @@
 // Small fixes don't need an entry. The card is also in Settings → "What's new".
 
 const NEWS = [
+  { v: '3.7', items: ['New status: On hold, for games you stopped but want to get back to'] },
   {
     v: '3.6',
     items: [
