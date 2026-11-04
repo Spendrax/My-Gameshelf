@@ -3,7 +3,7 @@
 //   • the game list and settings, and saving them on the phone (localStorage)
 //   • a tiny event system: emit('change') after any edit, other files listen with on('change', …)
 //   • small helpers ($, esc, today, …) and caseHTML(), which draws one game case
-const VERSION = '3.4';
+const VERSION = '3.5';
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 
@@ -12,6 +12,7 @@ const STATUS = {
   onoff: { label: 'On & off', color: '#c08bff' }, // played now and then
   backlog: { label: 'Backlog', color: '#8a8fb0' },
   finished: { label: 'Finished', color: '#ffcf4a' },
+  enough: { label: 'Played enough', color: '#ffa05c' }, // the "finished" of never-ending games
   dropped: { label: 'Dropped', color: '#ff5c7a' },
   wishlist: { label: 'Wishlist', color: '#6ac8ff' },
 };

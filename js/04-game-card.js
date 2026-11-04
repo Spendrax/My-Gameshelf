@@ -31,6 +31,7 @@ function openGame(id) {
     <div class="quick">
       ${g.status !== 'playing' ? '<button class="btn" data-q="playing">▶ Playing</button>' : ''}
       ${g.status !== 'finished' && !g.endless ? '<button class="btn" data-q="finished">🏆 Finished</button>' : ''}
+      ${g.endless && g.status !== 'enough' ? '<button class="btn" data-q="enough">\u270B Played enough</button>' : ''}
       <button class="btn" data-q="hour">+1 h</button>
     </div>
     <div class="actions"><button class="btn primary" data-q="edit">Edit</button></div>`;
@@ -55,6 +56,7 @@ $('#gBody').addEventListener('click', (e) => {
       openGame(g.id);
       emit('finished', g);
     });
+  if (q === 'enough') g.status = 'enough';
   if (q === 'hour') g.hours = (+g.hours || 0) + 1;
   g.updated = Date.now();
   save();

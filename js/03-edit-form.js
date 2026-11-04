@@ -40,7 +40,8 @@ function drawEditBits() {
   $('#eFinished').hidden = !!draft.endless;
   $('#eStatus').innerHTML = Object.entries(STATUS).reduce(
     (h, [k, s]) =>
-      draft.endless && k === 'finished'
+      // never-ending games get "Played enough" instead of "Finished"
+      (draft.endless && k === 'finished') || (!draft.endless && k === 'enough')
         ? h
         : h +
           `<button type="button" data-s="${k}" style="--sc:${s.color}" class="${draft.status === k ? 'on' : ''}">${s.label}</button>`,
@@ -55,7 +56,8 @@ function drawEditBits() {
 }
 form.elements.endless.onchange = (e) => {
   draft.endless = e.target.checked;
-  if (draft.endless && draft.status === 'finished') draft.status = 'playing';
+  if (draft.endless && draft.status === 'finished') draft.status = 'enough';
+  if (!draft.endless && draft.status === 'enough') draft.status = 'finished';
   drawEditBits();
 };
 $('#eStatus').onclick = (e) => {
