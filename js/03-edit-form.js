@@ -19,7 +19,8 @@ function openEdit(g) {
   );
   form.elements.endless.checked = !!draft.endless;
   drawEditBits();
-  $('#eArt').hidden = true;
+  $('#eArt').hidden = true; // closed until you tap "Find cover art" for this game
+  $('#eArt').innerHTML = '';
   $('#dlgEdit').showModal();
 }
 
@@ -81,7 +82,9 @@ $('#eArtBtn').onclick = async () => {
   const box = $('#eArt');
   box.hidden = false;
   box.innerHTML = '<p class="dim small">Finding pictures\u2026</p>';
+  const forGame = draft;
   const list = await gamePictures({ ...draft, title: form.elements.title.value.trim() || draft.title });
+  if (draft !== forGame || box.hidden) return; // you opened another game meanwhile
   box.innerHTML = list.length
     ? list.reduce(
         (h, u) =>

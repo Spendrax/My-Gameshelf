@@ -153,6 +153,13 @@ $('#addManual').onclick = () => {
   openEdit({ title: t });
 };
 
+// A title as databases know it: "Star Wars: Battlefront 2 (Classic, 2005)™" → "Star Wars: Battlefront 2"
+const plainTitle = (t) =>
+  t
+    .replace(/\(.*?\)|\[.*?\]|[\u2122\u00AE\u00A9]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim() || t;
+
 // Every picture we can find for a game (for its cover in the edit form): its cover, Steam's
 // poster art, IGDB's box art, artwork and screenshots, and RAWG's
 const imgCache = new Map();
@@ -166,7 +173,7 @@ async function gamePictures(g) {
   }
   // IGDB (through your helper): box art, artwork, screenshots
   try {
-    const q = g.igdb ? `igdb=${g.igdb}` : `q=${encodeURIComponent(g.title)}`;
+    const q = g.igdb ? `igdb=${g.igdb}` : `q=${encodeURIComponent(plainTitle(g.title))}`;
     const d = await fetch(`${HELPER}/pictures?${q}`, { signal: AbortSignal.timeout(8000) }).then((r) =>
       r.json(),
     );
@@ -180,7 +187,7 @@ async function gamePictures(g) {
       }).then((r) => r.json());
     // games added by hand have no RAWG id: look the title up once
     const id =
-      g.rawg || (await api('games', `&page_size=1&search=${encodeURIComponent(g.title)}`)).results?.[0]?.id;
+      g.rawg || (await api('games', `&page_size=1&search=${encodeURIComponent(plainTitle(g.title))}`)).results?.[0]?.id;
     if (id) {
       const [info, shots] = await Promise.all([api(`games/${id}`), api(`games/${id}/screenshots`)]);
       list.push(

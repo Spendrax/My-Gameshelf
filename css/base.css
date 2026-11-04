@@ -1,5 +1,10 @@
 /* BASE — colours (the LED colour is --led), fonts, the top bar and form fields used everywhere. */
 
+/* hidden always hides, even on things that set their own display */
+[hidden] {
+  display: none !important;
+}
+
 :root {
   --led: #b05cff;
   --glow: color-mix(in srgb, var(--led) 45%, transparent);
