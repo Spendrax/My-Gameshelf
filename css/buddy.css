@@ -579,10 +579,11 @@
 /* cat and fox: pointed ears */
 .pet[data-kind='cat'] .ears,
 .pet[data-kind='fox'] .ears {
+  /* their bottoms sit behind the top of the head (the ears come before .body in the page) */
   display: block;
-  left: 8px;
-  right: 8px;
-  top: 5px;
+  left: 10px;
+  right: 10px;
+  top: 8px;
   height: 15px;
 }
 .pet[data-kind='cat'] .ears::before,
@@ -605,7 +606,7 @@
   clip-path: polygon(0 100%, 75% 0, 100% 100%);
 }
 .pet[data-kind='fox'] .ears {
-  top: 2px;
+  top: 5px;
   height: 18px;
 }
 .pet[data-kind='fox'] .ears::before,
@@ -627,20 +628,22 @@
 }
 .pet[data-kind='dog'] .ears::before,
 .pet[data-kind='dog'] .ears::after {
-  top: 15px;
-  width: 12px;
+  top: 16px;
+  width: 11px;
   height: 21px;
   border-radius: 50%;
   background: var(--pk2);
   z-index: 1;
 }
 .pet[data-kind='dog'] .ears::before {
-  left: 2px;
-  transform: rotate(18deg);
+  left: 6px;
+  transform: rotate(22deg);
+  transform-origin: 50% 0;
 }
 .pet[data-kind='dog'] .ears::after {
-  right: 2px;
-  transform: rotate(-18deg);
+  right: 6px;
+  transform: rotate(-22deg);
+  transform-origin: 50% 0;
 }
 
 /* bunny: long ears, pink inside */
@@ -754,29 +757,29 @@
   display: block;
 }
 .pet[data-kind='cat'] .tail {
-  left: -2px;
-  bottom: 12px;
+  left: 7px;
+  bottom: 10px;
   width: 5px;
-  height: 20px;
+  height: 24px;
   border-radius: 3px;
   background: var(--pk2);
-  transform: rotate(-30deg);
+  transform: rotate(-38deg);
   transform-origin: bottom;
   animation: swish 2.4s ease-in-out infinite alternate;
 }
 .pet[data-kind='dog'] .tail {
-  left: 0;
-  bottom: 14px;
+  left: 7px;
+  bottom: 12px;
   width: 5px;
-  height: 13px;
+  height: 17px;
   border-radius: 3px;
   background: var(--pk2);
   transform-origin: bottom;
   animation: wag 0.3s ease-in-out infinite alternate;
 }
 .pet[data-kind='fox'] .tail {
-  left: -12px;
-  bottom: 6px;
+  left: -8px;
+  bottom: 7px;
   width: 22px;
   height: 13px;
   border-radius: 50%;
@@ -784,7 +787,7 @@
   transform: rotate(-28deg);
 }
 .pet[data-kind='bunny'] .tail {
-  left: 1px;
+  left: 3px;
   bottom: 8px;
   width: 11px;
   height: 11px;
@@ -794,14 +797,14 @@
 }
 @keyframes swish {
   to {
-    transform: rotate(-12deg);
+    transform: rotate(-22deg);
   }
 }
 @keyframes wag {
   from {
-    transform: rotate(-45deg);
+    transform: rotate(-55deg);
   }
   to {
-    transform: rotate(-15deg);
+    transform: rotate(-30deg);
   }
 }
