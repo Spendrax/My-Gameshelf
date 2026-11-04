@@ -4,6 +4,7 @@
 // Small fixes don't need an entry. The card is also in Settings → "What's new".
 
 const NEWS = [
+  { v: '3.2', items: ['The Goals wall matches the night room: a dark board with glowing pins'] },
   { v: '3.1', items: ['\u{1F3A8} New buddies: cat, dog, fox, bunny, frog and penguin (Customize \u2192 Your buddy \u2192 Animal)'] },
   {
     v: '3.0',
