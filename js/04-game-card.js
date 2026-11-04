@@ -46,13 +46,36 @@ $('#gBody').addEventListener('click', (e) => {
     g.status = 'playing';
     g.started ||= today();
   }
-  if (q === 'finished') {
-    g.status = 'finished';
-    g.finished ||= today();
-  }
+  if (q === 'finished')
+    return askFinished((date) => {
+      g.status = 'finished';
+      g.finished = date;
+      g.updated = Date.now();
+      save();
+      openGame(g.id);
+      emit('finished', g);
+    });
   if (q === 'hour') g.hours = (+g.hours || 0) + 1;
   g.updated = Date.now();
   save();
   openGame(g.id);
-  if (q === 'finished') emit('finished', g);
+});
+
+// "When did you finish it?": today, a day in the past, or long ago (no date: still finished, but not in
+// this year's challenge). done(date) gets 'YYYY-MM-DD' or ''.
+let whenDone = null;
+function askFinished(done) {
+  whenDone = done;
+  $('#whenDate').max = today();
+  $('#whenDate').value = '';
+  $('#dlgWhen').showModal();
+}
+$('#dlgWhen').addEventListener('click', (e) => {
+  const w = e.target.closest('[data-when]')?.dataset.when;
+  if (!w) return;
+  const date = w === 'today' ? today() : w === 'date' ? $('#whenDate').value : '';
+  if (w === 'date' && !date) return toast('Pick the day first');
+  $('#dlgWhen').close();
+  whenDone?.(date);
+  whenDone = null;
 });

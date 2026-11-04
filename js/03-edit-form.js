@@ -63,7 +63,7 @@ $('#eStatus').onclick = (e) => {
   if (!s) return;
   draft.status = s;
   if (s === 'playing' && !form.elements.started.value) form.elements.started.value = today();
-  if (s === 'finished' && !form.elements.finished.value) form.elements.finished.value = today();
+  if (s === 'finished' && !form.elements.finished.value) askFinished((d) => (form.elements.finished.value = d));
   drawEditBits();
 };
 $('#eRate').onclick = (e) => {

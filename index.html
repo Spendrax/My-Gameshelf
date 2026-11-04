@@ -147,6 +147,15 @@
   <div id="cBody"></div>
 </dialog>
 
+<!-- When did you finish it? (asked when a game is marked Finished) -->
+<dialog id="dlgWhen" class="sheet">
+  <div class="sheet-h"><h2>When did you finish it?</h2><button class="x" data-close aria-label="Close">✕</button></div>
+  <button class="btn primary wide" data-when="today">🏆 Today</button>
+  <label>A day in the past<input type="date" id="whenDate"></label>
+  <button class="btn wide" data-when="date">Use this date</button>
+  <button class="btn ghost wide" data-when="unknown">A long time ago (I don’t remember)</button>
+</dialog>
+
 <!-- What's new -->
 <dialog id="dlgNews" class="sheet">
   <div class="sheet-h"><h2>What’s new</h2><button class="x" data-close aria-label="Close">✕</button></div>
