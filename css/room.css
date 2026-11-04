@@ -920,6 +920,7 @@ body[data-scene='space'] .pane {
   display: none;
 }
 .window .blinds {
+  z-index: 3; /* in front of the temperature, like the curtains */
   left: 6px;
   right: 6px;
   top: 6px;
