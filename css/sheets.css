@@ -546,3 +546,12 @@ label.check input {
   padding: 6px 10px;
   font-size: 12px;
 }
+
+/* numbered how-to steps in Settings */
+.steps {
+  margin: 4px 0 0;
+  padding-left: 18px;
+}
+.steps li {
+  margin: 2px 0;
+}

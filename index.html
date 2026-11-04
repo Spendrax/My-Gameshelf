@@ -188,6 +188,24 @@
   <label>Steam profile (name, ID or link)<input id="sSteam" autocomplete="off" placeholder="steamcommunity.com/id/…"></label>
   <label class="check"><input type="checkbox" id="sSteamAll"> Also add games I never played</label>
   <button class="btn primary wide" id="sSteamSync">Sync with Steam</button>
+  <h3>PlayStation</h3>
+  <p class="dim small">Brings in your PS4 and PS5 games with their hours. Unofficial (Sony has no public way), so it could stop working one day.</p>
+  <ol class="dim small steps">
+    <li>Sign in at <a href="https://www.playstation.com" target="_blank" rel="noopener">playstation.com</a> in this browser.</li>
+    <li>Then open <a href="https://ca.account.sony.com/api/v1/ssocookie" target="_blank" rel="noopener">this page</a>: it shows <code>{"npsso":"…"}</code>.</li>
+    <li>Copy the long code (or the whole line) and paste it here. It works for about 2 months.</li>
+  </ol>
+  <label>PlayStation token (npsso)<input id="sPsn" type="password" autocomplete="off"></label>
+  <button class="btn primary wide" id="sPsnSync">Sync with PlayStation</button>
+  <h3>Xbox</h3>
+  <p class="dim small">Brings in your Xbox games, with hours when Xbox shares them. Uses OpenXBL, a free Xbox service.</p>
+  <ol class="dim small steps">
+    <li>Go to <a href="https://xbl.io" target="_blank" rel="noopener">xbl.io</a> and sign in with your Microsoft (Xbox) account.</li>
+    <li>On your profile there, copy your <b>API key</b> and paste it here.</li>
+  </ol>
+  <label>OpenXBL key<input id="sXbox" type="password" autocomplete="off"></label>
+  <button class="btn primary wide" id="sXboxSync">Sync with Xbox</button>
+  <p class="dim small">Your token and key stay on this phone and aren’t put in backups.</p>
   <h3>Backup</h3>
   <p class="dim">Your games live only on this phone. Save a backup now and then.</p>
   <div class="row">
@@ -219,5 +237,6 @@
 <script src="js/16-window-weather.js"></script>
 <script src="js/17-achievements.js"></script>
 <script src="js/18-friend.js"></script>
+<script src="js/19-console-sync.js"></script>
 </body>
 </html>

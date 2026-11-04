@@ -3,6 +3,10 @@
 //   /search?q=NAME&key=…   game search: IGDB (every platform), then RAWG, then the Steam store (PC only)
 //   /pictures?igdb=ID or ?q=NAME   box art, artwork and screenshots of one game (IGDB)
 //   /steam?id=NAME_OR_ID    the Steam games someone owns, with playtime (needs the STEAM_KEY secret)
+//   /psn?npsso=TOKEN        the PlayStation games someone played, with playtime (unofficial: each person's own
+//                           sign-in token from playstation.com; nothing is kept here)
+//   /xbox?key=KEY           the Xbox games someone played, with playtime when available (each person's own
+//                           free OpenXBL key from xbl.io; nothing is kept here)
 // Set up: Cloudflare → Workers & Pages → gameshelf-barcode → Edit code → paste this file → Deploy.
 // Steam key: Settings → Variables and Secrets → Add → type "Secret", name STEAM_KEY, value = your key → Deploy.
 // IGDB (Twitch): two more secrets the same way, TWITCH_ID (Client ID) and TWITCH_SECRET (Client Secret).
@@ -66,6 +70,110 @@ async function igdbPictures(id, title, env) {
   ];
 }
 
+// ---------- PlayStation (unofficial, the way the PlayStation app signs in) ----------
+const PSN_AUTH = 'https://ca.account.sony.com/api/authz/v3/oauth';
+const PSN_APP = {
+  client_id: '09515159-7237-4370-9b40-3806e67c0891',
+  redirect_uri: 'com.scee.psxandroid.scecompcall://redirect',
+  scope: 'psn:mobile.v2.core psn:clientapp',
+};
+// "PT228H56M33S" → minutes
+const isoMinutes = (d) => {
+  const [, h = 0, m = 0] = /PT(?:(\d+)H)?(?:(\d+)M)?/.exec(d || '') || [];
+  return +h * 60 + +m;
+};
+async function psnGames(npsso) {
+  // 1. the sign-in token → a one-time code (Sony answers with a redirect that carries it)
+  const a = await fetch(
+    `${PSN_AUTH}/authorize?${new URLSearchParams({ ...PSN_APP, access_type: 'offline', response_type: 'code' })}`,
+    {
+      headers: { Cookie: `npsso=${npsso}` },
+      redirect: 'manual',
+    },
+  );
+  const code = /[?&]code=([^&]+)/.exec(a.headers.get('location') || '')?.[1];
+  if (!code) return { error: 'npsso' }; // the token is wrong or expired
+  // 2. the code → an access token
+  const t = await fetch(`${PSN_AUTH}/token`, {
+    method: 'POST',
+    headers: {
+      Authorization: 'Basic MDk1MTUxNTktNzIzNy00MzcwLTliNDAtMzgwNmU2N2MwODkxOnVjUGprYTV0bnRCMktxc1A=',
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: new URLSearchParams({
+      code,
+      redirect_uri: PSN_APP.redirect_uri,
+      grant_type: 'authorization_code',
+      token_format: 'jwt',
+    }),
+  }).then((r) => r.json());
+  if (!t.access_token) return { error: 'npsso' };
+  // 3. the played games, 200 at a time
+  const games = [];
+  for (let offset = 0; offset < 2000; offset += 200) {
+    const d = await fetch(
+      `https://m.np.playstation.com/api/gamelist/v2/users/me/titles?categories=ps4_game,ps5_native_game&limit=200&offset=${offset}`,
+      { headers: { Authorization: `Bearer ${t.access_token}` } },
+    ).then((r) => r.json());
+    for (const g of d.titles || [])
+      games.push({
+        id: String(g.concept?.id || g.titleId),
+        name: g.name,
+        minutes: isoMinutes(g.playDuration),
+        last: Date.parse(g.lastPlayedDateTime) / 1000 || 0,
+        cover: g.imageUrl || '',
+        platform: g.category === 'ps5_native_game' ? 'PlayStation 5' : 'PlayStation 4',
+      });
+    if (!d.nextOffset) break;
+  }
+  return { games };
+}
+
+// ---------- Xbox (through OpenXBL, with the person's own key) ----------
+const XBOX_PLATFORMS = { XboxSeries: 'Xbox Series S/X', XboxOne: 'Xbox One', PC: 'PC', Xbox360: 'Xbox 360' };
+async function xboxGames(key) {
+  const xbl = (path, init = {}) =>
+    fetch(`https://xbl.io/api/v2/${path}`, {
+      ...init,
+      headers: {
+        'X-Authorization': key,
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        ...init.headers,
+      },
+    }).then((r) => (r.status === 401 || r.status === 403 ? { error: 'key' } : r.json()));
+  const acc = await xbl('account');
+  if (acc.error) return acc;
+  const xuid = (acc.content || acc).profileUsers?.[0]?.id;
+  const t = await xbl('titles');
+  const titles = (t.content || t).titles || [];
+  if (!xuid && !titles.length) return { error: 'key' };
+  // hours played: the "MinutesPlayed" stat of each game (not every game reports it)
+  const minutes = {};
+  try {
+    const ids = titles.reduce((a, g) => (g.titleId ? a.concat(g.titleId) : a), []).slice(0, 100);
+    const st = await xbl('player/stats', {
+      method: 'POST',
+      body: JSON.stringify({
+        xuids: [xuid],
+        stats: ids.map((titleId) => ({ name: 'MinutesPlayed', titleId })),
+      }),
+    });
+    for (const s of (st.content || st).statlistscollection?.[0]?.stats || [])
+      minutes[s.titleid] = +s.value || 0;
+  } catch {}
+  return {
+    games: titles.map((g) => ({
+      id: String(g.titleId),
+      name: g.name,
+      minutes: minutes[g.titleId] || 0,
+      last: Date.parse(g.titleHistory?.lastTimePlayed) / 1000 || 0,
+      cover: g.displayImage || '',
+      platform: XBOX_PLATFORMS[(g.devices || []).find((d) => XBOX_PLATFORMS[d])] || 'Xbox Series S/X',
+    })),
+  };
+}
+
 export default {
   async fetch(request, env) {
     const headers = {
@@ -118,6 +226,22 @@ export default {
         });
       } catch {
         return reply({ pictures: [] });
+      }
+    }
+
+    if (url.pathname === '/psn') {
+      try {
+        return reply(await psnGames(url.searchParams.get('npsso') || ''));
+      } catch {
+        return reply({ error: 'down' }, 502);
+      }
+    }
+
+    if (url.pathname === '/xbox') {
+      try {
+        return reply(await xboxGames(url.searchParams.get('key') || ''));
+      } catch {
+        return reply({ error: 'down' }, 502);
       }
     }
 

@@ -18,7 +18,7 @@ $('#sExport').onclick = () => {
           app: 'my-gameshelf',
           version: VERSION,
           saved: new Date().toISOString(),
-          settings: { ...set, key: '' },
+          settings: { ...set, key: '', psnToken: '', xboxKey: '' } /* sign-in tokens stay on this phone */,
           games,
         },
         null,

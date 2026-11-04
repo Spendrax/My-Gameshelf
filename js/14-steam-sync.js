@@ -1,5 +1,6 @@
 'use strict';
 // STEAM SYNC — Settings → Steam brings in the games you own on Steam, with their playtime.
+// importGames() here is also used by PlayStation and Xbox sync (19-console-sync.js).
 // It asks your Cloudflare helper (HELPER/steam), which holds the Steam key as a secret.
 // Rules: it never lowers hours you typed yourself and never changes the status of a game you already have.
 // It syncs again by itself, quietly, when you open the app and the last sync is over 12 hours old.
@@ -11,13 +12,65 @@ const steamCover = (appid) => `https://cdn.akamai.steamstatic.com/steam/apps/${a
 const sameTitle = (t) => t.toLowerCase().replace(/[^a-z0-9]/g, '');
 
 // Accepts a profile link (…/id/name or …/profiles/7656…), a profile name, or a 17-digit Steam ID
-const steamIdFrom = (text) => (text.match(/steamcommunity\.com\/(?:id|profiles)\/([^/?#]+)/i)?.[1] || text).trim();
+const steamIdFrom = (text) =>
+  (text.match(/steamcommunity\.com\/(?:id|profiles)\/([^/?#]+)/i)?.[1] || text).trim();
 
 const STEAM_ERRORS = {
   private: 'Your Steam “Game details” are private. Set them to Public in your Steam privacy settings.',
   'not-found': 'Steam profile not found. Check the name, or paste your profile link.',
   'no-key': 'The helper is missing its Steam key (STEAM_KEY in Cloudflare).',
 };
+
+// Adds games from an account (Steam, PlayStation, Xbox) and tops up their hours. Shared by every sync.
+//   items: [{ id, name, minutes, last (seconds since 1970), cover, platform }]
+//   field: where the account's id is kept on a game (g.steam / g.psn / g.xbox)
+//   platform: the platform for new games when the item has none; sameKind: platforms that count as a match
+//   all: also add games with no playtime
+// Never lowers hours you typed yourself and never changes the status of a game you already have.
+function importGames(items, { field, platform, sameKind, all }) {
+  // games already on the rack: linked to this account before, or the same title on a matching platform
+  const linked = new Map(games.reduce((a, g) => (g[field] ? a.concat([[g[field], g]]) : a), []));
+  const byTitle = new Map(
+    games.reduce(
+      (a, g) =>
+        !g[field] && (!g.platform || sameKind.test(g.platform)) ? a.concat([[sameTitle(g.title), g]]) : a,
+      [],
+    ),
+  );
+  const twoWeeksAgo = Date.now() / 1000 - 14 * 86400;
+  let added = 0;
+  let updated = 0;
+  for (const s of items) {
+    const hours = Math.round(s.minutes / 6) / 10; // minutes → hours with one decimal
+    const g = linked.get(s.id) || byTitle.get(sameTitle(s.name));
+    if (g) {
+      g[field] = s.id;
+      if (hours > (+g.hours || 0)) {
+        g.hours = hours;
+        g.updated = Date.now();
+        updated++;
+      }
+    } else if (s.minutes > 0 || all) {
+      games.push({
+        id: uid(),
+        title: s.name,
+        platform: s.platform || platform,
+        status: s.last > twoWeeksAgo ? 'playing' : 'backlog', // played in the last 2 weeks = playing
+        rating: 0,
+        hours,
+        genres: [],
+        notes: '',
+        cover: s.cover || '',
+        [field]: s.id,
+        added: Date.now(),
+        updated: Date.now(),
+      });
+      added++;
+    }
+  }
+  if (added || updated) save();
+  return { added, updated };
+}
 
 async function steamSync(quiet) {
   if (!set.steam) return;
@@ -34,47 +87,19 @@ async function steamSync(quiet) {
     return;
   }
 
-  // Games already on the rack: linked to Steam before, or a PC game with the same title
-  const linked = new Map(games.reduce((a, g) => (g.steam ? a.concat([[g.steam, g]]) : a), []));
-  const byTitle = new Map(
-    games.reduce((a, g) => (!g.steam && (!g.platform || /pc|steam/i.test(g.platform)) ? a.concat([[sameTitle(g.title), g]]) : a), []),
+  const { added, updated } = importGames(
+    data.games.map((g) => ({
+      id: g.appid,
+      name: g.name,
+      minutes: g.minutes,
+      last: g.last,
+      cover: steamCover(g.appid),
+    })),
+    { field: 'steam', platform: 'PC', sameKind: /pc|steam/i, all: set.steamAll },
   );
-  const twoWeeksAgo = Date.now() / 1000 - 14 * 86400;
-  let added = 0;
-  let updated = 0;
-
-  for (const s of data.games) {
-    const hours = Math.round(s.minutes / 6) / 10; // minutes → hours with one decimal
-    const g = linked.get(s.appid) || byTitle.get(sameTitle(s.name));
-    if (g) {
-      g.steam = s.appid;
-      if (hours > (+g.hours || 0)) {
-        g.hours = hours;
-        g.updated = Date.now();
-        updated++;
-      }
-    } else if (s.minutes > 0 || set.steamAll) {
-      games.push({
-        id: uid(),
-        title: s.name,
-        platform: 'PC',
-        status: s.last > twoWeeksAgo ? 'playing' : 'backlog', // played in the last 2 weeks = playing
-        rating: 0,
-        hours,
-        genres: [],
-        notes: '',
-        cover: steamCover(s.appid),
-        steam: s.appid,
-        added: Date.now(),
-        updated: Date.now(),
-      });
-      added++;
-    }
-  }
 
   set.steamSynced = Date.now();
   saveSet();
-  if (added || updated) save();
   if (!quiet || added || updated) toast(`Steam: ${added} games added, ${updated} hours updated`);
 }
 

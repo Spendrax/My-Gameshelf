@@ -37,6 +37,7 @@ Live at https://spendrax.github.io/My-Gameshelf/
 | `js/16-window-weather.js` | The window view: scenes, time of day, weather, and Live mode (real weather from Open-Meteo) |
 | `js/17-achievements.js` | The Achievements wall: medals, what they unlock, the locks in Customize |
 | `js/18-friend.js` | The second buddy (unlocked by the Best Friends medal): wanders and naps on the room floor |
+| `js/19-console-sync.js` | PlayStation and Xbox sync (through the helper's /psn and /xbox) |
 | `sw.js` | Offline copy (bump `V` on every release) |
 | `privacy.html` | Privacy policy |
 
