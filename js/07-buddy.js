@@ -82,6 +82,7 @@ function heart(e) {
 // A tap (not a drag): pet him
 function petTap(e) {
   pet.lastTouch = Date.now();
+  emit('petted'); // for the "Good Buddy" medal
   if (pet.sleeping) {
     wake();
     say(rand(['Huh? I was napping…', '*yawn* Hi!', 'Five more minutes…']));

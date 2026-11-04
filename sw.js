@@ -1,5 +1,5 @@
 // Offline copy. Bump V on every release.
-const V = 'gs-v47';
+const V = 'gs-v48';
 const IMG = 'gs-img';
 const SHELL = [
   './', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png',
@@ -24,6 +24,8 @@ const SHELL = [
   'js/14-steam-sync.js',
   'js/15-buddy-moves.js',
   'js/16-window-weather.js',
+  'js/17-achievements.js',
+  'js/18-friend.js',
 ];
 
 self.addEventListener('install', e => e.waitUntil(caches.open(V).then(c => c.addAll(SHELL.map(u => new Request(u, { cache: 'reload' }))))));

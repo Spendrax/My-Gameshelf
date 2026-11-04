@@ -6,6 +6,10 @@ const LOOK = {
   sign: 'PLAY',
   signColor: '#ff3fa4',
   kind: 'blob', // which animal the buddy is
+  fon: 'on', // the second buddy (18-friend.js), once unlocked
+  fkind: 'cat',
+  fname: 'Pixel',
+  fcolor: '',
   petColor: '',
   hat: '',
   scene: 'city', // the view out of the window (16-window-weather.js)
@@ -136,8 +140,16 @@ function applyLook() {
   emit('look'); // the window view (16-window-weather.js) redraws itself
 }
 
+// A row of choices. Choices still locked by a medal (17-achievements.js) show 🔒 and say how to get them.
+const LOCK_KEY = { fkind: 'kind' }; // the second buddy's animals unlock with the first buddy's
 const chips = (k, list, cur) =>
-  `<div class="seg opt" data-k="${k}">${list.reduce((h, [v, n]) => h + `<button data-v="${v}" class="${v === cur ? 'on' : ''}">${n}</button>`, '')}</div>`;
+  `<div class="seg opt" data-k="${k}">${list.reduce((h, [v, n]) => {
+    const lock = v !== cur && lockedBy(LOCK_KEY[k] || k, v);
+    return (
+      h +
+      `<button data-v="${v}" class="${v === cur ? 'on' : ''}${lock ? ' locked' : ''}"${lock ? ` data-lock="${esc(lock.desc)}"` : ''}>${lock ? '\u{1F512} ' : ''}${n}</button>`
+    );
+  }, '')}</div>`;
 const swatches = (k, cur, first = '') =>
   `<div class="swatches" data-k="${k}">${first}` +
   LEDS.reduce(
@@ -166,6 +178,22 @@ function drawLook() {
     <label>Name<input id="cPet" maxlength="16" value="${esc(set.pet)}"></label>
     <label>Colour</label>${swatches('petColor', l.petColor, `<button data-v="" class="match ${l.petColor ? '' : 'on'}">${l.kind === 'blob' ? 'Same as LED' : 'Natural'}</button>`)}
     <label>Hat</label>${chips('hat', OPTS.hat, l.hat)}
+    <h3>Second buddy</h3>
+    ${
+      unlocked('friend')
+        ? `${chips(
+            'fon',
+            [
+              ['on', 'On'],
+              ['off', 'Off'],
+            ],
+            l.fon,
+          )}
+      <label>Animal</label>${chips('fkind', OPTS.kind, l.fkind)}
+      <label>Name<input id="cFriend" maxlength="16" value="${esc(l.fname)}"></label>
+      <label>Colour</label>${swatches('fcolor', l.fcolor, `<button data-v="" class="match ${l.fcolor ? '' : 'on'}">Natural</button>`)}`
+        : '<p class="dim small">\u{1F512} Feed your buddy 10 times (the \u201cBest Friends\u201d medal) to get a second buddy.</p>'
+    }
     <button class="btn ghost wide" id="cReset">Reset to default</button>`;
 }
 
@@ -183,6 +211,7 @@ function pickLook(k, v) {
 // Scroll the room above the sheet so you see what you're changing
 function showPart(k) {
   const vis = innerHeight * 0.5 - 60;
+  if (/^f(on|kind|color)$/.test(k)) return $('#view-room').scrollTo({ top: 99999, behavior: 'smooth' }); // the floor
   if (/^(kind|petColor|hat|pet)$/.test(k)) {
     petHome(); // brings him to the room if he's on another wall
     $('#view-room').scrollTo({ top: pet.y - vis + 20, behavior: 'smooth' });
@@ -211,6 +240,7 @@ $('#cBody').addEventListener('click', (e) => {
   }
   const b = e.target.closest('button[data-v]');
   if (!b) return;
+  if (b.dataset.lock) return toast(`\u{1F512} To unlock: ${b.dataset.lock} (see Achievements)`);
   pickLook(b.closest('[data-k]').dataset.k, b.dataset.v);
   drawLook();
 });
@@ -221,6 +251,11 @@ $('#cBody').addEventListener('input', (e) => {
     set.look.sign = t.value.trim().toUpperCase() || 'PLAY';
     saveSet();
     applyLook();
+  }
+  if (t.id === 'cFriend') {
+    set.look.fname = t.value.trim() || 'Pixel';
+    saveSet();
+    emit('look');
   }
   if (t.id === 'cPet') {
     set.pet = t.value.trim() || 'Byte';

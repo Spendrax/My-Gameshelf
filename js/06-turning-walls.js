@@ -1,8 +1,10 @@
 'use strict';
-// TURNING THE WALLS — the three walls stand round a hexagon (120° corners), like Bookshelf.
-// Swipe left/right (or tap the dots, or use the arrow keys) to turn:  Goals ← Room → Stats
-// `cam` is where you're facing: -1 = Goals, 0 = Room, 1 = Stats (in between while swiping).
-const WALLS = { goals: -1, room: 0, stats: 1 };
+// TURNING THE WALLS — the walls stand round a hexagon (120° corners), like Bookshelf.
+// Swipe left/right (or tap the dots, or use the arrow keys) to turn:  Achievements ← Goals ← Room → Stats
+// `cam` is where you're facing: -2 = Achievements, -1 = Goals, 0 = Room, 1 = Stats (in between while swiping).
+const WALLS = { ach: -2, goals: -1, room: 0, stats: 1 };
+const FIRST = -2,
+  LAST = 1; // the leftmost and rightmost walls
 const wallEls = Object.entries(WALLS).map(([v, k]) => [$('#view-' + v), k]);
 let view = 'room',
   cam = 0,
@@ -73,8 +75,9 @@ addEventListener('pointermove', (e) => {
   sw.lx = e.clientX;
   sw.lt = now;
   let c = sw.c0 - (e.clientX - sw.x) / innerWidth;
-  if (c < -1) c = -1 - Math.min(0.06, (-1 - c) * 0.2);
-  else if (c > 1) c = 1 + Math.min(0.06, (c - 1) * 0.2);
+  // past the last wall it only gives a little
+  if (c < FIRST) c = FIRST - Math.min(0.06, (FIRST - c) * 0.2);
+  else if (c > LAST) c = LAST + Math.min(0.06, (c - LAST) * 0.2);
   camSet(c);
 });
 function swEnd(e) {
@@ -88,7 +91,7 @@ function swEnd(e) {
     dir = Math.sign(dc),
     fast = Math.abs(s.v) > 0.45 && Math.sign(-s.v) === dir;
   go(
-    dir && Math.abs(s.c0 + dir) <= 1 && (Math.abs(dc) > 0.22 || (fast && Math.abs(dc) > 0.03))
+    dir && s.c0 + dir >= FIRST && s.c0 + dir <= LAST && (Math.abs(dc) > 0.22 || (fast && Math.abs(dc) > 0.03))
       ? s.c0 + dir
       : s.c0,
   );
@@ -112,8 +115,8 @@ $('.dots').onclick = (e) => {
 document.addEventListener('keydown', (e) => {
   if (document.querySelector('dialog[open]') || /INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName))
     return;
-  if (e.key === 'ArrowRight' && WALLS[view] < 1) go(WALLS[view] + 1);
-  if (e.key === 'ArrowLeft' && WALLS[view] > -1) go(WALLS[view] - 1);
+  if (e.key === 'ArrowRight' && WALLS[view] < LAST) go(WALLS[view] + 1);
+  if (e.key === 'ArrowLeft' && WALLS[view] > FIRST) go(WALLS[view] - 1);
 });
 addEventListener('resize', () => camSet(cam));
 

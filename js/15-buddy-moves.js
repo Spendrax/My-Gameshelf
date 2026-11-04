@@ -26,6 +26,10 @@ const SURFACES = {
     ['.beanbag', (b) => [b.x + 22, b.x + b.w - 22, b.y + 16]],
     ['.floor', (b) => [0, b.w, b.y + 34]],
   ],
+  ach: [
+    ['.ach-shelf', (b) => [b.x + 12, b.x + b.w - 12, b.y + b.h]], // the cabinet shelves
+    ['.floor', (b) => [0, b.w, b.y + 34]],
+  ],
   goals: [
     ['.board', topEdge],
     ['.board .card', topEdge],
@@ -40,7 +44,8 @@ const SURFACES = {
 const NEXT_WALL = {
   room: { left: 'goals', right: 'stats' },
   stats: { left: 'room' },
-  goals: { right: 'room' },
+  goals: { left: 'ach', right: 'room' },
+  ach: { right: 'goals' },
 };
 
 const wallOf = (name) => $('#view-' + name);
@@ -358,6 +363,7 @@ $$('.bowl').forEach((bowl) =>
     setTimeout(() => {
       bowl.classList.remove('full');
       pet.lastTouch = Date.now();
+      emit('fed'); // for the "Best Friends" medal
       say(rand(['Yum! Thanks! 💜', 'That hit the spot!', '*burp* 😳', 'Best meal ever!']));
     }, 3000);
   }),

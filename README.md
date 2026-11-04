@@ -35,6 +35,8 @@ Live at https://spendrax.github.io/My-Gameshelf/
 | `tools/cloudflare-helper.js` | The Cloudflare Worker (`HELPER` in 01-core.js): barcode lookups, Steam sync, and backup game search (IGDB, Steam store); holds the Steam and Twitch keys as secrets |
 | `js/15-buddy-moves.js` | How the buddy moves: walkable surfaces, walking and jumping, going to other walls, dragging, food bowls |
 | `js/16-window-weather.js` | The window view: scenes, time of day, weather, and Live mode (real weather from Open-Meteo) |
+| `js/17-achievements.js` | The Achievements wall: medals, what they unlock, the locks in Customize |
+| `js/18-friend.js` | The second buddy (unlocked by the Best Friends medal): wanders and naps on the room floor |
 | `sw.js` | Offline copy (bump `V` on every release) |
 | `privacy.html` | Privacy policy |
 

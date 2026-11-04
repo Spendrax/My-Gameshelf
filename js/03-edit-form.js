@@ -55,6 +55,11 @@ function drawEditBits() {
   ).join('');
   $('#eRateTxt').textContent = draft.rating ? `${draft.rating}/10` : '';
 }
+// "Change…" under the Finished date: today, another day, or a long time ago (clears the date)
+$('#eWhen').onclick = (e) => {
+  e.preventDefault();
+  askFinished((d) => (form.elements.finished.value = d));
+};
 form.elements.endless.onchange = (e) => {
   draft.endless = e.target.checked;
   if (draft.endless && draft.status === 'finished') draft.status = 'enough';

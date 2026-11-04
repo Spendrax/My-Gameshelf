@@ -534,3 +534,15 @@ label.check input {
   border-color: var(--led);
   box-shadow: 0 0 10px var(--glow);
 }
+
+/* a Customize choice still locked by a medal */
+.seg button.locked {
+  opacity: 0.55;
+  border-style: dashed;
+}
+
+.when-btn {
+  margin-top: 6px;
+  padding: 6px 10px;
+  font-size: 12px;
+}

@@ -4,6 +4,13 @@
 // Small fixes don't need an entry. The card is also in Settings → "What's new".
 
 const NEWS = [
+  {
+    v: '3.6',
+    items: [
+      '\u{1F3C6} New Achievements wall (left of Goals): earn medals to unlock hats, animals, walls and window scenes',
+      '\u{1F43E} Feed your buddy 10 times to get a second buddy',
+    ],
+  },
   { v: '3.5', items: ['\u270B \u201cPlayed enough\u201d: the finish line for never-ending games'] },
   { v: '3.4', items: ['\u{1F3C6} Finished an old game? Pick the day you finished it, or \u201ca long time ago\u201d'] },
   { v: '3.3', items: ['Your rack is sorted into sections (Playing, Backlog, Finished\u2026). Tap a section to fold it into one shelf you scroll sideways.'] },

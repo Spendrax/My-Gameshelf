@@ -82,9 +82,14 @@
       <div class="nightstand"><i class="lamp"></i></div>
     </div>
   </section>
+  <section id="view-ach" class="view wall away">
+    <div class="led"></div>
+    <div id="achBody" class="wall-body"></div>
+    <div class="floor"><i class="rug"></i><button class="bowl" aria-label="Food bowl: call your buddy"><i></i></button></div>
+  </section>
 </main>
 
-<div class="dots"><button data-k="-1" aria-label="Goals"></button><button data-k="0" class="on" aria-label="Room"></button><button data-k="1" aria-label="Stats"></button></div>
+<div class="dots"><button data-k="-2" aria-label="Achievements"></button><button data-k="-1" aria-label="Goals"></button><button data-k="0" class="on" aria-label="Room"></button><button data-k="1" aria-label="Stats"></button></div>
 <button id="updBtn" class="upd" hidden>⟳ Update now</button>
 <button id="btnAdd" class="fab" aria-label="Add a game">+</button>
 
@@ -130,7 +135,7 @@
     </div>
     <div class="two">
       <label>Started<input name="started" type="date"></label>
-      <label id="eFinished">Finished<input name="finished" type="date"></label>
+      <label id="eFinished">Finished<input name="finished" type="date"><button type="button" class="btn ghost when-btn" id="eWhen">Change…</button></label>
     </div>
     <label>Genres<input name="genres" placeholder="Action, RPG"></label>
     <label>Notes<textarea name="notes" rows="4" placeholder="What did you think?"></textarea></label>
@@ -212,5 +217,7 @@
 <script src="js/14-steam-sync.js"></script>
 <script src="js/15-buddy-moves.js"></script>
 <script src="js/16-window-weather.js"></script>
+<script src="js/17-achievements.js"></script>
+<script src="js/18-friend.js"></script>
 </body>
 </html>
