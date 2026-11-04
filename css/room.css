@@ -1130,3 +1130,81 @@ body[data-scene='space'] .pane {
 [data-shade='open'] .window .curtain.r {
   clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 0 55%);
 }
+
+/* ---------- Rack sections (one per status) ---------- */
+.grp-h {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: calc(100% - 28px);
+  margin: 14px 14px 0;
+  padding: 6px 4px;
+  font: 700 14px var(--hd);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+/* the status colour as a little light */
+.grp-h::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--sc);
+  box-shadow: 0 0 8px var(--sc);
+}
+.grp-h span {
+  color: var(--dim);
+  font-weight: 500;
+}
+/* the fold arrow on the right */
+.grp-h i {
+  order: 9;
+  margin-left: auto;
+  width: 9px;
+  height: 9px;
+  border-right: 2px solid var(--dim);
+  border-bottom: 2px solid var(--dim);
+  transform: rotate(45deg);
+  transition: transform 0.2s;
+}
+.grp-h[aria-expanded='false'] i {
+  transform: rotate(-45deg);
+}
+/* a folded section: one shelf you scroll sideways */
+.shelf.peek {
+  justify-content: flex-start;
+  overflow-x: auto;
+  overflow-y: hidden;
+  margin-bottom: 0;
+  scrollbar-width: none;
+  touch-action: pan-x pan-y;
+  scroll-snap-type: x proximity;
+}
+.shelf.peek::-webkit-scrollbar {
+  display: none;
+}
+.shelf.peek .case {
+  scroll-snap-align: start;
+}
+/* the wrapper draws the board; the cases scroll inside it, so the board stays put */
+.peek-wrap {
+  position: relative;
+  margin-bottom: 12px;
+}
+.peek-wrap::after {
+  content: '';
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: -10px;
+  height: 10px;
+  border-radius: 2px;
+  background: linear-gradient(#4b3f6b, #241c3d);
+  box-shadow:
+    0 10px 22px -6px var(--led),
+    0 2px 0 #0006;
+}
+.shelf.peek::after {
+  display: none;
+}

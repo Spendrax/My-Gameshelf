@@ -39,7 +39,7 @@ function go(k, now) {
 }
 
 $('main').addEventListener('pointerdown', (e) => {
-  if (sw || e.target.closest('input,select,textarea,.pet')) return;
+  if (sw || e.target.closest('input,select,textarea,.pet,.peek')) return;
   sw = {
     id: e.pointerId,
     x: e.clientX,

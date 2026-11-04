@@ -48,11 +48,40 @@ function renderRack() {
     return;
   }
   const per = Math.max(3, Math.floor((rack.clientWidth - 24 + 10) / 88));
-  let h = '';
-  for (let i = 0; i < list.length; i += per)
-    h += `<div class="shelf">${list.slice(i, i + per).reduce((s, g) => s + caseHTML(g), '')}</div>`;
-  rack.innerHTML = h;
+  const shelves = (l) => {
+    let h = '';
+    for (let i = 0; i < l.length; i += per)
+      h += `<div class="shelf">${l.slice(i, i + per).reduce((s, g) => s + caseHTML(g), '')}</div>`;
+    return h;
+  };
+  // Searching or one filter chosen: just the matching games
+  if (q || filter !== 'all') {
+    rack.innerHTML = shelves(list);
+    return;
+  }
+  // Everything: one section per status. A folded section is a single shelf you scroll sideways.
+  const groups = list.reduce((m, g) => ((m[g.status] = (m[g.status] || []).concat(g)), m), {});
+  rack.innerHTML = Object.keys(STATUS).reduce((h, k) => {
+    const l = groups[k];
+    if (!l) return h;
+    const open = rackOpen(k);
+    return (
+      h +
+      `<button class="grp-h" data-g="${k}" aria-expanded="${open}" style="--sc:${STATUS[k].color}"><i></i>${STATUS[k].label}<span>${l.length}</span></button>` +
+      (open ? shelves(l) : `<div class="peek-wrap"><div class="shelf peek">${l.reduce((s, g) => s + caseHTML(g), '')}</div></div>`)
+    );
+  }, '');
 }
+
+// Which sections are open (remembered); Playing and On & off start open
+const rackOpen = (k) => (set.rackOpen || {})[k] ?? (k === 'playing' || k === 'onoff');
+$('#rack').addEventListener('click', (e) => {
+  const b = e.target.closest('.grp-h');
+  if (!b) return;
+  set.rackOpen = { ...set.rackOpen, [b.dataset.g]: !rackOpen(b.dataset.g) };
+  saveSet();
+  renderRack();
+});
 
 // The monitor cycles through the games you're playing
 let screenI = 0;
@@ -92,7 +121,8 @@ async function monitorPicture(g) {
   const tall = /t_cover|library_600x900/;
   const list = (await gamePictures(g)).reduce((a, u, i) => (i > 0 && !tall.test(u) ? a.concat(u) : a), []);
   // IGDB screenshots (ids start with "sc") first: IGDB "artworks" ("ar") are often logos on plain white
-  const wide = list.find((u) => /\/sc[^/]*\.jpg$/.test(u)) || list.find((u) => !/\/ar[^/]*\.jpg$/.test(u)) || list[0];
+  const wide =
+    list.find((u) => /\/sc[^/]*\.jpg$/.test(u)) || list.find((u) => !/\/ar[^/]*\.jpg$/.test(u)) || list[0];
   if (!wide || !byId(g.id)) return;
   g.screen = wide;
   store('gr.games', games); // saved quietly: nothing else needs redrawing
