@@ -19,6 +19,15 @@
 .view > * {
   flex-shrink: 0;
 }
+/* no grey scrollbar on the side of the walls (they still scroll) */
+.view,
+dialog.sheet {
+  scrollbar-width: none;
+}
+.view::-webkit-scrollbar,
+dialog.sheet::-webkit-scrollbar {
+  display: none;
+}
 
 body:not(.turning) .view.away {
   visibility: hidden;
