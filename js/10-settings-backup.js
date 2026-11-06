@@ -16,7 +16,13 @@ async function backupData() {
     app: 'my-gameshelf',
     version: VERSION,
     saved: new Date().toISOString(),
-    settings: { ...set, key: '', psnToken: '', xboxKey: '' } /* sign-in tokens stay on this phone */,
+    settings: {
+      ...set,
+      key: '',
+      psnToken: '',
+      xboxKey: '',
+      drive: undefined,
+    } /* sign-ins stay on this phone */,
     games: await Promise.all(
       games.map(async (g) =>
         g.cover?.startsWith('photos/') ? { ...g, cover: await photoData(g.cover) } : g,

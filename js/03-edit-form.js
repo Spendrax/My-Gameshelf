@@ -71,7 +71,8 @@ $('#eStatus').onclick = (e) => {
   if (!s) return;
   draft.status = s;
   if (s === 'playing' && !form.elements.started.value) form.elements.started.value = today();
-  if (s === 'finished' && !form.elements.finished.value) askFinished((d) => (form.elements.finished.value = d));
+  if (s === 'finished' && !form.elements.finished.value)
+    askFinished((d) => (form.elements.finished.value = d));
   drawEditBits();
 };
 $('#eRate').onclick = (e) => {
@@ -188,6 +189,8 @@ form.addEventListener('submit', (e) => {
 $('#eDel').onclick = () => {
   if (!confirm(`Delete "${draft.title}"?`)) return;
   games = games.filter((g) => g.id !== draft.id);
+  set.gone = (set.gone || []).concat({ id: draft.id, at: Date.now() }).slice(-500); // so Drive sync deletes it on your other devices too
+  saveSet();
   save();
   $('#dlgEdit').close();
   $('#dlgGame').close();

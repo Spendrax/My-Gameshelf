@@ -206,6 +206,13 @@
   <label>OpenXBL key<input id="sXbox" type="password" autocomplete="off"></label>
   <button class="btn primary wide" id="sXboxSync">Sync with Xbox</button>
   <p class="dim small">Your token and key stay on this phone and aren’t put in backups.</p>
+  <h3>Google Drive backup</h3>
+  <p class="dim small" id="gStatus"></p>
+  <button class="btn primary wide" id="gConnect">Connect Google Drive</button>
+  <div class="row" id="gActions" hidden>
+    <button class="btn" id="gNow">Back up now</button>
+    <button class="btn ghost" id="gOff">Disconnect</button>
+  </div>
   <h3>Game info</h3>
   <button class="btn wide" id="sYears">📅 Find missing release years</button>
   <h3>Backup</h3>
@@ -242,5 +249,6 @@
 <script src="js/19-console-sync.js"></script>
 <script src="js/20-fill-info.js"></script>
 <script src="js/21-photos.js"></script>
+<script src="js/22-drive-backup.js"></script>
 </body>
 </html>

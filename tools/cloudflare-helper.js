@@ -7,11 +7,14 @@
 //                           person's own sign-in token from playstation.com; nothing is kept here)
 //   POST /xbox (key in the body)     the Xbox games someone played, with playtime when available (each
 //                           person's own free OpenXBL key from xbl.io; nothing is kept here)
+//   POST /gauth, /gtoken    Google Drive backup: trades Google's one-time code for a lasting token, and that
+//                           token for a short pass (needs the GOOGLE_ID and GOOGLE_SECRET secrets)
 //   /ping                   "are you there?": open it in a browser to check the helper's version
 // Only the app's own site may use it, at most 60 requests a minute per connection.
 // Set up: Cloudflare → Workers & Pages → gameshelf-barcode → Edit code → paste this file → Deploy.
 // Steam key: Settings → Variables and Secrets → Add → type "Secret", name STEAM_KEY, value = your key → Deploy.
 // IGDB (Twitch): two more secrets the same way, TWITCH_ID (Client ID) and TWITCH_SECRET (Client Secret).
+// Google Drive backup: GOOGLE_ID (OAuth client ID) and GOOGLE_SECRET (client secret), the same way.
 
 // IGDB needs a Twitch access token; it lasts about two months, so it's kept between requests
 let igdbToken = { value: '', until: 0 };
@@ -187,7 +190,7 @@ async function xboxGames(key) {
   };
 }
 
-const HELPER_VERSION = 4;
+const HELPER_VERSION = 5;
 
 // Counts requests per connection over the last minute (kept in this server's memory, so it's a soft limit)
 const recent = new Map();
@@ -263,6 +266,28 @@ export default {
       } catch {
         return reply({ pictures: [] });
       }
+    }
+
+    if (url.pathname === '/gauth' || url.pathname === '/gtoken') {
+      const v = request.method === 'POST' ? (await request.text()).trim() : '';
+      const google = await fetch('https://oauth2.googleapis.com/token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+          client_id: env.GOOGLE_ID || '',
+          client_secret: env.GOOGLE_SECRET || '',
+          ...(url.pathname === '/gauth'
+            ? { code: v, grant_type: 'authorization_code', redirect_uri: 'postmessage' }
+            : { refresh_token: v, grant_type: 'refresh_token' }),
+        }),
+      }).then((r) => r.json());
+      // only what the app needs
+      return reply({
+        access_token: google.access_token,
+        expires_in: google.expires_in,
+        refresh_token: google.refresh_token,
+        error: google.error,
+      });
     }
 
     if (url.pathname === '/psn') {

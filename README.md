@@ -40,6 +40,7 @@ Live at https://spendrax.github.io/My-Gameshelf/
 | `js/19-console-sync.js` | PlayStation and Xbox sync (through the helper's /psn and /xbox) |
 | `js/20-fill-info.js` | Looks up missing release years and genres in the background |
 | `js/21-photos.js` | Your cover photos, kept in the offline file storage instead of the small game list storage |
+| `js/22-drive-backup.js` | Automatic Google Drive backup and sync between devices (`GOOGLE_CLIENT_ID`) |
 | `sw.js` | Offline copy (bump `V` on every release) |
 | `privacy.html` | Privacy policy |
 
