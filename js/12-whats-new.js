@@ -4,7 +4,12 @@
 // Small fixes don't need an entry. The card is also in Settings → "What's new".
 
 const NEWS = [
-  { v: '4.2', items: ['\u{1F1EB}\u{1F1F7} The app in French (Settings \u2192 Display \u2192 Language)'] },
+  {
+    v: '4.3',
+    items: [
+      '\u{1F30D} The app in your language: French, Spanish, Haitian Creole, Portuguese, German or Italian (Settings \u2192 Display \u2192 Language)',
+    ],
+  },
   {
     v: '4.1',
     items: ['Filter your rack by platform', 'Calm mode in Settings: fewer animations, less battery'],

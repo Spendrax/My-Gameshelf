@@ -41,7 +41,8 @@ Live at https://spendrax.github.io/My-Gameshelf/
 | `js/20-fill-info.js` | Looks up missing release years and genres in the background |
 | `js/21-photos.js` | Your cover photos, kept in the offline file storage instead of the small game list storage |
 | `js/22-drive-backup.js` | Automatic Google Drive backup and sync between devices (`GOOGLE_CLIENT_ID`) |
-| `js/23-french.js` | French version: swaps the English text on screen for French (add phrases to `FR` / `FR_TPL`) |
+| `js/23-languages.js` | Languages: swaps the English text on screen for the picked language |
+| `js/lang/*.js` | One file of phrases per language (French, Spanish, Haitian Creole, Portuguese, German, Italian) |
 | `sw.js` | Offline copy (bump `V` on every release) |
 | `privacy.html` | Privacy policy |
 
