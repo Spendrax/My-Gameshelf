@@ -169,6 +169,7 @@ form.addEventListener('submit', (e) => {
     updated: Date.now(),
   };
   delete g.platforms;
+  if (byId(g.id)?.title !== g.title) delete g.infoChecked; // renamed: look its year up again
   if (byId(g.id)?.cover !== g.cover) delete g.screen; // new cover: find a new wide picture
   if (!g.title) return;
   const isNew = !g.id;

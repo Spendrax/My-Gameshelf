@@ -4,6 +4,7 @@
 // Small fixes don't need an entry. The card is also in Settings → "What's new".
 
 const NEWS = [
+  { v: '3.9', items: ['Release years (and genres) now fill in by themselves for synced games'] },
   { v: '3.8', items: ['\u{1F3AE} Sync your PlayStation and Xbox games and hours (Settings)'] },
   { v: '3.7', items: ['New status: On hold, for games you stopped but want to get back to'] },
   {

@@ -38,6 +38,7 @@ Live at https://spendrax.github.io/My-Gameshelf/
 | `js/17-achievements.js` | The Achievements wall: medals, what they unlock, the locks in Customize |
 | `js/18-friend.js` | The second buddy (unlocked by the Best Friends medal): wanders and naps on the room floor |
 | `js/19-console-sync.js` | PlayStation and Xbox sync (through the helper's /psn and /xbox) |
+| `js/20-fill-info.js` | Looks up missing release years and genres in the background |
 | `sw.js` | Offline copy (bump `V` on every release) |
 | `privacy.html` | Privacy policy |
 
