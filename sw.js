@@ -1,5 +1,5 @@
 // Offline copy. Bump V on every release.
-const V = 'gs-v54';
+const V = 'gs-v55';
 const IMG = 'gs-img';
 const SHELL = [
   './', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png',
@@ -28,18 +28,24 @@ const SHELL = [
   'js/18-friend.js',
   'js/19-console-sync.js',
   'js/20-fill-info.js',
+  'js/21-photos.js',
 ];
 
 self.addEventListener('install', e => e.waitUntil(caches.open(V).then(c => c.addAll(SHELL.map(u => new Request(u, { cache: 'reload' }))))));
 // the page's "Update now" button asks the new version to take over
 self.addEventListener('message', e => { if (e.data === 'skip') self.skipWaiting(); });
 self.addEventListener('activate', e => {
-  e.waitUntil(caches.keys().then(ks => Promise.all(ks.reduce((a, k) => k !== V && k !== IMG ? a.concat(caches.delete(k)) : a, []))));
+  e.waitUntil(caches.keys().then(ks => Promise.all(ks.reduce((a, k) => k !== V && k !== IMG && k !== 'gs-photos' ? a.concat(caches.delete(k)) : a, []))));
   self.clients.claim();
 });
 self.addEventListener('fetch', e => {
   const r = e.request, u = new URL(r.url);
   if (r.method !== 'GET') return;
+  // your own cover photos (js/21-photos.js)
+  if (u.origin === location.origin && u.pathname.includes('/photos/')) {
+    e.respondWith(caches.open('gs-photos').then(c => c.match(r, { ignoreSearch: true })).then(hit => hit || new Response('', { status: 404 })));
+    return;
+  }
   if (r.destination === 'image' && u.origin !== location.origin) {
     // covers: keep a copy so the rack works offline
     e.respondWith(caches.open(IMG).then(c => c.match(r).then(hit => hit || fetch(r).then(res => { c.put(r, res.clone()); return res; }))));
