@@ -7,9 +7,13 @@
 const sameName = (t) => plainTitle(t).toLowerCase().replace(/[^a-z0-9]/g, '');
 let filling = false;
 
-async function fillMissingInfo() {
-  if (filling || !navigator.onLine) return;
+// loud = started from the Settings button: says how it's going and what it found
+async function fillMissingInfo(loud) {
+  if (filling || !navigator.onLine) return loud && toast(filling ? 'Already looking\u2026' : 'No connection right now');
   filling = true;
+  const todo = games.reduce((n, g) => n + (!g.year && !g.infoChecked), 0);
+  if (loud) toast(todo ? `Looking up ${todo} games\u2026` : 'Every game already has its year!');
+  let found = 0;
   try {
     let changed = 0;
     for (const g of games) {
@@ -20,7 +24,11 @@ async function fillMissingInfo() {
       // the result with the same name, else the first one
       const r = (d.results || []).find((x) => sameName(x.name) === sameName(g.title)) || d.results?.[0];
       if (r && sameName(r.name).includes(sameName(g.title).slice(0, 12))) {
-        if (r.released) g.year = r.released.slice(0, 4);
+        if (r.released) {
+          g.year = r.released.slice(0, 4);
+          found++;
+          if (loud && found % 5 === 0) toast(`Found ${found} of ${todo}\u2026`);
+        }
         if (!g.genres?.length && r.genres?.length) g.genres = r.genres.map((x) => x.name);
         if (r.igdb && !g.igdb) g.igdb = r.igdb;
         changed++;
@@ -32,7 +40,14 @@ async function fillMissingInfo() {
   } finally {
     filling = false;
   }
+  if (loud && todo) toast(`Found the year of ${found} of ${todo} games`);
 }
+
+// Settings → "Find missing years": look again for every game still without a year
+$('#sYears').onclick = () => {
+  games.forEach((g) => !g.year && delete g.infoChecked);
+  fillMissingInfo(true);
+};
 
 // a few seconds after opening the app, and after games are added
 setTimeout(fillMissingInfo, 6000);
