@@ -127,6 +127,7 @@ function applyLook() {
   r.setProperty('--led', set.led);
   r.setProperty('--sign', l.signColor);
   r.setProperty('--curtain', l.curtain);
+  document.body.classList.toggle('calm', !!set.calm); // Settings → Calm mode
   // the buddy: your colour, else the animal's natural colour (the blob glows in the LED colour)
   pet.el.dataset.kind = l.kind;
   const petColor = l.petColor || KIND_COLOR[l.kind];

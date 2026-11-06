@@ -30,12 +30,31 @@ const SORTS = {
   hours: (a, b) => (b.hours || 0) - (a.hours || 0),
 };
 
+// The platform list (most games first); only shown once you have games on 2 or more platforms
+function renderPlatforms() {
+  const count = games.reduce(
+    (m, g) => ((m[g.platform || 'Other'] = (m[g.platform || 'Other'] || 0) + 1), m),
+    {},
+  );
+  const names = Object.keys(count).sort((a, b) => count[b] - count[a]);
+  const sel = $('#plat');
+  sel.parentElement.hidden = names.length < 2;
+  if (!names.includes(sel.value)) sel.value = '';
+  const cur = sel.value;
+  sel.innerHTML =
+    `<option value="">All platforms</option>` +
+    names.reduce((h, n) => h + `<option value="${esc(n)}">${esc(n)} (${count[n]})</option>`, '');
+  sel.value = cur;
+}
+
 function renderRack() {
+  const plat = $('#plat').value;
   const q = $('#q').value.trim().toLowerCase();
   const list = games
     .reduce(
       (a, g) =>
         (filter === 'all' || g.status === filter) &&
+        (!plat || (g.platform || 'Other') === plat) &&
         (!q || (g.title + ' ' + g.platform).toLowerCase().includes(q))
           ? a.concat(g)
           : a,
@@ -55,7 +74,7 @@ function renderRack() {
     return h;
   };
   // Searching or one filter chosen: just the matching games
-  if (q || filter !== 'all') {
+  if (q || plat || filter !== 'all') {
     rack.innerHTML = shelves(list);
     return;
   }
@@ -68,7 +87,9 @@ function renderRack() {
     return (
       h +
       `<button class="grp-h" data-g="${k}" aria-expanded="${open}" style="--sc:${STATUS[k].color}"><i></i>${STATUS[k].label}<span>${l.length}</span></button>` +
-      (open ? shelves(l) : `<div class="peek-wrap"><div class="shelf peek">${l.reduce((s, g) => s + caseHTML(g), '')}</div></div>`)
+      (open
+        ? shelves(l)
+        : `<div class="peek-wrap"><div class="shelf peek">${l.reduce((s, g) => s + caseHTML(g), '')}</div></div>`)
     );
   }, '');
 }
@@ -147,6 +168,7 @@ $('#monitor').onclick = () => {
 };
 
 function renderRoom() {
+  renderPlatforms();
   renderChips();
   renderRack();
   renderScreen();
@@ -154,6 +176,7 @@ function renderRoom() {
 
 $('#q').addEventListener('input', renderRack);
 $('#sort').onchange = renderRack;
+$('#plat').onchange = renderRack;
 let rw = 0;
 addEventListener('resize', () => {
   if (innerWidth !== rw) {

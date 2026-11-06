@@ -150,3 +150,19 @@ textarea {
   display: flex;
   gap: 8px;
 }
+
+/* Calm mode (Settings): the decorative animations stop; the buddies still move */
+.calm .weather,
+.calm .weather::after,
+.calm .stars,
+.calm .sign span,
+.calm .console i,
+.calm .mug b,
+.calm .screen .idle,
+.calm .scan-frame i,
+.calm .pet .tail {
+  animation: none !important;
+}
+.calm .led {
+  box-shadow: 0 0 6px 1px var(--led);
+}

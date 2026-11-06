@@ -62,8 +62,24 @@ function box(el, wall) {
   return { x, y, w: el.offsetWidth, h: el.offsetHeight };
 }
 
-// Every walkable surface on every wall, measured fresh (the shelves move when games are added)
-function surfaces() {
+// Every walkable surface on every wall
+// Measured once, then remembered until something on the walls changes (games added, a section folded,
+// the screen resized…). Changes inside a buddy (speech bubble, moving) don't count.
+let surfCache = null;
+const forgetSurfaces = () => (surfCache = null);
+new MutationObserver((list) => {
+  const real = list.some(
+    (m) =>
+      !m.target.closest?.('.pet') &&
+      ![...m.addedNodes, ...m.removedNodes].every((n) => n.classList?.contains('pet')),
+  );
+  if (real) forgetSurfaces();
+}).observe($('main'), { childList: true, subtree: true });
+addEventListener('resize', forgetSurfaces);
+document.fonts?.ready.then(forgetSurfaces);
+const surfaces = () => (surfCache ||= measureSurfaces());
+
+function measureSurfaces() {
   return Object.entries(SURFACES).reduce((all, [name, list]) => {
     const wall = wallOf(name);
     for (const [sel, edge] of list) {

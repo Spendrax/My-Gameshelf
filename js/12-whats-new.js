@@ -4,6 +4,7 @@
 // Small fixes don't need an entry. The card is also in Settings → "What's new".
 
 const NEWS = [
+  { v: '4.1', items: ['Filter your rack by platform', 'Calm mode in Settings: fewer animations, less battery'] },
   {
     v: '4.0',
     items: ['\u2601 Automatic Google Drive backup that also syncs your devices (Settings)', 'Safer: sign-in tokens never travel in web addresses'],

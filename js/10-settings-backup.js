@@ -63,3 +63,11 @@ $('#sImport').onchange = async (e) => {
     toast("That file isn't a Gameshelf backup");
   }
 };
+
+// Calm mode: the decorative animations stop (the buddy still moves)
+$('#btnSettings').addEventListener('click', () => ($('#sCalm').checked = !!set.calm));
+$('#sCalm').onchange = (e) => {
+  set.calm = e.target.checked;
+  saveSet();
+  applyLook();
+};
