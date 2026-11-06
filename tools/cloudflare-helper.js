@@ -3,10 +3,12 @@
 //   /search?q=NAME&key=…   game search: IGDB (every platform), then RAWG, then the Steam store (PC only)
 //   /pictures?igdb=ID or ?q=NAME   box art, artwork and screenshots of one game (IGDB)
 //   /steam?id=NAME_OR_ID    the Steam games someone owns, with playtime (needs the STEAM_KEY secret)
-//   /psn?npsso=TOKEN        the PlayStation games someone played, with playtime (unofficial: each person's own
-//                           sign-in token from playstation.com; nothing is kept here)
-//   /xbox?key=KEY           the Xbox games someone played, with playtime when available (each person's own
-//                           free OpenXBL key from xbl.io; nothing is kept here)
+//   POST /psn  (token in the body)   the PlayStation games someone played, with playtime (unofficial: each
+//                           person's own sign-in token from playstation.com; nothing is kept here)
+//   POST /xbox (key in the body)     the Xbox games someone played, with playtime when available (each
+//                           person's own free OpenXBL key from xbl.io; nothing is kept here)
+//   /ping                   "are you there?": open it in a browser to check the helper's version
+// Only the app's own site may use it, at most 60 requests a minute per connection.
 // Set up: Cloudflare → Workers & Pages → gameshelf-barcode → Edit code → paste this file → Deploy.
 // Steam key: Settings → Variables and Secrets → Add → type "Secret", name STEAM_KEY, value = your key → Deploy.
 // IGDB (Twitch): two more secrets the same way, TWITCH_ID (Client ID) and TWITCH_SECRET (Client Secret).
@@ -185,6 +187,21 @@ async function xboxGames(key) {
   };
 }
 
+const HELPER_VERSION = 4;
+
+// Counts requests per connection over the last minute (kept in this server's memory, so it's a soft limit)
+const recent = new Map();
+function tooMany(ip) {
+  const now = Date.now();
+  const r = recent.get(ip);
+  if (!r || now - r.since > 60e3) {
+    if (recent.size > 5000) recent.clear();
+    recent.set(ip, { since: now, n: 1 });
+    return false;
+  }
+  return ++r.n > 60;
+}
+
 export default {
   async fetch(request, env) {
     const headers = {
@@ -193,6 +210,14 @@ export default {
     };
     const reply = (data, status = 200) => new Response(JSON.stringify(data), { status, headers });
     const url = new URL(request.url);
+
+    // a quick "are you there?" you can open in a browser: shows the helper's version
+    if (url.pathname === '/ping') return reply({ ok: true, version: HELPER_VERSION });
+    // only the app may use the helper (browsers always say which site is asking)
+    if (request.headers.get('Origin') !== 'https://spendrax.github.io')
+      return reply({ error: 'forbidden' }, 403);
+    // at most 60 requests a minute from one connection
+    if (tooMany(request.headers.get('CF-Connecting-IP') || '')) return reply({ error: 'busy' }, 429);
 
     if (url.pathname === '/search') {
       const q = (url.searchParams.get('q') || '').slice(0, 100);
@@ -242,7 +267,7 @@ export default {
 
     if (url.pathname === '/psn') {
       try {
-        return reply(await psnGames(url.searchParams.get('npsso') || ''));
+        return reply(await psnGames(request.method === 'POST' ? (await request.text()).trim() : ''));
       } catch {
         return reply({ error: 'down' }, 502);
       }
@@ -250,7 +275,7 @@ export default {
 
     if (url.pathname === '/xbox') {
       try {
-        return reply(await xboxGames(url.searchParams.get('key') || ''));
+        return reply(await xboxGames(request.method === 'POST' ? (await request.text()).trim() : ''));
       } catch {
         return reply({ error: 'down' }, 502);
       }

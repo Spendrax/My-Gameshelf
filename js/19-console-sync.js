@@ -10,7 +10,7 @@ const CONSOLE = {
   psn: {
     name: 'PlayStation',
     setting: 'psnToken',
-    url: (v) => `${HELPER}/psn?npsso=${encodeURIComponent(v)}`,
+    path: '/psn',
     field: 'psn',
     sameKind: /play\s?station|ps\d/i,
     errors: {
@@ -20,7 +20,7 @@ const CONSOLE = {
   xbox: {
     name: 'Xbox',
     setting: 'xboxKey',
-    url: (v) => `${HELPER}/xbox?key=${encodeURIComponent(v)}`,
+    path: '/xbox',
     field: 'xbox',
     sameKind: /xbox/i,
     errors: { key: 'That OpenXBL key doesn’t work. Copy it again from xbl.io and paste it.' },
@@ -34,7 +34,10 @@ async function consoleSync(which, quiet) {
   if (!quiet) toast(`Syncing with ${c.name}…`);
   let data;
   try {
-    data = await (await fetch(c.url(secret), { signal: AbortSignal.timeout(30000) })).json();
+    // the token goes in the body of the request, never in the web address (addresses can end up in logs)
+    data = await (
+      await fetch(HELPER + c.path, { method: 'POST', body: secret, signal: AbortSignal.timeout(30000) })
+    ).json();
   } catch {
     if (!quiet) toast(`Couldn’t reach ${c.name}. Try again later.`);
     return;
