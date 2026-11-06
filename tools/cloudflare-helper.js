@@ -132,20 +132,31 @@ async function psnGames(npsso) {
 // ---------- Xbox (through OpenXBL, with the person's own key) ----------
 const XBOX_PLATFORMS = { XboxSeries: 'Xbox Series S/X', XboxOne: 'Xbox One', PC: 'PC', Xbox360: 'Xbox 360' };
 async function xboxGames(key) {
-  const xbl = (path, init = {}) =>
-    fetch(`https://xbl.io/api/v2/${path}`, {
-      ...init,
-      headers: {
-        'X-Authorization': key,
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        ...init.headers,
-      },
-    }).then((r) => (r.status === 401 || r.status === 403 ? { error: 'key' } : r.json()));
+  // OpenXBL's address is api.xbl.io/v2 (the older xbl.io/api/v2 is tried if it fails)
+  const xbl = async (path, init = {}) => {
+    for (const base of ['https://api.xbl.io/v2/', 'https://xbl.io/api/v2/']) {
+      try {
+        const r = await fetch(base + path, {
+          ...init,
+          headers: {
+            'X-Authorization': key,
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            ...init.headers,
+          },
+        });
+        if (r.status === 401 || r.status === 403) return { error: 'key' };
+        if (r.ok) return await r.json();
+      } catch {}
+    }
+    return {};
+  };
   const acc = await xbl('account');
   if (acc.error) return acc;
   const xuid = (acc.content || acc).profileUsers?.[0]?.id;
-  const t = await xbl('titles');
+  // the games played: /titles, or /titles/{xuid} on some versions of OpenXBL
+  let t = await xbl('titles');
+  if (!(t.content || t).titles && xuid) t = await xbl(`titles/${xuid}`);
   const titles = (t.content || t).titles || [];
   if (!xuid && !titles.length) return { error: 'key' };
   // hours played: the "MinutesPlayed" stat of each game (not every game reports it)
