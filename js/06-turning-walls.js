@@ -121,3 +121,17 @@ document.addEventListener('keydown', (e) => {
 addEventListener('resize', () => camSet(cam));
 
 go(0, true);
+
+// The walls scroll together: at the top of one wall, the walls beside it are at their top too;
+// halfway down, they're halfway; at the bottom, at their bottom.
+wallEls.forEach(([el, k]) =>
+  el.addEventListener(
+    'scroll',
+    () => {
+      if (k !== WALLS[view]) return; // only the wall you're looking at leads
+      const f = el.scrollTop / Math.max(1, el.scrollHeight - el.clientHeight);
+      wallEls.forEach(([o]) => o !== el && (o.scrollTop = f * (o.scrollHeight - o.clientHeight)));
+    },
+    { passive: true },
+  ),
+);
