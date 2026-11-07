@@ -9,7 +9,7 @@
 // your Cloudflare helper (/gauth and /gtoken, with the GOOGLE_SECRET secret). The token stays on this phone.
 
 // Your Google Cloud "OAuth client ID" (web application). Empty = Drive backup not set up yet.
-const GOOGLE_CLIENT_ID = '';
+const GOOGLE_CLIENT_ID = '679061823989-qighlus30socegriekpu65btin6j5aka.apps.googleusercontent.com';
 const DRIVE_FILE = 'gameshelf-backup.json';
 
 set.drive = Object.assign({ refresh: '', last: 0, file: '' }, set.drive);
