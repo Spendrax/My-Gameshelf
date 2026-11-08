@@ -245,7 +245,6 @@ LANG.de = {
     'Multi-platform': 'Multiplattform',
     'Games on 3 different platforms': 'Spiele auf 3 verschiedenen Plattformen',
     Connected: 'Verbunden',
-    'Sync with Steam, PlayStation or Xbox': 'Synchronisiere mit Steam, PlayStation oder Xbox',
     'Night Owl': 'Nachteule',
     'Visit your room after midnight': 'Besuch dein Zimmer nach Mitternacht',
     'Good Buddy': 'Guter Kumpel',
@@ -434,6 +433,25 @@ LANG.de = {
       'Sicherer: Anmelde-Tokens stehen nie mehr in Webadressen',
     'The app in your language: French, Spanish, Haitian Creole, Portuguese, German or Italian (Settings → Display → Language)':
       'Die App in deiner Sprache: Französisch, Spanisch, Haitianisch, Portugiesisch, Deutsch oder Italienisch (Einstellungen → Anzeige → Sprache)',
+    'Brings in every Switch and Switch 2 game you played, with its hours. Unofficial (Nintendo has no public way), so it could stop working one day':
+      'Holt jedes Switch- und Switch-2-Spiel, das du gespielt hast, mit seinen Stunden. Inoffiziell (Nintendo bietet keinen öffentlichen Weg), kann also eines Tages aufhören zu funktionieren',
+    'Tap “Sign in to Nintendo” and sign in': 'Tippe auf „Bei Nintendo anmelden“ und melde dich an',
+    'On the “Select this person” button: long-press it (right-click on a computer) and choose “Copy link”. Don’t tap it':
+      'Beim Knopf „Diese Person auswählen“: lange drücken (Rechtsklick am Computer) und „Link kopieren“ wählen. Nicht antippen',
+    'Paste the link here and tap Sync. You stay connected for about 2 years':
+      'Füge den Link hier ein und tippe auf Synchronisieren. Du bleibst etwa 2 Jahre verbunden',
+    'Sign in to Nintendo': 'Bei Nintendo anmelden',
+    'Nintendo link': 'Nintendo-Link',
+    'Sync with Nintendo': 'Mit Nintendo synchronisieren',
+    'That Nintendo link didn’t work. A link works once, for a few minutes: sign in again and copy a new one':
+      'Dieser Nintendo-Link hat nicht geklappt. Ein Link gilt nur einmal, für ein paar Minuten: melde dich neu an und kopiere einen neuen',
+    'Your Nintendo sign-in expired. Sign in again (steps below)':
+      'Deine Nintendo-Anmeldung ist abgelaufen. Melde dich neu an (Schritte unten)',
+    'Tap “Sign in to Nintendo” first': 'Tippe zuerst auf „Bei Nintendo anmelden“',
+    'Sync your Nintendo Switch and Switch 2 games and hours (Settings → Nintendo)':
+      'Synchronisiere deine Nintendo-Switch- und Switch-2-Spiele und -Stunden (Einstellungen → Nintendo)',
+    'Sync with Steam, PlayStation, Xbox or Nintendo':
+      'Synchronisiere mit Steam, PlayStation, Xbox oder Nintendo',
   },
   tpl: {
     '{1} behind pace': '{1} hinter dem Plan',

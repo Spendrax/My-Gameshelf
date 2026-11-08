@@ -245,7 +245,6 @@ LANG.ht = {
     'Multi-platform': 'Miltiplatfòm',
     'Games on 3 different platforms': 'Jwèt sou 3 platfòm diferan',
     Connected: 'Konekte',
-    'Sync with Steam, PlayStation or Xbox': 'Senkronize ak Steam, PlayStation oswa Xbox',
     'Night Owl': 'Koukou lannwit',
     'Visit your room after midnight': 'Vizite chanm ou apre minwi',
     'Good Buddy': 'Bon zanmi',
@@ -429,6 +428,24 @@ LANG.ht = {
       'Pi an sekirite: token koneksyon yo pa janm pase nan adrès entènèt ankò',
     'The app in your language: French, Spanish, Haitian Creole, Portuguese, German or Italian (Settings → Display → Language)':
       'Aplikasyon an nan lang ou: franse, panyòl, kreyòl ayisyen, pòtigè, alman oswa italyen (Paramèt → Afichaj → Lang)',
+    'Brings in every Switch and Switch 2 game you played, with its hours. Unofficial (Nintendo has no public way), so it could stop working one day':
+      'Pote tout jwèt Switch ak Switch 2 ou te jwe yo, ak èdtan yo. Pa ofisyèl (Nintendo pa gen yon fason piblik), kidonk li ka sispann mache yon jou',
+    'Tap “Sign in to Nintendo” and sign in': 'Peze «Konekte ak Nintendo» epi konekte',
+    'On the “Select this person” button: long-press it (right-click on a computer) and choose “Copy link”. Don’t tap it':
+      'Sou bouton «Chwazi moun sa a»: kenbe l peze (klike adwat sou yon òdinatè) epi chwazi «Kopye lyen an». Pa peze l',
+    'Paste the link here and tap Sync. You stay connected for about 2 years':
+      'Kole lyen an isit la epi peze Senkronize. Ou rete konekte anviwon 2 lane',
+    'Sign in to Nintendo': 'Konekte ak Nintendo',
+    'Nintendo link': 'Lyen Nintendo',
+    'Sync with Nintendo': 'Senkronize ak Nintendo',
+    'That Nintendo link didn’t work. A link works once, for a few minutes: sign in again and copy a new one':
+      'Lyen Nintendo sa a pa mache. Yon lyen mache yon sèl fwa, pou kèk minit: konekte ankò epi kopye yon nouvo',
+    'Your Nintendo sign-in expired. Sign in again (steps below)':
+      'Koneksyon Nintendo ou ekspire. Konekte ankò (etap anba yo)',
+    'Tap “Sign in to Nintendo” first': 'Peze «Konekte ak Nintendo» anvan',
+    'Sync your Nintendo Switch and Switch 2 games and hours (Settings → Nintendo)':
+      'Senkronize jwèt ak èdtan Nintendo Switch ak Switch 2 ou (Paramèt → Nintendo)',
+    'Sync with Steam, PlayStation, Xbox or Nintendo': 'Senkronize ak Steam, PlayStation, Xbox oswa Nintendo',
   },
   tpl: {
     '{1} behind pace': '{1} an reta',

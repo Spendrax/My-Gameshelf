@@ -21,6 +21,7 @@ async function backupData() {
       key: '',
       psnToken: '',
       xboxKey: '',
+      nsToken: '',
       drive: undefined,
     } /* sign-ins stay on this phone */,
     games: await Promise.all(

@@ -7,6 +7,8 @@
 //                           person's own sign-in token from playstation.com; nothing is kept here)
 //   POST /xbox (key in the body)     the Xbox games someone played, with playtime when available (each
 //                           person's own free OpenXBL key from xbl.io; nothing is kept here)
+//   POST /nintendo (JSON body)   the Switch and Switch 2 games someone played, with playtime (unofficial: the
+//                           way Nintendo's Store app signs in; nothing is kept here)
 //   POST /gauth, /gtoken    Google Drive backup: trades Google's one-time code for a lasting token, and that
 //                           token for a short pass (needs the GOOGLE_ID and GOOGLE_SECRET secrets)
 //   /ping                   "are you there?": open it in a browser to check the helper's version
@@ -190,7 +192,72 @@ async function xboxGames(key) {
   };
 }
 
-const HELPER_VERSION = 5;
+// ---------- Nintendo (unofficial, the way the Nintendo Store app signs in) ----------
+// The app opens Nintendo's sign-in page; the person copies the "npf5c38e31cd085304b://auth#…" link and the app
+// sends it here once with its secret check code (PKCE verifier). That's traded for a sign-in that lasts about
+// 2 years ("session"), which the app keeps and sends again on each sync. Nothing is kept here.
+const NS_CLIENT = '5c38e31cd085304b';
+const NS_AGENT = 'com.nintendo.znej/3.0.3 (iOS/26.0.1)';
+const nsPost = (path, body, type) =>
+  fetch('https://accounts.nintendo.com/connect/1.0.0/api/' + path, {
+    method: 'POST',
+    headers: { 'Content-Type': type, Accept: 'application/json', 'User-Agent': NS_AGENT },
+    body,
+  }).then((r) => r.json().catch(() => ({})));
+
+async function nintendoGames({ link, verifier, session }) {
+  if (link) {
+    const code = new URLSearchParams(String(link).split('#')[1] || '').get('session_token_code');
+    const t = await nsPost(
+      'session_token',
+      new URLSearchParams({
+        client_id: NS_CLIENT,
+        session_token_code: code || '',
+        session_token_code_verifier: verifier || '',
+      }),
+      'application/x-www-form-urlencoded',
+    );
+    if (!t.session_token) return { error: 'link' };
+    session = t.session_token;
+  }
+  const a = await nsPost(
+    'token',
+    JSON.stringify({
+      client_id: NS_CLIENT,
+      session_token: session,
+      grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer-session-token',
+    }),
+    'application/json; charset=utf-8',
+  );
+  if (!a.access_token) return { error: 'session' };
+  const r = await fetch('https://app-api.znej.nintendo.com/api/v2.0/users/me/play_histories', {
+    headers: {
+      Authorization: 'Bearer ' + a.access_token,
+      Accept: 'application/json',
+      'gentry-locale': 'en-US',
+      'User-Agent': NS_AGENT,
+    },
+  });
+  if (!r.ok) return { error: 'down' };
+  // a game played on Switch and on Switch 2 comes twice: added together
+  const byId = {};
+  for (const h of (await r.json()).playHistories || []) {
+    const g = (byId[h.titleId] ||= {
+      id: h.titleId,
+      name: h.titleName,
+      minutes: 0,
+      last: 0,
+      cover: h.imageUrl || '',
+      platform: 'Nintendo Switch',
+    });
+    g.minutes += +h.totalPlayedMinutes || 0;
+    g.last = Math.max(g.last, Date.parse(h.lastPlayedAt) / 1000 || 0);
+    if (/2/.test(h.platform || '')) g.platform = 'Nintendo Switch 2';
+  }
+  return { session, games: Object.values(byId) };
+}
+
+const HELPER_VERSION = 6;
 
 // Counts requests per connection over the last minute (kept in this server's memory, so it's a soft limit)
 const recent = new Map();
@@ -293,6 +360,14 @@ export default {
     if (url.pathname === '/psn') {
       try {
         return reply(await psnGames(request.method === 'POST' ? (await request.text()).trim() : ''));
+      } catch {
+        return reply({ error: 'down' }, 502);
+      }
+    }
+
+    if (url.pathname === '/nintendo') {
+      try {
+        return reply(await nintendoGames(await request.json().catch(() => ({}))));
       } catch {
         return reply({ error: 'down' }, 502);
       }

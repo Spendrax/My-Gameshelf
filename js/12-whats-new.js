@@ -5,6 +5,10 @@
 
 const NEWS = [
   {
+    v: '4.4',
+    items: ['\u{1F3AE} Sync your Nintendo Switch and Switch 2 games and hours (Settings \u2192 Nintendo)'],
+  },
+  {
     v: '4.3',
     items: [
       '\u{1F30D} The app in your language: French, Spanish, Haitian Creole, Portuguese, German or Italian (Settings \u2192 Display \u2192 Language)',
