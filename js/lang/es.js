@@ -518,6 +518,9 @@ LANG.es = {
       '¿El mismo juego en dos consolas? Fusiónalos y conserva las horas de ambos',
     '3DS and Wii U games from Nintendo sync are recognized':
       'Se reconocen los juegos de 3DS y Wii U de la sincronización con Nintendo',
+    'Merge with': 'Fusionar con',
+    'Pick the other copy of this game. You keep this one, with the hours of both': 'Elige la otra copia de este juego. Conservas este, con las horas de ambos',
+    'Merge': 'Fusionar',
   },
   tpl: {
     '{1} behind pace': '{1} de retraso',

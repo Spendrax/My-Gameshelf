@@ -518,6 +518,9 @@ LANG.de = {
       'Dasselbe Spiel auf zwei Konsolen? Führ sie zusammen und behalte die Stunden von beiden',
     '3DS and Wii U games from Nintendo sync are recognized':
       '3DS- und Wii-U-Spiele aus dem Nintendo-Sync werden erkannt',
+    'Merge with': 'Zusammenführen mit',
+    'Pick the other copy of this game. You keep this one, with the hours of both': 'Wähl die andere Kopie dieses Spiels. Du behältst dieses, mit den Stunden von beiden',
+    'Merge': 'Zusammenführen',
   },
   tpl: {
     '{1} behind pace': '{1} hinter dem Plan',

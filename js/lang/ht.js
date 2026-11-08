@@ -514,6 +514,9 @@ LANG.ht = {
       'Menm jwèt la sou de konsòl? Mete yo ansanm epi kenbe èdtan toude',
     '3DS and Wii U games from Nintendo sync are recognized':
       'Jwèt 3DS ak Wii U ki soti nan senkronizasyon Nintendo yo rekonèt',
+    'Merge with': 'Mete ansanm ak',
+    'Pick the other copy of this game. You keep this one, with the hours of both': 'Chwazi lòt kopi jwèt sa a. Ou kenbe sa a, ak èdtan toude',
+    'Merge': 'Mete ansanm',
   },
   tpl: {
     '{1} behind pace': '{1} an reta',

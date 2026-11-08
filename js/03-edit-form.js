@@ -10,6 +10,7 @@ function openEdit(g) {
   const isNew = !draft.id;
   $('#editH').textContent = isNew ? 'New game' : 'Edit game';
   $('#eDel').hidden = isNew;
+  $('#eMerge').hidden = isNew;
   for (const k of [
     'title',
     'platform',

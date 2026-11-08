@@ -224,3 +224,8 @@
 .calm .treats span {
   animation-duration: 3.5s !important;
 }
+
+/* merge picker */
+#dlgMerge .list { max-height: 55vh; overflow: auto; margin-top: 10px; }
+#dlgMerge .lrow { cursor: pointer; }
+#dlgMerge .lrow small { margin-left: auto; white-space: nowrap; }
