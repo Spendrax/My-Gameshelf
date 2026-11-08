@@ -187,7 +187,8 @@ async function gamePictures(g) {
       }).then((r) => r.json());
     // games added by hand have no RAWG id: look the title up once
     const id =
-      g.rawg || (await api('games', `&page_size=1&search=${encodeURIComponent(plainTitle(g.title))}`)).results?.[0]?.id;
+      g.rawg ||
+      (await api('games', `&page_size=1&search=${encodeURIComponent(plainTitle(g.title))}`)).results?.[0]?.id;
     if (id) {
       const [info, shots] = await Promise.all([api(`games/${id}`), api(`games/${id}/screenshots`)]);
       list.push(

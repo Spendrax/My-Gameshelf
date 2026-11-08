@@ -1,5 +1,5 @@
 // Offline copy. Bump V on every release.
-const V = 'gs-v63';
+const V = 'gs-v64';
 const IMG = 'gs-img';
 const SHELL = [
   './', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png',
@@ -8,6 +8,7 @@ const SHELL = [
   'css/buddy.css',
   'css/walls.css',
   'css/sheets.css',
+  'css/extras.css',
   'js/01-core.js',
   'js/02-search.js',
   'js/03-edit-form.js',
@@ -31,6 +32,13 @@ const SHELL = [
   'js/21-photos.js',
   'js/22-drive-backup.js',
   'js/23-languages.js',
+  'js/24-game-facts.js',
+  'js/25-play-timer.js',
+  'js/26-collection.js',
+  'js/27-year-review.js',
+  'js/28-merge.js',
+  'js/29-deals.js',
+  'js/30-drag-cases.js',
   'js/lang/fr.js',
   'js/lang/es.js',
   'js/lang/ht.js',

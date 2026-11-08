@@ -3,7 +3,7 @@
 //   • the game list and settings, and saving them on the phone (localStorage)
 //   • a tiny event system: emit('change') after any edit, other files listen with on('change', …)
 //   • small helpers ($, esc, today, …) and caseHTML(), which draws one game case
-const VERSION = '4.4';
+const VERSION = '4.5';
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 
@@ -107,12 +107,22 @@ function platInfo(p = '') {
   return { c, s };
 }
 
+// Places later files can add to without editing these: each is a list of functions that return HTML.
+//   CASE_BADGES(g): little tags on a game case · CARD_EXTRAS(g): lines on the game card
+//   STATS_EXTRAS() / GOALS_EXTRAS(): cards on the Stats and Goals walls
+const CASE_BADGES = [];
+const CARD_EXTRAS = [];
+const STATS_EXTRAS = [];
+const GOALS_EXTRAS = [];
+const extras = (list, g) => list.reduce((h, f) => h + f(g), '');
+
 function caseHTML(g, cls = '') {
   const p = platInfo(g.platform);
   return (
     `<button class="case ${cls}" data-id="${g.id}" style="${p.c ? `--pc:${p.c};` : ''}" aria-label="${esc(g.title)}">` +
     `<span class="pb">${esc(p.s)}</span><span class="fb" style="--h:${hue(g.title)}">${esc(g.title)}</span>` +
     (g.cover ? `<img src="${esc(g.cover)}" alt="" loading="lazy" onerror="this.remove()">` : '') +
+    extras(CASE_BADGES, g) +
     `<i class="dot" style="--sc:${STATUS[g.status]?.color || '#888'}"></i></button>`
   );
 }

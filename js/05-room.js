@@ -38,12 +38,16 @@ function renderPlatforms() {
   );
   const names = Object.keys(count).sort((a, b) => count[b] - count[a]);
   const sel = $('#plat');
-  sel.parentElement.hidden = names.length < 2;
+  const tags = [...new Set(games.flatMap((g) => g.tags || []))].sort();
+  sel.parentElement.hidden = names.length < 2 && !tags.length;
   if (!names.includes(sel.value)) sel.value = '';
   const cur = sel.value;
   sel.innerHTML =
     `<option value="">All platforms</option>` +
-    names.reduce((h, n) => h + `<option value="${esc(n)}">${esc(n)} (${count[n]})</option>`, '');
+    names.reduce((h, n) => h + `<option value="${esc(n)}">${esc(n)} (${count[n]})</option>`, '') +
+    (tags.length
+      ? `<optgroup label="Tags">${tags.reduce((h, t) => h + `<option value="tag:${esc(t)}">🏷 ${esc(t)}</option>`, '')}</optgroup>`
+      : '');
   sel.value = cur;
 }
 
@@ -54,8 +58,11 @@ function renderRack() {
     .reduce(
       (a, g) =>
         (filter === 'all' || g.status === filter) &&
-        (!plat || (g.platform || 'Other') === plat) &&
-        (!q || (g.title + ' ' + g.platform).toLowerCase().includes(q))
+        (!plat ||
+          (plat.startsWith('tag:')
+            ? (g.tags || []).includes(plat.slice(4))
+            : (g.platform || 'Other') === plat)) &&
+        (!q || [g.title, g.platform, ...(g.tags || [])].join(' ').toLowerCase().includes(q))
           ? a.concat(g)
           : a,
       [],

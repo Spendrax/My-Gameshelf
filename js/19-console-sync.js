@@ -37,7 +37,7 @@ const CONSOLE = {
     setting: 'nsToken',
     path: '/nintendo',
     field: 'ns',
-    sameKind: /switch|nintendo/i,
+    sameKind: /switch|nintendo|3ds|wii/i,
     // a freshly pasted link is sent once with its check code; after that, the lasting sign-in
     body: () => JSON.stringify(nsLink ? { link: nsLink, verifier: loadNsCheck() } : { session: set.nsToken }),
     errors: {

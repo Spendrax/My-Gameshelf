@@ -50,10 +50,25 @@ function renderStats() {
     .sort((a, b) => (b.rating || 0) - (a.rating || 0))
     .slice(0, 5)
     .reduce((h, g) => (g.rating ? h + listRow(g, g.rating + '/10') : h), '');
-  const most = [...games]
+  // the same game on two consoles counts as one game, with the hours of both
+  const once = Object.values(
+    games.reduce((m, g) => {
+      const k = g.title.toLowerCase().replace(/[^a-z0-9]/g, '');
+      const cur = m[k];
+      m[k] = cur
+        ? {
+            ...((+g.hours || 0) > (+cur.hours || 0) ? g : cur),
+            hours: Math.round(((+cur.hours || 0) + (+g.hours || 0)) * 10) / 10,
+            both: true,
+          }
+        : g;
+      return m;
+    }, {}),
+  );
+  const most = once
     .sort((a, b) => (b.hours || 0) - (a.hours || 0))
     .slice(0, 5)
-    .reduce((h, g) => (g.hours ? h + listRow(g, g.hours + ' h') : h), '');
+    .reduce((h, g) => (g.hours ? h + listRow(g, g.hours + ' h' + (g.both ? ' 🔗' : '')) : h), '');
   const yrs = Object.fromEntries(
     Object.entries(s.years)
       .sort((a, b) => b[0] - a[0])
@@ -62,7 +77,11 @@ function renderStats() {
 
   $('#statsBody').innerHTML = `<h2>STATS</h2>
     <div class="trophies" title="One trophy per finished game">${'<i class="tro"></i>'.repeat(Math.min(s.fin, 10))}${
-      s.fin > 10 ? `<b>+${s.fin - 10}</b>` : s.fin ? '' : '<span class="dim">Finish a game to win a trophy</span>'
+      s.fin > 10
+        ? `<b>+${s.fin - 10}</b>`
+        : s.fin
+          ? ''
+          : '<span class="dim">Finish a game to win a trophy</span>'
     }</div>
     <div class="kpis">
       <div class="kpi"><b>${games.length}</b><span>Games</span></div>
@@ -75,7 +94,7 @@ function renderStats() {
     <div class="card"><h3>Most played</h3><div class="list">${most || '<p class="dim">Log some hours to see it here.</p>'}</div></div>
     <div class="card"><h3>Platforms</h3>${bars(s.plat)}</div>
     <div class="card"><h3>Genres</h3>${bars(s.gen)}</div>
-    <div class="card"><h3>Finished per year</h3>${bars(yrs)}</div>`;
+    <div class="card"><h3>Finished per year</h3>${bars(yrs)}</div>${extras(STATS_EXTRAS)}`;
 }
 
 function renderGoals() {
@@ -117,7 +136,7 @@ function renderGoals() {
     <div class="card"><h3>Backlog roulette</h3>
       <p class="dim" style="margin:0">${backlog.length ? `${backlog.length} games waiting. Can't choose? Let ${esc(set.pet)} pick.` : 'Your backlog is empty. Nice!'}</p>
       ${backlog.length ? '<button class="btn primary wide" id="spin">🎲 Pick my next game</button><div id="picked"></div>' : ''}
-    </div></div>`;
+    </div>${extras(GOALS_EXTRAS)}</div>`;
 }
 
 $('#view-goals').addEventListener('click', (e) => {

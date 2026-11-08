@@ -28,8 +28,15 @@ const STEAM_ERRORS = {
 //   all: also add games with no playtime
 // Never lowers hours you typed yourself and never changes the status of a game you already have.
 function importGames(items, { field, platform, sameKind, all }) {
-  // games already on the rack: linked to this account before, or the same title on a matching platform
-  const linked = new Map(games.reduce((a, g) => (g[field] ? a.concat([[g[field], g]]) : a), []));
+  // games already on the rack: linked to this account before, or the same title on a matching platform.
+  // A merged game (28-merge.js) keeps the other copy's link in g.merged: its hours are topped up there.
+  const linked = new Map(
+    games.reduce((a, g) => {
+      if (g[field]) a.push([g[field], [g, null]]);
+      for (const part of g.merged || []) if (part[field]) a.push([part[field], [g, part]]);
+      return a;
+    }, []),
+  );
   const byTitle = new Map(
     games.reduce(
       (a, g) =>
@@ -40,13 +47,28 @@ function importGames(items, { field, platform, sameKind, all }) {
   const twoWeeksAgo = Date.now() / 1000 - 14 * 86400;
   let added = 0;
   let updated = 0;
+  let played = 0;
   for (const s of items) {
     const hours = Math.round(s.minutes / 6) / 10; // minutes → hours with one decimal
-    const g = linked.get(s.id) || byTitle.get(sameTitle(s.name));
+    const [g, part] = linked.get(s.id) || [byTitle.get(sameTitle(s.name)), null];
     if (g) {
-      g[field] = s.id;
-      if (hours > (+g.hours || 0)) {
-        g.hours = hours;
+      // the hours that come from this account: the merged copy's, or the game's own (without merged copies)
+      const others = (g.merged || []).reduce((n, p) => n + (+p.hours || 0), 0);
+      const mine = part ? +part.hours || 0 : (+g.hours || 0) - others;
+      if ((part || g[field]) && hours > mine) played += (hours - mine) * 60; // played since last sync
+      // a game first brought in as "Switch" that the account now says is from another system (3DS, Wii U)
+      if (
+        !part &&
+        g[field] === s.id &&
+        s.platform &&
+        /switch/i.test(g.platform || '') &&
+        !/switch/i.test(s.platform)
+      )
+        g.platform = s.platform;
+      if (!part) g[field] = s.id;
+      if (hours > mine) {
+        if (part) part.hours = hours;
+        g.hours = Math.round(((+g.hours || 0) + hours - mine) * 10) / 10;
         g.updated = Date.now();
         updated++;
       }
@@ -68,6 +90,7 @@ function importGames(items, { field, platform, sameKind, all }) {
       added++;
     }
   }
+  if (played) emit('played', played);
   if (added || updated) save();
   return { added, updated };
 }

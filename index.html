@@ -17,6 +17,7 @@
 <link rel="stylesheet" href="css/buddy.css">
 <link rel="stylesheet" href="css/walls.css">
 <link rel="stylesheet" href="css/sheets.css">
+<link rel="stylesheet" href="css/extras.css">
 </head>
 <body>
 <header class="top">
@@ -139,6 +140,12 @@
       <label id="eFinished">Finished<input name="finished" type="date"><button type="button" class="btn ghost when-btn" id="eWhen">Change…</button></label>
     </div>
     <label>Genres<input name="genres" placeholder="Action, RPG"></label>
+    <label>Tags (your own shelves)<input name="tags" placeholder="Co-op, Cozy, Retro"></label>
+    <div class="two">
+      <label>Format<select name="format"><option value="">—</option><option value="physical">💿 Physical</option><option value="digital">☁️ Digital</option></select></label>
+      <label>Price paid<input name="price" type="number" min="0" step="0.01" inputmode="decimal"></label>
+    </div>
+    <label>Bought at<input name="store" maxlength="40" placeholder="Steam, Walmart, eShop…"></label>
     <label>Notes<textarea name="notes" rows="4" placeholder="What did you think?"></textarea></label>
     <div class="actions">
       <button type="button" id="eDel" class="btn danger">Delete</button>
@@ -265,5 +272,12 @@
 <script src="js/21-photos.js"></script>
 <script src="js/22-drive-backup.js"></script>
 <script src="js/23-languages.js"></script>
+<script src="js/24-game-facts.js"></script>
+<script src="js/25-play-timer.js"></script>
+<script src="js/26-collection.js"></script>
+<script src="js/27-year-review.js"></script>
+<script src="js/28-merge.js"></script>
+<script src="js/29-deals.js"></script>
+<script src="js/30-drag-cases.js"></script>
 </body>
 </html>

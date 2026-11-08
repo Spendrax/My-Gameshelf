@@ -11,18 +11,22 @@
 //                           way Nintendo's Store app signs in; nothing is kept here)
 //   POST /gauth, /gtoken    Google Drive backup: trades Google's one-time code for a lasting token, and that
 //                           token for a short pass (needs the GOOGLE_ID and GOOGLE_SECRET secrets)
+//   POST /facts (JSON body)  how long games take to beat, and their release dates (IGDB)
+//   POST /deals (JSON body)  current sales on wishlist games (IsThereAnyDeal; needs the ITAD_KEY secret)
 //   /ping                   "are you there?": open it in a browser to check the helper's version
 // Only the app's own site may use it, at most 60 requests a minute per connection.
 // Set up: Cloudflare → Workers & Pages → gameshelf-barcode → Edit code → paste this file → Deploy.
 // Steam key: Settings → Variables and Secrets → Add → type "Secret", name STEAM_KEY, value = your key → Deploy.
 // IGDB (Twitch): two more secrets the same way, TWITCH_ID (Client ID) and TWITCH_SECRET (Client Secret).
+// Sale alerts: ITAD_KEY (free API key from isthereanydeal.com/apps/my/), the same way.
 // Google Drive backup: GOOGLE_ID (OAuth client ID) and GOOGLE_SECRET (client secret), the same way.
 
 // IGDB needs a Twitch access token; it lasts about two months, so it's kept between requests
 let igdbToken = { value: '', until: 0 };
 
-// Asks IGDB (body = IGDB's query language). Needs the TWITCH_ID and TWITCH_SECRET secrets.
-async function igdb(body, env) {
+// Asks IGDB (body = IGDB's query language; endpoint = which list, games by default).
+// Needs the TWITCH_ID and TWITCH_SECRET secrets.
+async function igdb(body, env, endpoint = 'games') {
   if (!env.TWITCH_ID || !env.TWITCH_SECRET) return [];
   // the Twitch access token lasts about two months, so it's kept between requests
   if (Date.now() > igdbToken.until) {
@@ -32,7 +36,7 @@ async function igdb(body, env) {
     ).then((r) => r.json());
     igdbToken = { value: t.access_token, until: Date.now() + (t.expires_in - 3600) * 1000 };
   }
-  const list = await fetch('https://api.igdb.com/v4/games', {
+  const list = await fetch(`https://api.igdb.com/v4/${endpoint}`, {
     method: 'POST',
     headers: { 'Client-ID': env.TWITCH_ID, Authorization: `Bearer ${igdbToken.value}` },
     body,
@@ -205,6 +209,15 @@ const nsPost = (path, body, type) =>
     body,
   }).then((r) => r.json().catch(() => ({})));
 
+// Which system: from Nintendo's platform name or code, else from the title id (3DS ids start 00040…, Wii U 00050…)
+function nsPlatform({ platform = '', titleId = '' }) {
+  const p = String(platform);
+  if (/3ds|2ds|ctr/i.test(p) || /^00040/.test(titleId)) return 'Nintendo 3DS';
+  if (/wii ?u|wup/i.test(p) || /^00050/.test(titleId)) return 'Wii U';
+  if (/switch ?2|ounce|bee/i.test(p)) return 'Nintendo Switch 2';
+  return 'Nintendo Switch';
+}
+
 async function nintendoGames({ link, verifier, session }) {
   if (link) {
     const code = new URLSearchParams(String(link).split('#')[1] || '').get('session_token_code');
@@ -242,22 +255,109 @@ async function nintendoGames({ link, verifier, session }) {
   // a game played on Switch and on Switch 2 comes twice: added together
   const byId = {};
   for (const h of (await r.json()).playHistories || []) {
-    const g = (byId[h.titleId] ||= {
+    const platform = nsPlatform(h);
+    const key = h.titleId + (platform.includes('Switch') ? '' : platform);
+    const g = (byId[key] ||= {
       id: h.titleId,
       name: h.titleName,
       minutes: 0,
       last: 0,
       cover: h.imageUrl || '',
-      platform: 'Nintendo Switch',
+      platform,
     });
     g.minutes += +h.totalPlayedMinutes || 0;
     g.last = Math.max(g.last, Date.parse(h.lastPlayedAt) / 1000 || 0);
-    if (/2/.test(h.platform || '')) g.platform = 'Nintendo Switch 2';
+    if (platform === 'Nintendo Switch 2') g.platform = platform;
   }
   return { session, games: Object.values(byId) };
 }
 
-const HELPER_VERSION = 6;
+// ---------- Game facts: time to beat and release date (IGDB) ----------
+// body: { games: [{ key, igdb, name }] } (up to 40). Games without an IGDB id are found by name first.
+// Answer: { facts: { key: { beat, rush, full (hours), release (YYYY-MM-DD), igdb } } }
+async function gameFacts({ games = [] }, env) {
+  const list = games.slice(0, 40);
+  await Promise.all(
+    list.map(async (g) => {
+      if (g.igdb || !g.name) return;
+      const r = await igdb(
+        `search ${quoted(g.name)}; fields id; where parent_game = null & version_parent = null; limit 1;`,
+        env,
+      );
+      g.igdb = r[0]?.id;
+    }),
+  );
+  const ids = list.reduce((a, g) => (+g.igdb ? a.concat(+g.igdb) : a), []);
+  if (!ids.length) return { facts: {} };
+  const [times, dates] = await Promise.all([
+    igdb(
+      `fields game_id,hastily,normally,completely; where game_id = (${ids}); limit 50;`,
+      env,
+      'game_time_to_beats',
+    ),
+    igdb(`fields first_release_date; where id = (${ids}); limit 50;`, env),
+  ]);
+  const h = (s) => (s ? Math.round(s / 360) / 10 : 0); // seconds → hours with one decimal
+  const facts = {};
+  for (const g of list) {
+    if (!+g.igdb) continue;
+    const t = times.find((x) => x.game_id === +g.igdb) || {};
+    const d = dates.find((x) => x.id === +g.igdb)?.first_release_date;
+    facts[g.key] = {
+      igdb: +g.igdb,
+      beat: h(t.normally),
+      rush: h(t.hastily),
+      full: h(t.completely),
+      release: d ? new Date(d * 1000).toISOString().slice(0, 10) : '',
+    };
+  }
+  return { facts };
+}
+
+// ---------- Sales on wishlist games (IsThereAnyDeal) ----------
+// body: { games: [{ key, name, steam }], country: 'CA' }. Answer: { deals: { key: { cut, price, currency, shop, url } } }
+async function gameDeals({ games = [], country = 'US' }, env) {
+  if (!env.ITAD_KEY) return { error: 'no-key' };
+  const itad = (path, body) =>
+    fetch(`https://api.isthereanydeal.com/${path}${path.includes('?') ? '&' : '?'}key=${env.ITAD_KEY}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    }).then((r) => (r.ok ? r.json() : {}));
+  const list = games.slice(0, 100);
+  // IsThereAnyDeal's id for each game: by Steam app when there is one, else by name
+  const bySteam = await itad(
+    'lookup/id/shop/61/v1',
+    list.reduce((a, g) => (g.steam ? a.concat(`app/${g.steam}`) : a), []),
+  );
+  const byName = await itad(
+    'lookup/id/title/v1',
+    list.reduce((a, g) => (!g.steam ? a.concat(g.name) : a), []),
+  );
+  const idOf = list.reduce((m, g) => {
+    const id = g.steam ? bySteam[`app/${g.steam}`] : byName[g.name];
+    if (id) m[id] = g.key;
+    return m;
+  }, {});
+  const ids = Object.keys(idOf);
+  if (!ids.length) return { deals: {} };
+  const prices = await itad(`games/prices/v3?country=${encodeURIComponent(country)}&deals=true`, ids);
+  const deals = {};
+  for (const p of Array.isArray(prices) ? prices : []) {
+    const best = (p.deals || []).reduce((b, d) => (d.cut > (b?.cut || 0) ? d : b), null);
+    if (best)
+      deals[idOf[p.id]] = {
+        cut: best.cut,
+        price: best.price?.amount,
+        currency: best.price?.currency,
+        shop: best.shop?.name,
+        url: best.url,
+      };
+  }
+  return { deals };
+}
+
+const HELPER_VERSION = 7;
 
 // Counts requests per connection over the last minute (kept in this server's memory, so it's a soft limit)
 const recent = new Map();
@@ -360,6 +460,15 @@ export default {
     if (url.pathname === '/psn') {
       try {
         return reply(await psnGames(request.method === 'POST' ? (await request.text()).trim() : ''));
+      } catch {
+        return reply({ error: 'down' }, 502);
+      }
+    }
+
+    if (url.pathname === '/facts' || url.pathname === '/deals') {
+      try {
+        const body = await request.json().catch(() => ({}));
+        return reply(await (url.pathname === '/facts' ? gameFacts : gameDeals)(body, env));
       } catch {
         return reply({ error: 'down' }, 502);
       }

@@ -1,0 +1,226 @@
+/* Styles for the newer parts: countdowns and sales, the play timer chip, streak, treats game,
+   year in review, merging, and dragging games between sections. */
+
+/* little tags on a case: "12 d" until release, "-50%" on sale */
+.case .badge {
+  position: absolute;
+  z-index: 4;
+  top: 18%;
+  right: -3px;
+  padding: 1px 5px;
+  border-radius: 6px;
+  font:
+    700 10px/1.4 system-ui,
+    sans-serif;
+  color: #fff;
+  box-shadow: 0 1px 4px #0008;
+}
+.case .badge.soon {
+  background: #4b6bff;
+}
+.case .badge.sale {
+  background: #e0245e;
+  top: auto;
+  bottom: 18%;
+}
+
+/* game card lines */
+.g-facts {
+  margin: 10px 0 0;
+  line-height: 1.6;
+  font-size: 14px;
+}
+.g-facts a {
+  color: var(--led);
+}
+.tags.mine span {
+  border-color: var(--led);
+}
+.twin {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  font-size: 14px;
+}
+#gBody > .btn.wide {
+  margin-top: 12px;
+}
+
+/* the timer / streak chip */
+.play-chip {
+  position: fixed;
+  z-index: 30;
+  left: 12px;
+  bottom: calc(env(safe-area-inset-bottom) + 74px);
+  max-width: calc(100vw - 110px);
+  padding: 8px 14px;
+  border: 1px solid #ffffff22;
+  border-radius: 999px;
+  background: #15121dee;
+  color: #fff;
+  font:
+    600 14px system-ui,
+    sans-serif;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  box-shadow: 0 4px 14px #0008;
+}
+.play-chip.on {
+  border-color: var(--led);
+  box-shadow: 0 0 14px var(--led);
+}
+.play-chip span {
+  margin-left: 6px;
+  color: #ff6b6b;
+}
+
+/* streak card */
+.streak {
+  margin: 4px 0 10px;
+}
+.streak b {
+  font-size: 34px;
+  color: var(--led);
+}
+.week {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  height: 64px;
+}
+.week div {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  opacity: 0.8;
+}
+.week i {
+  width: 100%;
+  max-width: 22px;
+  border-radius: 4px;
+  background: var(--led);
+}
+
+/* daily treats game */
+.treats {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  background: #0009;
+  overflow: hidden;
+  touch-action: none;
+}
+.treats p {
+  margin: calc(env(safe-area-inset-top) + 20px) 0 0;
+  text-align: center;
+  color: #fff;
+  font:
+    700 22px system-ui,
+    sans-serif;
+}
+.treats span {
+  position: absolute;
+  top: -60px;
+  font-size: 44px;
+  cursor: pointer;
+  user-select: none;
+  animation: treat-fall 2.4s linear forwards;
+}
+@keyframes treat-fall {
+  to {
+    transform: translateY(calc(100vh + 80px)) rotate(200deg);
+  }
+}
+
+/* year in review */
+#dlgYear .sheet-h {
+  gap: 6px;
+}
+#dlgYear h2 {
+  flex: 1;
+  text-align: center;
+}
+.recap {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 6px 0 14px;
+}
+.recap div {
+  display: grid;
+  padding: 12px;
+  border-radius: 14px;
+  background: #ffffff0d;
+}
+.recap span {
+  font-size: 24px;
+}
+.recap b {
+  font-size: 18px;
+  overflow-wrap: anywhere;
+}
+.recap small {
+  opacity: 0.7;
+}
+
+/* dragging a game */
+#rack .case {
+  -webkit-touch-callout: none;
+  user-select: none;
+}
+#rack .case img {
+  -webkit-user-drag: none;
+}
+.drag-ghost {
+  position: fixed !important;
+  z-index: 100;
+  left: 0;
+  top: 0;
+  margin: 0 !important;
+  pointer-events: none;
+  opacity: 0.9;
+  box-shadow: 0 12px 30px #000a;
+}
+.drop-bar {
+  position: fixed;
+  z-index: 99;
+  left: 8px;
+  right: 8px;
+  bottom: calc(env(safe-area-inset-bottom) + 10px);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px;
+  border-radius: 18px;
+  background: #15121df2;
+  box-shadow: 0 6px 20px #000a;
+}
+.drop-bar span {
+  padding: 8px 12px;
+  border: 2px solid var(--sc);
+  border-radius: 999px;
+  color: #fff;
+  font:
+    600 13px system-ui,
+    sans-serif;
+}
+.drop-here {
+  outline: 3px dashed var(--led);
+  outline-offset: 3px;
+  border-radius: 10px;
+}
+.drop-bar .drop-here {
+  background: var(--sc);
+  outline: none;
+}
+
+.calm .treats span {
+  animation-duration: 3.5s !important;
+}

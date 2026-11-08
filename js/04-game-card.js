@@ -28,6 +28,7 @@ function openGame(id) {
     ${g.genres?.length ? `<div class="tags">${g.genres.reduce((h, x) => h + `<span>${esc(x)}</span>`, '')}</div>` : ''}
     ${g.notes ? `<div class="notes">${esc(g.notes)}</div>` : ''}
     ${g.rawg ? `<p class="dim small">Game info from <a href="https://rawg.io/games/${+g.rawg}" target="_blank" rel="noopener">RAWG</a></p>` : ''}
+    ${extras(CARD_EXTRAS, g)}
     <div class="quick">
       ${g.status !== 'playing' ? '<button class="btn" data-q="playing">▶ Playing</button>' : ''}
       ${g.status !== 'finished' && !g.endless ? '<button class="btn" data-q="finished">🏆 Finished</button>' : ''}
@@ -57,7 +58,10 @@ $('#gBody').addEventListener('click', (e) => {
       emit('finished', g);
     });
   if (q === 'enough') g.status = 'enough';
-  if (q === 'hour') g.hours = (+g.hours || 0) + 1;
+  if (q === 'hour') {
+    g.hours = (+g.hours || 0) + 1;
+    emit('played', 60);
+  }
   g.updated = Date.now();
   save();
   openGame(g.id);

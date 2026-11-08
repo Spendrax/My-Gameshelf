@@ -10,9 +10,21 @@ function openEdit(g) {
   const isNew = !draft.id;
   $('#editH').textContent = isNew ? 'New game' : 'Edit game';
   $('#eDel').hidden = isNew;
-  for (const k of ['title', 'platform', 'hours', 'year', 'started', 'finished', 'notes'])
+  for (const k of [
+    'title',
+    'platform',
+    'hours',
+    'year',
+    'started',
+    'finished',
+    'notes',
+    'format',
+    'price',
+    'store',
+  ])
     form.elements[k].value = draft[k] ?? '';
   form.elements.genres.value = (draft.genres || []).join(', ');
+  form.elements.tags.value = (draft.tags || []).join(', ');
   $('#platList').innerHTML = [...new Set([...(draft.platforms || []), ...PLATFORMS])].reduce(
     (h, p) => h + `<option value="${esc(p)}">`,
     '',
@@ -167,6 +179,12 @@ form.addEventListener('submit', (e) => {
     genres: v('genres')
       .split(',')
       .reduce((a, x) => ((x = x.trim()) ? a.concat(x) : a), []),
+    tags: v('tags')
+      .split(',')
+      .reduce((a, x) => ((x = x.trim()) ? a.concat(x) : a), []),
+    format: v('format'),
+    price: v('price'),
+    store: v('store'),
     updated: Date.now(),
   };
   delete g.platforms;
@@ -174,6 +192,8 @@ form.addEventListener('submit', (e) => {
   if (byId(g.id)?.cover !== g.cover) delete g.screen; // new cover: find a new wide picture
   if (!g.title) return;
   const isNew = !g.id;
+  const more = g.hours - (+byId(g.id)?.hours || 0);
+  if (!isNew && more > 0) emit('played', more * 60); // more hours typed in: counts for today's streak
   if (isNew) {
     g.id = uid();
     g.added = Date.now();

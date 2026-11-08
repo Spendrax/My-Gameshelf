@@ -56,7 +56,7 @@ function tr(text) {
 
 // Game titles, notes and anything typed by you stay as they are
 const MINE = '.fb, .notes, .lrow span, .pick h4, textarea, script, style, code';
-const ATTRS = ['placeholder', 'aria-label', 'title'];
+const ATTRS = ['placeholder', 'aria-label', 'title', 'label'];
 
 function translate(root) {
   if (root.nodeType === 3) {
@@ -67,7 +67,7 @@ function translate(root) {
     return;
   }
   if (root.nodeType !== 1 || root.closest(MINE)) return;
-  for (const el of [root, ...root.querySelectorAll('[placeholder],[aria-label],[title]')])
+  for (const el of [root, ...root.querySelectorAll('[placeholder],[aria-label],[title],optgroup[label]')])
     for (const a of ATTRS) {
       const v = el.getAttribute(a);
       if (v && tr(v) !== v) el.setAttribute(a, tr(v)); // only when it changes, or the observer would loop

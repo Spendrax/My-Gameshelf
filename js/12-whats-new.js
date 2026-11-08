@@ -5,6 +5,20 @@
 
 const NEWS = [
   {
+    v: '4.5',
+    items: [
+      '\u23F1 Time to beat and hours left on each game, and release countdowns on your Wishlist',
+      '\u{1F525} Play timer and a daily play streak (Goals wall)',
+      '\u{1F36A} Daily treats mini-game for your buddy, who now cheers you on while you play',
+      '\u{1F3F7} Tags for your own shelves, plus format, price and store for your collection',
+      '\u{1F381} Year in review and a picture of your shelf to share (Stats wall)',
+      '\u{1F3F7} Sale alerts for your Wishlist',
+      '\u270B Hold a game to drag it to another section',
+      '\u{1F517} Same game on two consoles? Merge them and keep the hours of both',
+      '\u{1F3AE} 3DS and Wii U games from Nintendo sync are recognized',
+    ],
+  },
+  {
     v: '4.4',
     items: ['\u{1F3AE} Sync your Nintendo Switch and Switch 2 games and hours (Settings \u2192 Nintendo)'],
   },

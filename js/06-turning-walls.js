@@ -55,6 +55,7 @@ $('main').addEventListener('pointerdown', (e) => {
 });
 addEventListener('pointermove', (e) => {
   if (!sw || e.pointerId !== sw.id) return;
+  if (document.body.classList.contains('dragcase')) return (sw = null); // moving a game, not turning
   const dx = e.clientX - sw.x,
     dy = e.clientY - sw.y;
   if (!sw.on) {
