@@ -30,15 +30,10 @@ dlgYear.addEventListener('click', (e) => e.target === dlgYear && dlgYear.close()
 function yearRecap(y) {
   const Y = String(y);
   const inYear = (t) => t && new Date(t).getFullYear() === y;
-  const fin = games.reduce(
-    (a, g) => (beaten(g) && (g.finished || '').startsWith(Y) ? a.concat(g) : a),
-    [],
-  );
+  const fin = games.reduce((a, g) => (beaten(g) && (g.finished || '').startsWith(Y) ? a.concat(g) : a), []);
   const played = games.reduce(
     (a, g) =>
-      (g.started || '').startsWith(Y) ||
-      (g.finished || '').startsWith(Y) ||
-      (inYear(g.updated) && g.hours > 0)
+      (g.started || '').startsWith(Y) || (g.finished || '').startsWith(Y) || inYear(g.lastPlayed) // from Steam, PlayStation, Xbox and Nintendo syncs
         ? a.concat(g)
         : a,
     [],
@@ -184,7 +179,11 @@ const loadImg = (src) =>
     i.onload = () => res(i);
     i.onerror = () => res(null);
     setTimeout(() => res(null), 6000);
-    i.src = src;
+    // pictures from other sites go through your helper, which allows drawing them
+    i.src =
+      /^https?:/.test(src) && !src.startsWith(location.origin)
+        ? `${HELPER}/img?u=${encodeURIComponent(src)}`
+        : src;
   });
 
 async function drawCovers(x, list, left, top, perRow, w) {

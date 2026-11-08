@@ -480,12 +480,14 @@
   --w2: #07140f;
 }
 
-[data-shelf='wood'] .shelf::after {
+[data-shelf='wood'] .shelf::after,
+[data-shelf='wood'] .peek-wrap::after {
   background: linear-gradient(#8a5a36, #5b3820);
   box-shadow: 0 6px 12px -4px #0009;
 }
 
-[data-shelf='metal'] .shelf::after {
+[data-shelf='metal'] .shelf::after,
+[data-shelf='metal'] .peek-wrap::after {
   height: 6px;
   bottom: -6px;
   background: linear-gradient(#d0d3dc, #6e7280);

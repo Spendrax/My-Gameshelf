@@ -13,6 +13,7 @@
 //                           token for a short pass (needs the GOOGLE_ID and GOOGLE_SECRET secrets)
 //   POST /facts (JSON body)  how long games take to beat, and their release dates (IGDB)
 //   POST /deals (JSON body)  current sales on wishlist games (IsThereAnyDeal; needs the ITAD_KEY secret)
+//   /img?u=…                a cover picture, passed through so the app may draw it (Share my shelf)
 //   /ping                   "are you there?": open it in a browser to check the helper's version
 // Only the app's own site may use it, at most 60 requests a minute per connection.
 // Set up: Cloudflare → Workers & Pages → gameshelf-barcode → Edit code → paste this file → Deploy.
@@ -357,7 +358,7 @@ async function gameDeals({ games = [], country = 'US' }, env) {
   return { deals };
 }
 
-const HELPER_VERSION = 7;
+const HELPER_VERSION = 8;
 
 // Counts requests per connection over the last minute (kept in this server's memory, so it's a soft limit)
 const recent = new Map();
@@ -386,6 +387,28 @@ export default {
     // only the app may use the helper (browsers always say which site is asking)
     if (request.headers.get('Origin') !== 'https://spendrax.github.io')
       return reply({ error: 'forbidden' }, 403);
+    // a cover from a known picture site, passed through with permission for the app to draw it
+    if (url.pathname === '/img') {
+      let u;
+      try {
+        u = new URL(url.searchParams.get('u'));
+      } catch {
+        return reply({ error: 'bad' }, 400);
+      }
+      const ok =
+        /(^|\.)(igdb\.com|steamstatic\.com|steampowered\.com|playstation\.(com|net)|s-microsoft\.com|xboxlive\.com|nintendo\.(com|net)|rawg\.io)$/;
+      if (u.protocol !== 'https:' || !ok.test(u.hostname)) return reply({ error: 'bad' }, 400);
+      const r = await fetch(u, { cf: { cacheTtl: 86400 } });
+      if (!r.ok || !/^image\//.test(r.headers.get('Content-Type') || '')) return reply({ error: 'bad' }, 404);
+      return new Response(r.body, {
+        headers: {
+          'Content-Type': r.headers.get('Content-Type'),
+          'Access-Control-Allow-Origin': 'https://spendrax.github.io',
+          'Cache-Control': 'public, max-age=86400',
+        },
+      });
+    }
+
     // at most 60 requests a minute from one connection
     if (tooMany(request.headers.get('CF-Connecting-IP') || '')) return reply({ error: 'busy' }, 429);
 
