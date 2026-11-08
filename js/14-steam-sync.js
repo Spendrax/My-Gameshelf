@@ -21,6 +21,52 @@ const STEAM_ERRORS = {
   'no-key': 'The helper is missing its Steam key (STEAM_KEY in Cloudflare).',
 };
 
+// System apps and tools that accounts list like games: never added by a sync
+const NOT_A_GAME = new RegExp(
+  [
+    'e ?shop',
+    'pok[eé]mon bank',
+    'pok[eé] ?transporter',
+    'pok[eé]mon home',
+    'system settings',
+    'system transfer',
+    'data (transfer|management)',
+    'mii maker',
+    'nintendo 3ds (camera|sound)',
+    'internet browser',
+    'nintendo video',
+    'activity log',
+    'health (and|&) safety',
+    'parental controls',
+    'nintendo network id',
+    'wii u (chat|menu)',
+    'tvii',
+    'theme shop',
+    'download play',
+    'miiverse',
+    'youtube',
+    'netflix',
+    'hulu',
+    'disney\\+',
+    'crunchyroll',
+    'twitch',
+    'spotify',
+    'prime video',
+    'plex',
+    'steamvr',
+    'proton \\d',
+    'steam linux runtime',
+    'steamworks',
+    'wallpaper engine',
+    'soundtrack',
+    'dedicated server',
+    'benchmark',
+    'media player',
+    'web browser',
+  ].join('|'),
+  'i',
+);
+
 // Adds games from an account (Steam, PlayStation, Xbox) and tops up their hours. Shared by every sync.
 //   items: [{ id, name, minutes, last (seconds since 1970), cover, platform }]
 //   field: where the account's id is kept on a game (g.steam / g.psn / g.xbox)
@@ -49,6 +95,7 @@ function importGames(items, { field, platform, sameKind, all }) {
   let updated = 0;
   let played = 0;
   for (const s of items) {
+    if (NOT_A_GAME.test(s.name || '')) continue;
     const hours = Math.round(s.minutes / 6) / 10; // minutes → hours with one decimal
     const [g, part] = linked.get(s.id) || [byTitle.get(sameTitle(s.name)), null];
     if (g) {
@@ -89,6 +136,17 @@ function importGames(items, { field, platform, sameKind, all }) {
       });
       added++;
     }
+  }
+  // system apps a sync brought in before this filter existed (left alone if you rated them or wrote notes)
+  const junk = games.reduce(
+    (a, g) => (g[field] && NOT_A_GAME.test(g.title) && !g.rating && !g.notes ? a.concat(g.id) : a),
+    [],
+  );
+  if (junk.length) {
+    games = games.filter((g) => !junk.includes(g.id));
+    set.gone = (set.gone || []).concat(junk.map((id) => ({ id, at: Date.now() }))).slice(-500);
+    saveSet();
+    updated++;
   }
   if (played) emit('played', played);
   if (added || updated) save();
