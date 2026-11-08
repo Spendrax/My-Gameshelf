@@ -31,7 +31,7 @@ function yearRecap(y) {
   const Y = String(y);
   const inYear = (t) => t && new Date(t).getFullYear() === y;
   const fin = games.reduce(
-    (a, g) => (g.status === 'finished' && (g.finished || '').startsWith(Y) ? a.concat(g) : a),
+    (a, g) => (beaten(g) && (g.finished || '').startsWith(Y) ? a.concat(g) : a),
     [],
   );
   const played = games.reduce(
@@ -130,7 +130,7 @@ async function shareShelf() {
   const rows = Math.ceil(list.length / 5);
   const c = canvasCard(1080, 330 + rows * 290, tr('My Gameshelf'));
   const x = c.getContext('2d');
-  const fin = games.reduce((n, g) => n + (g.status === 'finished'), 0);
+  const fin = games.reduce((n, g) => n + beaten(g), 0);
   const hours = Math.round(games.reduce((n, g) => n + (+g.hours || 0), 0));
   x.font = '34px sans-serif';
   x.fillStyle = '#ffffffcc';

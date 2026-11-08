@@ -26,7 +26,7 @@ function renderStats() {
   const s = games.reduce(
     (a, g) => {
       a.hours += +g.hours || 0;
-      if (g.status === 'finished') {
+      if (beaten(g)) {
         a.fin++;
         if (g.finished) {
           const y = g.finished.slice(0, 4);
@@ -100,7 +100,7 @@ function renderStats() {
 function renderGoals() {
   const year = String(new Date().getFullYear());
   const done = games.reduce(
-    (a, g) => (g.status === 'finished' && (g.finished || '').startsWith(year) ? a.concat(g) : a),
+    (a, g) => (beaten(g) && (g.finished || '').startsWith(year) ? a.concat(g) : a),
     [],
   );
   const backlog = games.reduce((a, g) => (g.status === 'backlog' ? a.concat(g) : a), []);

@@ -1,5 +1,5 @@
 // Offline copy. Bump V on every release.
-const V = 'gs-v66';
+const V = 'gs-v67';
 const IMG = 'gs-img';
 const SHELL = [
   './', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png',
@@ -39,6 +39,7 @@ const SHELL = [
   'js/28-merge.js',
   'js/29-deals.js',
   'js/30-drag-cases.js',
+  'js/31-replay.js',
   'js/lang/fr.js',
   'js/lang/es.js',
   'js/lang/ht.js',

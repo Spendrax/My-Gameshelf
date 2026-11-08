@@ -520,8 +520,13 @@ LANG.fr = {
     '3DS and Wii U games from Nintendo sync are recognized':
       'Les jeux 3DS et Wii U de la synchro Nintendo sont reconnus',
     'Merge with': 'Fusionner avec',
-    'Pick the other copy of this game. You keep this one, with the hours of both': 'Choisis l’autre copie de ce jeu. Tu gardes celui-ci, avec les heures des deux',
-    'Merge': 'Fusionner',
+    'Pick the other copy of this game. You keep this one, with the hours of both':
+      'Choisis l’autre copie de ce jeu. Tu gardes celui-ci, avec les heures des deux',
+    Merge: 'Fusionner',
+    'Play again': 'Rejouer',
+    'Playing again': 'Rejoué',
+    'Playing a finished game again? Tap Play again: it stays finished too':
+      'Tu rejoues à un jeu terminé ? Touche Rejouer : il reste terminé aussi',
   },
   tpl: {
     '{1} behind pace': '{1} de retard',
@@ -590,5 +595,7 @@ LANG.fr = {
     '{1} in games': '{1} en jeux',
     '{1} at {2}': '{1} chez {2}',
     '{1} · {2}': '{1} · {2}',
+    'Finished {1}×': 'Terminé {1} fois',
+    'Round {1}': 'Partie {1}',
   },
 };

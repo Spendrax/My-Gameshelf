@@ -515,8 +515,13 @@ LANG.ht = {
     '3DS and Wii U games from Nintendo sync are recognized':
       'Jwèt 3DS ak Wii U ki soti nan senkronizasyon Nintendo yo rekonèt',
     'Merge with': 'Mete ansanm ak',
-    'Pick the other copy of this game. You keep this one, with the hours of both': 'Chwazi lòt kopi jwèt sa a. Ou kenbe sa a, ak èdtan toude',
-    'Merge': 'Mete ansanm',
+    'Pick the other copy of this game. You keep this one, with the hours of both':
+      'Chwazi lòt kopi jwèt sa a. Ou kenbe sa a, ak èdtan toude',
+    Merge: 'Mete ansanm',
+    'Play again': 'Jwe ankò',
+    'Playing again': 'Ap jwe ankò',
+    'Playing a finished game again? Tap Play again: it stays finished too':
+      'W ap jwe yon jwèt ou fini ankò? Peze Jwe ankò: li rete fini tou',
   },
   tpl: {
     '{1} behind pace': '{1} an reta',
@@ -585,5 +590,7 @@ LANG.ht = {
     '{1} in games': '{1} an jwèt',
     '{1} at {2}': '{1} nan {2}',
     '{1} · {2}': '{1} · {2}',
+    'Finished {1}×': 'Fini {1} fwa',
+    'Round {1}': 'Wonn {1}',
   },
 };

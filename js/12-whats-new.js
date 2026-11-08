@@ -4,6 +4,7 @@
 // Small fixes don't need an entry. The card is also in Settings → "What's new".
 
 const NEWS = [
+  { v: '4.6', items: ['\u{1F501} Playing a finished game again? Tap Play again: it stays finished too'] },
   {
     v: '4.5',
     items: [

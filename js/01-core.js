@@ -3,7 +3,7 @@
 //   • the game list and settings, and saving them on the phone (localStorage)
 //   • a tiny event system: emit('change') after any edit, other files listen with on('change', …)
 //   • small helpers ($, esc, today, …) and caseHTML(), which draws one game case
-const VERSION = '4.5';
+const VERSION = '4.6';
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 
@@ -110,6 +110,8 @@ function platInfo(p = '') {
 // Places later files can add to without editing these: each is a list of functions that return HTML.
 //   CASE_BADGES(g): little tags on a game case · CARD_EXTRAS(g): lines on the game card
 //   STATS_EXTRAS() / GOALS_EXTRAS(): cards on the Stats and Goals walls
+// Finished, or finished before and playing it again (31-replay.js)
+const beaten = (g) => g.status === 'finished' || !!g.beatenOn?.length;
 const CASE_BADGES = [];
 const CARD_EXTRAS = [];
 const STATS_EXTRAS = [];

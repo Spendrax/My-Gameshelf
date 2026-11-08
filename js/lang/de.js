@@ -519,8 +519,13 @@ LANG.de = {
     '3DS and Wii U games from Nintendo sync are recognized':
       '3DS- und Wii-U-Spiele aus dem Nintendo-Sync werden erkannt',
     'Merge with': 'Zusammenführen mit',
-    'Pick the other copy of this game. You keep this one, with the hours of both': 'Wähl die andere Kopie dieses Spiels. Du behältst dieses, mit den Stunden von beiden',
-    'Merge': 'Zusammenführen',
+    'Pick the other copy of this game. You keep this one, with the hours of both':
+      'Wähl die andere Kopie dieses Spiels. Du behältst dieses, mit den Stunden von beiden',
+    Merge: 'Zusammenführen',
+    'Play again': 'Nochmal spielen',
+    'Playing again': 'Wird nochmal gespielt',
+    'Playing a finished game again? Tap Play again: it stays finished too':
+      'Spielst du ein durchgespieltes Spiel nochmal? Tippe auf Nochmal spielen: es bleibt auch durchgespielt',
   },
   tpl: {
     '{1} behind pace': '{1} hinter dem Plan',
@@ -591,5 +596,7 @@ LANG.de = {
     '{1} in games': '{1} in Spielen',
     '{1} at {2}': '{1} bei {2}',
     '{1} · {2}': '{1} · {2}',
+    'Finished {1}×': '{1}× durchgespielt',
+    'Round {1}': 'Runde {1}',
   },
 };

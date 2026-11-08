@@ -136,7 +136,7 @@ function achStats() {
   const s = games.reduce(
     (a, g) => {
       a.hours += +g.hours || 0;
-      if (g.status === 'finished') {
+      if (beaten(g)) {
         a.fin++;
         if ((g.finished || '').startsWith(year)) a.year++;
       }

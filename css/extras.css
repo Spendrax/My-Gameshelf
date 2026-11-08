@@ -229,3 +229,4 @@
 #dlgMerge .list { max-height: 55vh; overflow: auto; margin-top: 10px; }
 #dlgMerge .lrow { cursor: pointer; }
 #dlgMerge .lrow small { margin-left: auto; white-space: nowrap; }
+.case .badge.again { background: #2e9e6a; top: auto; bottom: 18%; left: -3px; right: auto; }
