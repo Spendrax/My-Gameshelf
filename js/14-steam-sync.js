@@ -67,6 +67,19 @@ const NOT_A_GAME = new RegExp(
   'i',
 );
 
+// Demos ("Hades Demo", "Pokémon Scarlet - Demo", "… Free Trial"): their hours go to the full game
+const DEMO = /\s*[-–—:(\[]*\s*\b(free )?(demo|trial)( version| edition)?\b[)\]]*\s*$/i;
+const fullGameOf = (title) => {
+  const base = sameTitle(title.replace(DEMO, ''));
+  return games.find((g) => sameTitle(g.title) === base && !DEMO.test(g.title));
+};
+// Adds a demo's hours to the full game, as a merged part, so later syncs keep topping it up (28-merge.js)
+function addDemo(full, { platform, hours, field, id }) {
+  full.merged = (full.merged || []).concat({ platform: `${platform || ''} demo`.trim(), hours, [field]: id });
+  full.hours = Math.round(((+full.hours || 0) + hours) * 10) / 10;
+  full.updated = Date.now();
+}
+
 // Adds games from an account (Steam, PlayStation, Xbox) and tops up their hours. Shared by every sync.
 //   items: [{ id, name, minutes, last (seconds since 1970), cover, platform }]
 //   field: where the account's id is kept on a game (g.steam / g.psn / g.xbox)
@@ -94,8 +107,13 @@ function importGames(items, { field, platform, sameKind, all }) {
   let added = 0;
   let updated = 0;
   let played = 0;
+  const demos = [];
   for (const s of items) {
     if (NOT_A_GAME.test(s.name || '')) continue;
+    if (DEMO.test(s.name || '') && !linked.has(s.id)) {
+      demos.push(s); // after the full games, which may arrive in this same sync
+      continue;
+    }
     const hours = Math.round(s.minutes / 6) / 10; // minutes → hours with one decimal
     const [g, part] = linked.get(s.id) || [byTitle.get(sameTitle(s.name)), null];
     if (g) {
@@ -138,6 +156,27 @@ function importGames(items, { field, platform, sameKind, all }) {
       });
       added++;
     }
+  }
+  // demos: onto the full game if you have it, else left out
+  for (const s of demos) {
+    const full = fullGameOf(s.name);
+    if (!full) continue;
+    addDemo(full, {
+      platform: s.platform || platform,
+      hours: Math.round(s.minutes / 6) / 10,
+      field,
+      id: s.id,
+    });
+    updated++;
+  }
+  // demos a sync brought in as games before: moved onto the full game, or removed
+  for (const d of games.reduce((a, g) => (g[field] && DEMO.test(g.title) ? a.concat(g) : a), [])) {
+    const full = fullGameOf(d.title);
+    if (!full && (d.rating || d.notes)) continue;
+    if (full) addDemo(full, { platform: d.platform, hours: +d.hours || 0, field, id: d[field] });
+    games = games.filter((g) => g !== d);
+    set.gone = (set.gone || []).concat({ id: d.id, at: Date.now() }).slice(-500);
+    updated++;
   }
   // system apps a sync brought in before this filter existed (left alone if you rated them or wrote notes)
   const junk = games.reduce(
