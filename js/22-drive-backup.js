@@ -123,6 +123,9 @@ function mergeFrom(remote) {
   }
   games = [...all.values()].sort((a, b) => (b.added || 0) - (a.added || 0));
   set.gone = [...gone].map(([id, at]) => ({ id, at })).slice(-500);
+  // games deleted on either device stay out of syncs on both
+  const skip = new Map((set.skip || []).concat(remote.settings?.skip || []).map((x) => [x.keys.join(), x]));
+  set.skip = [...skip.values()];
   // a brand-new device also takes your room's look and goals
   if (wasEmpty && remote.settings) {
     const { look, pet: name, led, goal, rackOpen, ach } = remote.settings;

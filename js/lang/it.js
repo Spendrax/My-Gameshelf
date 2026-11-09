@@ -531,6 +531,8 @@ LANG.it = {
     'Playing again': 'Di nuovo in gioco',
     'Playing a finished game again? Tap Play again: it stays finished too':
       'Rigiochi un gioco finito? Tocca Gioca di nuovo: resta anche finito',
+    'They’ll come back on the next sync': 'Torneranno alla prossima sincronizzazione',
+    'Let deleted games come back': 'Fai tornare i giochi eliminati',
   },
   tpl: {
     '{1} behind pace': '{1} di ritardo',
@@ -602,5 +604,8 @@ LANG.it = {
     '{1} · {2}': '{1} · {2}',
     'Finished {1}×': 'Finito {1} volte',
     'Round {1}': 'Round {1}',
+    "{1} deleted games won't come back when you sync.":
+      '{1} giochi eliminati non torneranno con la sincronizzazione.',
+    'Let these come back on the next sync?\n\n{1}': 'Farli tornare alla prossima sincronizzazione?\n\n{1}',
   },
 };

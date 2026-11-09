@@ -522,6 +522,8 @@ LANG.ht = {
     'Playing again': 'Ap jwe ankò',
     'Playing a finished game again? Tap Play again: it stays finished too':
       'W ap jwe yon jwèt ou fini ankò? Peze Jwe ankò: li rete fini tou',
+    'They’ll come back on the next sync': 'Y ap tounen nan pwochen senkronizasyon an',
+    'Let deleted games come back': 'Kite jwèt ki efase yo tounen',
   },
   tpl: {
     '{1} behind pace': '{1} an reta',
@@ -592,5 +594,7 @@ LANG.ht = {
     '{1} · {2}': '{1} · {2}',
     'Finished {1}×': 'Fini {1} fwa',
     'Round {1}': 'Wonn {1}',
+    "{1} deleted games won't come back when you sync.": '{1} jwèt ki efase p ap tounen lè w senkronize.',
+    'Let these come back on the next sync?\n\n{1}': 'Kite yo tounen nan pwochen senkronizasyon an?\n\n{1}',
   },
 };

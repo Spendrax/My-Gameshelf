@@ -526,6 +526,8 @@ LANG.de = {
     'Playing again': 'Wird nochmal gespielt',
     'Playing a finished game again? Tap Play again: it stays finished too':
       'Spielst du ein durchgespieltes Spiel nochmal? Tippe auf Nochmal spielen: es bleibt auch durchgespielt',
+    'They’ll come back on the next sync': 'Sie kommen beim nächsten Sync zurück',
+    'Let deleted games come back': 'Gelöschte Spiele zurückkommen lassen',
   },
   tpl: {
     '{1} behind pace': '{1} hinter dem Plan',
@@ -598,5 +600,7 @@ LANG.de = {
     '{1} · {2}': '{1} · {2}',
     'Finished {1}×': '{1}× durchgespielt',
     'Round {1}': 'Runde {1}',
+    "{1} deleted games won't come back when you sync.": '{1} gelöschte Spiele kommen beim Sync nicht zurück.',
+    'Let these come back on the next sync?\n\n{1}': 'Beim nächsten Sync zurückkommen lassen?\n\n{1}',
   },
 };

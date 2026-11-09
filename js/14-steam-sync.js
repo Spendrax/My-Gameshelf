@@ -123,7 +123,10 @@ function importGames(items, { field, platform, sameKind, all }) {
   let updated = 0;
   let played = 0;
   const demos = [];
+  // games you deleted: syncs don't bring them back
+  const skipped = new Set((set.skip || []).flatMap((x) => x.keys));
   for (const s of items) {
+    if (skipped.has(`${field}:${s.id}`)) continue;
     if (NOT_A_GAME.test(s.name || '')) continue;
     if (DEMO.test(s.name || '') && !linked.has(s.id)) {
       demos.push(s); // after the full games, which may arrive in this same sync

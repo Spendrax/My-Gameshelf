@@ -72,3 +72,19 @@ $('#sCalm').onchange = (e) => {
   saveSet();
   applyLook();
 };
+
+/* ---------- Deleted games that syncs leave out (set.skip, from 03-edit-form.js) ---------- */
+
+function drawSkip() {
+  const n = (set.skip || []).length;
+  $('#sSkipTxt').textContent = n ? `${n} deleted games won't come back when you sync.` : '';
+  $('#sSkip').hidden = !n;
+}
+$('#sSkip').onclick = () => {
+  if (!confirm(`Let these come back on the next sync?\n\n${set.skip.map((x) => x.title).join(', ')}`)) return;
+  set.skip = [];
+  saveSet();
+  drawSkip();
+  toast('They’ll come back on the next sync');
+};
+$('#btnSettings').addEventListener('click', drawSkip);

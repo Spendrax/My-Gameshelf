@@ -209,8 +209,14 @@ form.addEventListener('submit', (e) => {
 });
 $('#eDel').onclick = () => {
   if (!confirm(`Delete "${draft.title}"?`)) return;
-  games = games.filter((g) => g.id !== draft.id);
+  const g = byId(draft.id);
+  games = games.filter((x) => x.id !== draft.id);
   set.gone = (set.gone || []).concat({ id: draft.id, at: Date.now() }).slice(-500); // so Drive sync deletes it on your other devices too
+  // synced from an account: remembered, so the next sync doesn't bring it back (Settings → Game info to undo)
+  const keys = ['steam', 'psn', 'xbox', 'ns'].flatMap((k) =>
+    [g?.[k], ...(g?.merged || []).map((p) => p[k])].reduce((a, id) => (id ? a.concat(`${k}:${id}`) : a), []),
+  );
+  if (keys.length) set.skip = (set.skip || []).concat({ keys, title: g.title });
   saveSet();
   save();
   $('#dlgEdit').close();
