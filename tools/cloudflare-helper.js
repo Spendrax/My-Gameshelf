@@ -336,8 +336,28 @@ async function gameDeals({ games = [], country = 'US', all = false }, env) {
     'lookup/id/title/v1',
     list.reduce((a, g) => (!g.steam ? a.concat(g.name) : a), []),
   );
+  // console names often differ from the PC one ("… – Remastered", "… PS4 & PS5"): a second try, cleaned up
+  const clean = (t) =>
+    t
+      .replace(/[™®©]/g, '')
+      .replace(
+        /\s*[-–—:]?\s*\b(ps4|ps5|ps4 (&|and) ps5|xbox( series x\|s| one)?|nintendo switch( 2)?( edition)?|remastered|definitive edition|complete edition|deluxe edition|game of the year edition|goty)\b.*$/i,
+        '',
+      )
+      .replace(/\s*\([^)]*\)\s*$/, '')
+      .trim();
+  const missed = list.reduce(
+    (a, g) => (!g.steam && !byName[g.name] && clean(g.name) !== g.name ? a.concat(g) : a),
+    [],
+  );
+  const byClean = missed.length
+    ? await itad(
+        'lookup/id/title/v1',
+        missed.map((g) => clean(g.name)),
+      )
+    : {};
   const idOf = list.reduce((m, g) => {
-    const id = g.steam ? bySteam[`app/${g.steam}`] : byName[g.name];
+    const id = g.steam ? bySteam[`app/${g.steam}`] : byName[g.name] || byClean[clean(g.name)];
     if (id) m[id] = g.key;
     return m;
   }, {});
@@ -350,7 +370,10 @@ async function gameDeals({ games = [], country = 'US', all = false }, env) {
   const deals = {};
   for (const p of Array.isArray(prices) ? prices : []) {
     if (all) {
-      const low = (p.deals || []).reduce((b, d) => (!b || d.price?.amount < b.price?.amount ? d : b), null);
+      // Steam's price when Steam sells it, else the lowest store price
+      const low =
+        (p.deals || []).find((d) => d.shop?.id === 61) ||
+        (p.deals || []).reduce((b, d) => (!b || d.price?.amount < b.price?.amount ? d : b), null);
       if (low)
         deals[idOf[p.id]] = {
           price: low.price?.amount,
@@ -372,7 +395,7 @@ async function gameDeals({ games = [], country = 'US', all = false }, env) {
   return { deals };
 }
 
-const HELPER_VERSION = 9;
+const HELPER_VERSION = 10;
 
 // Counts requests per connection over the last minute (kept in this server's memory, so it's a soft limit)
 const recent = new Map();
