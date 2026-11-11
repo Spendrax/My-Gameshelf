@@ -7,10 +7,14 @@ if ('serviceWorker' in navigator)
     const reg = await navigator.serviceWorker.register('sw.js').catch(() => null);
     if (!reg) return;
     const ready = (w) => {
-      if (w && navigator.serviceWorker.controller) {
-        $('#updBtn').hidden = false;
-        $('#updBtn').onclick = () => w.postMessage('skip');
-      }
+      if (w && navigator.serviceWorker.controller) $('#updBtn').hidden = false;
+    };
+    // Asks the newest waiting version to take over (not one remembered earlier: several updates may have
+    // arrived since). If nothing happens within a few seconds, reloads anyway.
+    $('#updBtn').onclick = () => {
+      $('#updBtn').textContent = '⟳ Updating…';
+      (reg.waiting || reg.installing)?.postMessage('skip');
+      setTimeout(() => location.reload(), 3000);
     };
     ready(reg.waiting);
     reg.addEventListener('updatefound', () => {

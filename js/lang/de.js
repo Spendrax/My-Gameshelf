@@ -537,6 +537,7 @@ LANG.de = {
       'Preise brauchen das ITAD_KEY-Secret in deinem Helper (wie der Angebotsalarm)',
     'Prices aren’t answering right now. Try again later':
       'Die Preise antworten gerade nicht. Versuch es später',
+    'Updating': 'Wird aktualisiert',
   },
   tpl: {
     '{1} behind pace': '{1} hinter dem Plan',

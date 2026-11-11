@@ -537,6 +537,7 @@ LANG.es = {
       'Los precios necesitan el secreto ITAD_KEY en tu helper (como las alertas de ofertas)',
     'Prices aren’t answering right now. Try again later':
       'Los precios no responden ahora. Inténtalo más tarde',
+    'Updating': 'Actualizando',
   },
   tpl: {
     '{1} behind pace': '{1} de retraso',

@@ -538,6 +538,7 @@ LANG.fr = {
       'Les prix ont besoin du secret ITAD_KEY dans ton helper (comme les alertes de soldes)',
     'Prices aren’t answering right now. Try again later':
       'Les prix ne répondent pas pour le moment. Réessaie plus tard',
+    'Updating': 'Mise à jour',
   },
   tpl: {
     '{1} behind pace': '{1} de retard',

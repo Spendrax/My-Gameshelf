@@ -51,6 +51,7 @@ body.snap .view {
   background: var(--led);
   box-shadow: 0 0 20px var(--led);
   animation: up 0.3s;
+  will-change: transform; /* its own layer, above the turning walls (taps reach it, not the game behind) */
 }
 
 /* floating add button and wall dots */

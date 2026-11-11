@@ -532,6 +532,7 @@ LANG.ht = {
     'Prices need the ITAD_KEY secret in your helper (like sale alerts)':
       'Pri yo bezwen sekrè ITAD_KEY nan helper ou (menm jan ak alèt rabè yo)',
     'Prices aren’t answering right now. Try again later': 'Pri yo pa reponn kounye a. Eseye ankò pita',
+    'Updating': 'Ap mete ajou',
   },
   tpl: {
     '{1} behind pace': '{1} an reta',

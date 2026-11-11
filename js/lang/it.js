@@ -541,6 +541,7 @@ LANG.it = {
     'Prices need the ITAD_KEY secret in your helper (like sale alerts)':
       'I prezzi richiedono il segreto ITAD_KEY nel tuo helper (come gli avvisi di sconto)',
     'Prices aren’t answering right now. Try again later': 'I prezzi non rispondono ora. Riprova più tardi',
+    'Updating': 'Aggiornamento',
   },
   tpl: {
     '{1} behind pace': '{1} di ritardo',
