@@ -533,6 +533,14 @@ LANG.it = {
       'Rigiochi un gioco finito? Tocca Gioca di nuovo: resta anche finito',
     'They’ll come back on the next sync': 'Torneranno alla prossima sincronizzazione',
     'Let deleted games come back': 'Fai tornare i giochi eliminati',
+    'At full price': 'A prezzo pieno',
+    'Update what it’s worth': 'Aggiorna quanto vale',
+    'What’s my library worth': 'Quanto vale la mia collezione',
+    'Store prices today, mostly from PC stores: many console games have no price':
+      'Prezzi di oggi nei negozi, soprattutto per PC: molti giochi console non hanno un prezzo',
+    'Prices need the ITAD_KEY secret in your helper (like sale alerts)':
+      'I prezzi richiedono il segreto ITAD_KEY nel tuo helper (come gli avvisi di sconto)',
+    'Prices aren’t answering right now. Try again later': 'I prezzi non rispondono ora. Riprova più tardi',
   },
   tpl: {
     '{1} behind pace': '{1} di ritardo',
@@ -607,5 +615,8 @@ LANG.it = {
     "{1} deleted games won't come back when you sync.":
       '{1} giochi eliminati non torneranno con la sincronizzazione.',
     'Let these come back on the next sync?\n\n{1}': 'Farli tornare alla prossima sincronizzazione?\n\n{1}',
+    'Worth today ({1} games)': 'Valore oggi ({1} giochi)',
+    'Looking up prices for {1} games': 'Cerco i prezzi di {1} giochi',
+    'Found prices for {1} of {2} games': 'Prezzi trovati per {1} giochi su {2}',
   },
 };

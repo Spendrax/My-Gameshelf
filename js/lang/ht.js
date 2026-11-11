@@ -524,6 +524,14 @@ LANG.ht = {
       'W ap jwe yon jwèt ou fini ankò? Peze Jwe ankò: li rete fini tou',
     'They’ll come back on the next sync': 'Y ap tounen nan pwochen senkronizasyon an',
     'Let deleted games come back': 'Kite jwèt ki efase yo tounen',
+    'At full price': 'Nan pri konplè',
+    'Update what it’s worth': 'Mete valè a ajou',
+    'What’s my library worth': 'Konbyen koleksyon mwen vo',
+    'Store prices today, mostly from PC stores: many console games have no price':
+      'Pri magazen jodi a, sitou nan magazen PC: anpil jwèt konsòl pa gen pri',
+    'Prices need the ITAD_KEY secret in your helper (like sale alerts)':
+      'Pri yo bezwen sekrè ITAD_KEY nan helper ou (menm jan ak alèt rabè yo)',
+    'Prices aren’t answering right now. Try again later': 'Pri yo pa reponn kounye a. Eseye ankò pita',
   },
   tpl: {
     '{1} behind pace': '{1} an reta',
@@ -596,5 +604,8 @@ LANG.ht = {
     'Round {1}': 'Wonn {1}',
     "{1} deleted games won't come back when you sync.": '{1} jwèt ki efase p ap tounen lè w senkronize.',
     'Let these come back on the next sync?\n\n{1}': 'Kite yo tounen nan pwochen senkronizasyon an?\n\n{1}',
+    'Worth today ({1} games)': 'Valè jodi a ({1} jwèt)',
+    'Looking up prices for {1} games': 'M ap chèche pri {1} jwèt',
+    'Found prices for {1} of {2} games': 'Jwenn pri pou {1} sou {2} jwèt',
   },
 };

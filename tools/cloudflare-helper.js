@@ -317,7 +317,8 @@ async function gameFacts({ games = [] }, env) {
 
 // ---------- Sales on wishlist games (IsThereAnyDeal) ----------
 // body: { games: [{ key, name, steam }], country: 'CA' }. Answer: { deals: { key: { cut, price, currency, shop, url } } }
-async function gameDeals({ games = [], country = 'US' }, env) {
+// With all: true, every game's lowest price today, on sale or not (what your library is worth): { price, regular }
+async function gameDeals({ games = [], country = 'US', all = false }, env) {
   if (!env.ITAD_KEY) return { error: 'no-key' };
   const itad = (path, body) =>
     fetch(`https://api.isthereanydeal.com/${path}${path.includes('?') ? '&' : '?'}key=${env.ITAD_KEY}`, {
@@ -342,9 +343,22 @@ async function gameDeals({ games = [], country = 'US' }, env) {
   }, {});
   const ids = Object.keys(idOf);
   if (!ids.length) return { deals: {} };
-  const prices = await itad(`games/prices/v3?country=${encodeURIComponent(country)}&deals=true`, ids);
+  const prices = await itad(
+    `games/prices/v3?country=${encodeURIComponent(country)}${all ? '' : '&deals=true'}`,
+    ids,
+  );
   const deals = {};
   for (const p of Array.isArray(prices) ? prices : []) {
+    if (all) {
+      const low = (p.deals || []).reduce((b, d) => (!b || d.price?.amount < b.price?.amount ? d : b), null);
+      if (low)
+        deals[idOf[p.id]] = {
+          price: low.price?.amount,
+          regular: low.regular?.amount,
+          currency: low.price?.currency,
+        };
+      continue;
+    }
     const best = (p.deals || []).reduce((b, d) => (d.cut > (b?.cut || 0) ? d : b), null);
     if (best)
       deals[idOf[p.id]] = {
@@ -358,7 +372,7 @@ async function gameDeals({ games = [], country = 'US' }, env) {
   return { deals };
 }
 
-const HELPER_VERSION = 8;
+const HELPER_VERSION = 9;
 
 // Counts requests per connection over the last minute (kept in this server's memory, so it's a soft limit)
 const recent = new Map();
