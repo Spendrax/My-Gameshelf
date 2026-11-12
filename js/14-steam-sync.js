@@ -150,6 +150,7 @@ function importGames(items, { field, platform, sameKind, all }) {
         g.platform = s.platform;
       if (!part) g[field] = s.id;
       if (s.last) g.lastPlayed = Math.max(g.lastPlayed || 0, s.last * 1000);
+      if (s.tro && !part) g.tro = s.tro; // trophies earned / possible (34-trophies.js)
       if (hours > mine) {
         if (part) part.hours = hours;
         g.hours = Math.round(((+g.hours || 0) + hours - mine) * 10) / 10;
@@ -169,6 +170,7 @@ function importGames(items, { field, platform, sameKind, all }) {
         cover: s.cover || '',
         [field]: s.id,
         lastPlayed: s.last ? s.last * 1000 : 0,
+        tro: s.tro,
         added: Date.now(),
         updated: Date.now(),
       });
@@ -239,6 +241,7 @@ async function steamSync(quiet) {
   );
 
   set.steamSynced = Date.now();
+  set.steamId = data.steamid || set.steamId; // for achievements (34-trophies.js)
   saveSet();
   if (!quiet || added || updated) toast(`Steam: ${added} games added, ${updated} hours updated`);
 }

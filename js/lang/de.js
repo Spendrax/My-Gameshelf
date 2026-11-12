@@ -537,7 +537,36 @@ LANG.de = {
       'Preise brauchen das ITAD_KEY-Secret in deinem Helper (wie der Angebotsalarm)',
     'Prices aren’t answering right now. Try again later':
       'Die Preise antworten gerade nicht. Versuch es später',
-    'Updating': 'Wird aktualisiert',
+    Updating: 'Wird aktualisiert',
+    'Add your games': 'Füge deine Spiele hinzu',
+    'Tap + to search for a game or scan its case. Or connect Steam, PlayStation, Xbox and Nintendo in Settings ⚙ to bring everything in at once':
+      'Tippe auf +, um ein Spiel zu suchen oder die Hülle zu scannen. Oder verbinde Steam, PlayStation, Xbox und Nintendo in den Einstellungen ⚙, um alles auf einmal zu holen',
+    'Your room has four walls': 'Dein Zimmer hat vier Wände',
+    'Swipe left or right: Achievements, Goals, your Room and Stats are all in the same bedroom':
+      'Wisch nach links oder rechts: Erfolge, Ziele, dein Zimmer und Statistik sind alle im selben Zimmer',
+    'Hold and drag': 'Halten und ziehen',
+    'Hold a game, then drop it on another section to change its status. Tap a section’s title to fold or open it':
+      'Halte ein Spiel gedrückt und lass es auf einem anderen Bereich los, um den Status zu ändern. Tippe auf einen Bereichstitel, um ihn ein- oder auszuklappen',
+    'Track your play': 'Erfasse deine Spielzeit',
+    'Open a game and tap Start playing. The timer adds your hours and keeps your daily streak going':
+      'Öffne ein Spiel und tippe auf Losspielen. Der Timer zählt deine Stunden und hält deine tägliche Serie am Laufen',
+    'Meet your buddy': 'Das ist dein Kumpel',
+    'Tap to pet, drag to move, tap a bowl to feed. Dress up the room and your buddy with 🎨':
+      'Tippen zum Streicheln, ziehen zum Bewegen, auf einen Napf tippen zum Füttern. Gestalte Zimmer und Kumpel mit 🎨',
+    Skip: 'Überspringen',
+    Next: 'Weiter',
+    'Let’s play': 'Los geht’s',
+    'Show the tips again': 'Tipps nochmal zeigen',
+    'What should I play': 'Was soll ich spielen',
+    'Almost done': 'Fast fertig',
+    'Quick ones': 'Kurze Spiele',
+    'Waiting the longest': 'Warten am längsten',
+    'What should I play? Ideas on the Goals wall': 'Was soll ich spielen? Ideen an der Ziele-Wand',
+    'Trophies and achievements on each game': 'Trophäen und Erfolge bei jedem Spiel',
+    'What’s my library worth? On the Stats wall': 'Was ist meine Sammlung wert? An der Statistik-Wand',
+    'A quick tour for new players (Settings to see it again)':
+      'Eine kurze Tour für neue Spieler (Einstellungen, um sie nochmal zu sehen)',
+    'Faster with big libraries': 'Schneller bei großen Sammlungen',
   },
   tpl: {
     '{1} behind pace': '{1} hinter dem Plan',
@@ -615,5 +644,6 @@ LANG.de = {
     'Worth today ({1} games)': 'Heutiger Wert ({1} Spiele)',
     'Looking up prices for {1} games': 'Suche Preise für {1} Spiele',
     'Found prices for {1} of {2} games': 'Preise gefunden für {1} von {2} Spielen',
+    'Show {1} more': '{1} weitere anzeigen',
   },
 };

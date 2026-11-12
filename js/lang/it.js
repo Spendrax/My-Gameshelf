@@ -541,7 +541,36 @@ LANG.it = {
     'Prices need the ITAD_KEY secret in your helper (like sale alerts)':
       'I prezzi richiedono il segreto ITAD_KEY nel tuo helper (come gli avvisi di sconto)',
     'Prices aren’t answering right now. Try again later': 'I prezzi non rispondono ora. Riprova più tardi',
-    'Updating': 'Aggiornamento',
+    Updating: 'Aggiornamento',
+    'Add your games': 'Aggiungi i tuoi giochi',
+    'Tap + to search for a game or scan its case. Or connect Steam, PlayStation, Xbox and Nintendo in Settings ⚙ to bring everything in at once':
+      'Tocca + per cercare un gioco o scansionare la custodia. Oppure collega Steam, PlayStation, Xbox e Nintendo nelle Impostazioni ⚙ per importare tutto in una volta',
+    'Your room has four walls': 'La tua stanza ha quattro pareti',
+    'Swipe left or right: Achievements, Goals, your Room and Stats are all in the same bedroom':
+      'Scorri a sinistra o a destra: Trofei, Obiettivi, la tua Stanza e Statistiche sono nella stessa camera',
+    'Hold and drag': 'Tieni premuto e trascina',
+    'Hold a game, then drop it on another section to change its status. Tap a section’s title to fold or open it':
+      'Tieni premuto un gioco e rilascialo su un’altra sezione per cambiarne lo stato. Tocca il titolo di una sezione per chiuderla o aprirla',
+    'Track your play': 'Tieni traccia del gioco',
+    'Open a game and tap Start playing. The timer adds your hours and keeps your daily streak going':
+      'Apri un gioco e tocca Inizia a giocare. Il timer aggiunge le ore e mantiene la tua serie giornaliera',
+    'Meet your buddy': 'Ecco il tuo amico',
+    'Tap to pet, drag to move, tap a bowl to feed. Dress up the room and your buddy with 🎨':
+      'Tocca per accarezzare, trascina per spostare, tocca una ciotola per dare da mangiare. Personalizza la stanza e il tuo amico con 🎨',
+    Skip: 'Salta',
+    Next: 'Avanti',
+    'Let’s play': 'Giochiamo',
+    'Show the tips again': 'Rivedi i suggerimenti',
+    'What should I play': 'A cosa gioco',
+    'Almost done': 'Quasi finito',
+    'Quick ones': 'Giochi brevi',
+    'Waiting the longest': 'In attesa da più tempo',
+    'What should I play? Ideas on the Goals wall': 'A cosa gioco? Idee sulla parete Obiettivi',
+    'Trophies and achievements on each game': 'Trofei e obiettivi su ogni gioco',
+    'What’s my library worth? On the Stats wall': 'Quanto vale la mia collezione? Sulla parete Statistiche',
+    'A quick tour for new players (Settings to see it again)':
+      'Un tour veloce per i nuovi giocatori (Impostazioni per rivederlo)',
+    'Faster with big libraries': 'Più veloce con collezioni grandi',
   },
   tpl: {
     '{1} behind pace': '{1} di ritardo',
@@ -619,5 +648,6 @@ LANG.it = {
     'Worth today ({1} games)': 'Valore oggi ({1} giochi)',
     'Looking up prices for {1} games': 'Cerco i prezzi di {1} giochi',
     'Found prices for {1} of {2} games': 'Prezzi trovati per {1} giochi su {2}',
+    'Show {1} more': 'Mostra altri {1}',
   },
 };

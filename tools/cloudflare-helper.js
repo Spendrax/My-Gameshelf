@@ -13,6 +13,7 @@
 //                           token for a short pass (needs the GOOGLE_ID and GOOGLE_SECRET secrets)
 //   POST /facts (JSON body)  how long games take to beat, and their release dates (IGDB)
 //   POST /deals (JSON body)  current sales on wishlist games (IsThereAnyDeal; needs the ITAD_KEY secret)
+//   /steam-ach?id=&app=     Steam achievements earned in one game
 //   /img?u=…                a cover picture, passed through so the app may draw it (Share my shelf)
 //   /ping                   "are you there?": open it in a browser to check the helper's version
 // Only the app's own site may use it, at most 60 requests a minute per connection.
@@ -138,6 +139,22 @@ async function psnGames(npsso) {
       });
     if (!d.nextOffset) break;
   }
+  // 4. trophies per game (matched by name; skipped quietly if Sony doesn't answer)
+  try {
+    const tr = await fetch('https://m.np.playstation.com/api/trophy/v1/users/me/trophyTitles?limit=800', {
+      headers: { Authorization: `Bearer ${t.access_token}` },
+    }).then((r) => r.json());
+    const sum = (o = {}) => (o.bronze || 0) + (o.silver || 0) + (o.gold || 0) + (o.platinum || 0);
+    const plain = (s) =>
+      String(s)
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, '');
+    const byName = (tr.trophyTitles || []).reduce(
+      (m, x) => ((m[plain(x.trophyTitleName)] = [sum(x.earnedTrophies), sum(x.definedTrophies)]), m),
+      {},
+    );
+    for (const g of games) if (byName[plain(g.name)]) g.tro = byName[plain(g.name)];
+  } catch {}
   return { games };
 }
 
@@ -192,6 +209,10 @@ async function xboxGames(key) {
       minutes: minutes[g.titleId] || 0,
       last: Date.parse(g.titleHistory?.lastTimePlayed) / 1000 || 0,
       cover: g.displayImage || '',
+      // gamerscore earned / possible
+      tro: g.achievement?.totalGamerscore
+        ? [g.achievement.currentGamerscore || 0, g.achievement.totalGamerscore, 'G']
+        : undefined,
       platform: XBOX_PLATFORMS[(g.devices || []).find((d) => XBOX_PLATFORMS[d])] || 'Xbox Series S/X',
     })),
   };
@@ -395,7 +416,7 @@ async function gameDeals({ games = [], country = 'US', all = false }, env) {
   return { deals };
 }
 
-const HELPER_VERSION = 10;
+const HELPER_VERSION = 11;
 
 // Counts requests per connection over the last minute (kept in this server's memory, so it's a soft limit)
 const recent = new Map();
@@ -548,6 +569,19 @@ export default {
       } catch {
         return reply({ error: 'down' }, 502);
       }
+    }
+
+    // Steam achievements of one game: /steam-ach?id=<17-digit Steam ID>&app=<app id> → { done, total }
+    if (url.pathname === '/steam-ach') {
+      if (!env.STEAM_KEY) return reply({ error: 'no-key' }, 500);
+      const id = url.searchParams.get('id') || '';
+      const app = url.searchParams.get('app') || '';
+      if (!/^\d{17}$/.test(id) || !/^\d+$/.test(app)) return reply({ error: 'bad' }, 400);
+      const r = await fetch(
+        `https://api.steampowered.com/ISteamUserStats/GetPlayerAchievements/v1/?key=${env.STEAM_KEY}&steamid=${id}&appid=${app}`,
+      );
+      const list = (await r.json().catch(() => ({}))).playerstats?.achievements || [];
+      return reply({ done: list.reduce((n, a) => n + (a.achieved ? 1 : 0), 0), total: list.length });
     }
 
     if (url.pathname === '/steam') {

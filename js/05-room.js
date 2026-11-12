@@ -74,15 +74,21 @@ function renderRack() {
     return;
   }
   const per = Math.max(3, Math.floor((rack.clientWidth - 24 + 10) / 88));
-  const shelves = (l) => {
+  // Big libraries stay quick: a long list shows its first 8 shelves and a "Show more" button,
+  // and a folded section draws 24 cases, then more as you scroll it sideways (peekRest).
+  const shelves = (all, key) => {
+    const l = showAll[key] ? all : all.slice(0, per * 8);
     let h = '';
     for (let i = 0; i < l.length; i += per)
       h += `<div class="shelf">${l.slice(i, i + per).reduce((s, g) => s + caseHTML(g), '')}</div>`;
-    return h;
+    return l.length < all.length
+      ? h + `<button class="btn wide more" data-more="${key}">Show ${all.length - l.length} more</button>`
+      : h;
   };
+  peekRest = {};
   // Searching or one filter chosen: just the matching games
   if (q || plat || filter !== 'all') {
-    rack.innerHTML = shelves(list);
+    rack.innerHTML = shelves(list, 'list');
     return;
   }
   // Everything: one section per status. A folded section is a single shelf you scroll sideways.
@@ -95,11 +101,34 @@ function renderRack() {
       h +
       `<button class="grp-h" data-g="${k}" aria-expanded="${open}" style="--sc:${STATUS[k].color}"><i></i>${STATUS[k].label}<span>${l.length}</span></button>` +
       (open
-        ? shelves(l)
-        : `<div class="peek-wrap"><div class="shelf peek">${l.reduce((s, g) => s + caseHTML(g), '')}</div></div>`)
+        ? shelves(l, k)
+        : `<div class="peek-wrap"><div class="shelf peek" data-peek="${k}">${l.slice(0, 24).reduce((s, g) => s + caseHTML(g), '')}</div></div>`)
     );
   }, '');
+  for (const k in groups) if (groups[k].length > 24) peekRest[k] = groups[k].slice(24);
 }
+let peekRest = {}; // the cases of each folded section that aren't drawn yet
+const showAll = {}; // long lists you asked to see whole (until the app is closed)
+// A folded shelf scrolled near its end: draw the next cases
+$('#rack').addEventListener(
+  'scroll',
+  (e) => {
+    const s = e.target;
+    const rest = peekRest[s.dataset?.peek];
+    if (!rest?.length || s.scrollLeft + s.clientWidth < s.scrollWidth - 500) return;
+    s.insertAdjacentHTML(
+      'beforeend',
+      rest.splice(0, 24).reduce((h, g) => h + caseHTML(g), ''),
+    );
+  },
+  { capture: true, passive: true },
+);
+$('#rack').addEventListener('click', (e) => {
+  const k = e.target.closest('[data-more]')?.dataset.more;
+  if (!k) return;
+  showAll[k] = true;
+  renderRack();
+});
 
 // Which sections are open (remembered); Playing and On & off start open
 const rackOpen = (k) => (set.rackOpen || {})[k] ?? (k === 'playing' || k === 'onoff');

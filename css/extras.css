@@ -230,3 +230,18 @@
 #dlgMerge .lrow { cursor: pointer; }
 #dlgMerge .lrow small { margin-left: auto; white-space: nowrap; }
 .case .badge.again { background: #2e9e6a; top: auto; bottom: 18%; left: -3px; right: auto; }
+#rack .more { margin: 6px 12px 14px; width: calc(100% - 24px); }
+
+/* first-run tour */
+.tour { text-align: center; padding: 10px 6px 4px; }
+.tour span { font-size: 54px; }
+.tour h2 { margin: 8px 0; }
+.tour p { min-height: 4.5em; opacity: 0.85; line-height: 1.5; }
+.tour-dots { display: flex; justify-content: center; gap: 6px; margin: 6px 0 12px; }
+.tour-dots i { width: 8px; height: 8px; border-radius: 50%; background: #ffffff33; }
+.tour-dots i.on { background: var(--led); }
+
+/* picks and trophies */
+.picks h4 { margin: 12px 0 4px; font-size: 13px; opacity: 0.8; }
+.g-facts.tro .prog { display: block; height: 6px; margin-top: 6px; border-radius: 3px; background: #ffffff1a; overflow: hidden; }
+.g-facts.tro .prog i { display: block; height: 100%; background: var(--led); }

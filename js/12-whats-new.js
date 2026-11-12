@@ -4,6 +4,16 @@
 // Small fixes don't need an entry. The card is also in Settings → "What's new".
 
 const NEWS = [
+  {
+    v: '4.7',
+    items: [
+      '\u{1F3AF} What should I play? Ideas on the Goals wall',
+      '\u{1F3C6} Trophies and achievements on each game',
+      '\u{1F4B0} What’s my library worth? On the Stats wall',
+      '\u{1F4A1} A quick tour for new players (Settings to see it again)',
+      '\u26A1 Faster with big libraries',
+    ],
+  },
   { v: '4.6', items: ['\u{1F501} Playing a finished game again? Tap Play again: it stays finished too'] },
   {
     v: '4.5',

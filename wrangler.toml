@@ -1,0 +1,8 @@
+# Lets Cloudflare deploy the helper (tools/cloudflare-helper.js) by itself every time this repo changes.
+# Set up once in Cloudflare: Workers & Pages → gameshelf-barcode → Settings → Builds → Connect this repo.
+# The secrets (STEAM_KEY, TWITCH_ID, TWITCH_SECRET, GOOGLE_ID, GOOGLE_SECRET, ITAD_KEY) stay in Cloudflare.
+name = "gameshelf-barcode"
+main = "tools/cloudflare-helper.js"
+compatibility_date = "2026-01-01"
+keep_vars = true   # keep anything set by hand in the dashboard
+workers_dev = true

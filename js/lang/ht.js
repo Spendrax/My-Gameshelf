@@ -532,7 +532,36 @@ LANG.ht = {
     'Prices need the ITAD_KEY secret in your helper (like sale alerts)':
       'Pri yo bezwen sekrè ITAD_KEY nan helper ou (menm jan ak alèt rabè yo)',
     'Prices aren’t answering right now. Try again later': 'Pri yo pa reponn kounye a. Eseye ankò pita',
-    'Updating': 'Ap mete ajou',
+    Updating: 'Ap mete ajou',
+    'Add your games': 'Ajoute jwèt ou yo',
+    'Tap + to search for a game or scan its case. Or connect Steam, PlayStation, Xbox and Nintendo in Settings ⚙ to bring everything in at once':
+      'Peze + pou chèche yon jwèt oswa eskane bwat li. Oswa konekte Steam, PlayStation, Xbox ak Nintendo nan Paramèt ⚙ pou pote tout bagay yon sèl kou',
+    'Your room has four walls': 'Chanm ou gen kat mi',
+    'Swipe left or right: Achievements, Goals, your Room and Stats are all in the same bedroom':
+      'Glise agoch oswa adwat: Siksè, Objektif, Chanm ou ak Estatistik tout nan menm chanm lan',
+    'Hold and drag': 'Kenbe epi trennen',
+    'Hold a game, then drop it on another section to change its status. Tap a section’s title to fold or open it':
+      'Kenbe yon jwèt, epi lage l sou yon lòt seksyon pou chanje estati li. Peze tit yon seksyon pou plwaye l oswa louvri l',
+    'Track your play': 'Swiv tan jwèt ou',
+    'Open a game and tap Start playing. The timer adds your hours and keeps your daily streak going':
+      'Louvri yon jwèt epi peze Kòmanse jwe. Kwonomèt la ajoute èdtan ou yo epi kenbe seri chak jou ou',
+    'Meet your buddy': 'Fè konesans ak zanmi ou',
+    'Tap to pet, drag to move, tap a bowl to feed. Dress up the room and your buddy with 🎨':
+      'Peze pou karese, trennen pou deplase, peze yon bòl pou bay manje. Dekore chanm lan ak zanmi ou ak 🎨',
+    Skip: 'Sote',
+    Next: 'Pwochen',
+    'Let’s play': 'Ann jwe',
+    'Show the tips again': 'Montre konsèy yo ankò',
+    'What should I play': 'Kisa pou m jwe',
+    'Almost done': 'Prèske fini',
+    'Quick ones': 'Jwèt kout',
+    'Waiting the longest': 'K ap tann depi pi lontan',
+    'What should I play? Ideas on the Goals wall': 'Kisa pou m jwe? Lide sou mi Objektif la',
+    'Trophies and achievements on each game': 'Twofe ak siksè sou chak jwèt',
+    'What’s my library worth? On the Stats wall': 'Konbyen koleksyon mwen vo? Sou mi Estatistik la',
+    'A quick tour for new players (Settings to see it again)':
+      'Yon ti vizit rapid pou nouvo jwè (Paramèt pou wè l ankò)',
+    'Faster with big libraries': 'Pi rapid ak gwo koleksyon',
   },
   tpl: {
     '{1} behind pace': '{1} an reta',
@@ -608,5 +637,6 @@ LANG.ht = {
     'Worth today ({1} games)': 'Valè jodi a ({1} jwèt)',
     'Looking up prices for {1} games': 'M ap chèche pri {1} jwèt',
     'Found prices for {1} of {2} games': 'Jwenn pri pou {1} sou {2} jwèt',
+    'Show {1} more': 'Montre {1} anplis',
   },
 };

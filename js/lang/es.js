@@ -537,7 +537,36 @@ LANG.es = {
       'Los precios necesitan el secreto ITAD_KEY en tu helper (como las alertas de ofertas)',
     'Prices aren’t answering right now. Try again later':
       'Los precios no responden ahora. Inténtalo más tarde',
-    'Updating': 'Actualizando',
+    Updating: 'Actualizando',
+    'Add your games': 'Añade tus juegos',
+    'Tap + to search for a game or scan its case. Or connect Steam, PlayStation, Xbox and Nintendo in Settings ⚙ to bring everything in at once':
+      'Toca + para buscar un juego o escanear su caja. O conecta Steam, PlayStation, Xbox y Nintendo en Ajustes ⚙ para traerlo todo de una vez',
+    'Your room has four walls': 'Tu cuarto tiene cuatro paredes',
+    'Swipe left or right: Achievements, Goals, your Room and Stats are all in the same bedroom':
+      'Desliza a izquierda o derecha: Logros, Metas, tu Cuarto y Estadísticas están en la misma habitación',
+    'Hold and drag': 'Mantén y arrastra',
+    'Hold a game, then drop it on another section to change its status. Tap a section’s title to fold or open it':
+      'Mantén pulsado un juego y suéltalo en otra sección para cambiar su estado. Toca el título de una sección para plegarla o abrirla',
+    'Track your play': 'Registra tu juego',
+    'Open a game and tap Start playing. The timer adds your hours and keeps your daily streak going':
+      'Abre un juego y toca Empezar a jugar. El temporizador suma tus horas y mantiene tu racha diaria',
+    'Meet your buddy': 'Conoce a tu compañero',
+    'Tap to pet, drag to move, tap a bowl to feed. Dress up the room and your buddy with 🎨':
+      'Toca para acariciar, arrastra para mover, toca un comedero para dar de comer. Decora el cuarto y a tu compañero con 🎨',
+    Skip: 'Saltar',
+    Next: 'Siguiente',
+    'Let’s play': '¡A jugar',
+    'Show the tips again': 'Ver los consejos otra vez',
+    'What should I play': '¿A qué juego',
+    'Almost done': 'Casi terminado',
+    'Quick ones': 'Juegos cortos',
+    'Waiting the longest': 'Los que más llevan esperando',
+    'What should I play? Ideas on the Goals wall': '¿A qué juego? Ideas en la pared de Metas',
+    'Trophies and achievements on each game': 'Trofeos y logros en cada juego',
+    'What’s my library worth? On the Stats wall': '¿Cuánto vale mi colección? En la pared de Estadísticas',
+    'A quick tour for new players (Settings to see it again)':
+      'Un recorrido rápido para nuevos jugadores (Ajustes para verlo otra vez)',
+    'Faster with big libraries': 'Más rápido con colecciones grandes',
   },
   tpl: {
     '{1} behind pace': '{1} de retraso',
@@ -614,5 +643,6 @@ LANG.es = {
     'Worth today ({1} games)': 'Valor hoy ({1} juegos)',
     'Looking up prices for {1} games': 'Buscando precios de {1} juegos',
     'Found prices for {1} of {2} games': 'Precios encontrados para {1} de {2} juegos',
+    'Show {1} more': 'Mostrar {1} más',
   },
 };
