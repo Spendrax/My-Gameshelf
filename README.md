@@ -43,6 +43,19 @@ Live at https://spendrax.github.io/My-Gameshelf/
 | `js/22-drive-backup.js` | Automatic Google Drive backup and sync between devices (`GOOGLE_CLIENT_ID`) |
 | `js/23-languages.js` | Languages: swaps the English text on screen for the picked language |
 | `js/lang/*.js` | One file of phrases per language (French, Spanish, Haitian Creole, Portuguese, German, Italian) |
+| `js/24-game-facts.js` | Time to beat and release countdowns (IGDB) |
+| `js/25-play-timer.js` | Play timer, daily streak, buddy cheering, daily treats game |
+| `js/26-collection.js` | Tags, format/price/store, and what the library is worth |
+| `js/27-year-review.js` | Year in review and the shelf picture |
+| `js/28-merge.js` | Merging the same game from two consoles |
+| `js/29-deals.js` | Wishlist sale alerts |
+| `js/30-drag-cases.js` | Dragging games between sections |
+| `js/31-replay.js` | Playing a finished game again |
+| `js/32-tour.js` | First-run tips |
+| `js/33-picks.js` | “What should I play?” ideas |
+| `js/34-trophies.js` | Trophies and achievements per game |
+| `js/35-share-room.js` | Sharing a link to your room (visitors open `shelf.html`) |
+| `wrangler.toml` | Lets Cloudflare deploy the helper from this repo, with its KV storage |
 | `sw.js` | Offline copy (bump `V` on every release) |
 | `privacy.html` | Privacy policy |
 

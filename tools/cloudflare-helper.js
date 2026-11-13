@@ -14,6 +14,7 @@
 //   POST /facts (JSON body)  how long games take to beat, and their release dates (IGDB)
 //   POST /deals (JSON body)  current sales on wishlist games (IsThereAnyDeal; needs the ITAD_KEY secret)
 //   /steam-ach?id=&app=     Steam achievements earned in one game
+//   POST /share, /shelf?id=  a shared room: saved in the KV storage, read by the visitor's page
 //   /img?u=…                a cover picture, passed through so the app may draw it (Share my shelf)
 //   /ping                   "are you there?": open it in a browser to check the helper's version
 // Only the app's own site may use it, at most 60 requests a minute per connection.
@@ -416,7 +417,7 @@ async function gameDeals({ games = [], country = 'US', all = false }, env) {
   return { deals };
 }
 
-const HELPER_VERSION = 11;
+const HELPER_VERSION = 12;
 
 // Counts requests per connection over the last minute (kept in this server's memory, so it's a soft limit)
 const recent = new Map();
@@ -544,6 +545,40 @@ export default {
       } catch {
         return reply({ error: 'down' }, 502);
       }
+    }
+
+    // A shared room (35-share-room.js). POST /share saves or updates it (only with its secret key), or
+    // removes it; /shelf?id= reads it for a visitor. Kept in the KV storage named in wrangler.toml.
+    if (url.pathname === '/share' || url.pathname === '/shelf') {
+      if (!env.KV) return reply({ error: 'no-kv' }, 500);
+      if (url.pathname === '/shelf') {
+        const d = await env.KV.get('shelf:' + (url.searchParams.get('id') || ''), 'json');
+        return d ? reply({ data: d.data, at: d.at }) : reply({ error: 'gone' }, 404);
+      }
+      const text = await request.text();
+      if (text.length > 900000) return reply({ error: 'too-big' }, 413);
+      let body;
+      try {
+        body = JSON.parse(text);
+      } catch {
+        return reply({ error: 'bad' }, 400);
+      }
+      const code = (n) =>
+        [...crypto.getRandomValues(new Uint8Array(n))].map((b) => (b % 36).toString(36)).join('');
+      let { id, key } = body;
+      if (id) {
+        const cur = await env.KV.get('shelf:' + id, 'json');
+        if (!cur || cur.key !== key) return reply({ error: 'forbidden' }, 403);
+        if (body.off) {
+          await env.KV.delete('shelf:' + id);
+          return reply({ ok: true });
+        }
+      } else {
+        id = code(10);
+        key = code(24);
+      }
+      await env.KV.put('shelf:' + id, JSON.stringify({ key, data: body.data, at: Date.now() }));
+      return reply({ id, key });
     }
 
     if (url.pathname === '/facts' || url.pathname === '/deals') {

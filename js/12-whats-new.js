@@ -5,6 +5,10 @@
 
 const NEWS = [
   {
+    v: '4.8',
+    items: ['\u{1F517} Share a link to your room: friends can visit and see your games (Settings)'],
+  },
+  {
     v: '4.7',
     items: [
       '\u{1F3AF} What should I play? Ideas on the Goals wall',

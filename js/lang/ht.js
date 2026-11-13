@@ -562,6 +562,24 @@ LANG.ht = {
     'A quick tour for new players (Settings to see it again)':
       'Yon ti vizit rapid pou nouvo jwè (Paramèt pou wè l ankò)',
     'Faster with big libraries': 'Pi rapid ak gwo koleksyon',
+    'Share your room': 'Pataje chanm ou',
+    'Get a link friends can open to visit your room and see your games. They can look, not change anything. Your notes, prices and accounts are not shared':
+      'Jwenn yon lyen zanmi ou ka louvri pou vizite chanm ou epi wè jwèt ou yo. Yo ka gade, yo pa ka chanje anyen. Nòt ou, pri ak kont ou yo pa pataje',
+    'Share a link to my room': 'Pataje yon lyen pou chanm mwen',
+    'Copy link': 'Kopye lyen an',
+    'Stop sharing': 'Sispann pataje',
+    'Your name, shown to visitors:': 'Non ou, vizitè yo ap wè l:',
+    'Making your link': 'M ap fè lyen ou',
+    'Sharing isn’t set up in the helper yet': 'Pataj la poko konfigire nan helper a',
+    'Couldn’t make the link. Check the helper is up to date': 'M pa ka fè lyen an. Tcheke si helper a ajou',
+    'Your room is shared. Send the link to a friend': 'Chanm ou pataje. Voye lyen an bay yon zanmi',
+    'Link copied': 'Lyen an kopye',
+    'Stop sharing? The link will stop working': 'Sispann pataje? Lyen an p ap mache ankò',
+    'Visiting a room': 'W ap vizite yon chanm',
+    '’s room': ': chanm li',
+    'My own shelf': 'Pwòp etajè mwen',
+    'Share a link to your room: friends can visit and see your games (Settings)':
+      'Pataje yon lyen pou chanm ou: zanmi ou ka vizite l epi wè jwèt ou yo (Paramèt)',
   },
   tpl: {
     '{1} behind pace': '{1} an reta',

@@ -7,7 +7,7 @@ let drag = null;
 
 $('#rack').addEventListener('pointerdown', (e) => {
   const c = e.target.closest('.case[data-id]');
-  if (!c || e.button > 0) return;
+  if (!c || e.button > 0 || VIEW) return; // visitors can't move games
   const start = { x: e.clientX, y: e.clientY };
   const t = setTimeout(() => startDrag(c, start), 450);
   const cancel = (ev) => {

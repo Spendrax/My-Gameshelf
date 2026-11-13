@@ -568,6 +568,26 @@ LANG.pt = {
     'A quick tour for new players (Settings to see it again)':
       'Um tour rápido para novos jogadores (Configurações para ver de novo)',
     'Faster with big libraries': 'Mais rápido com coleções grandes',
+    'Share your room': 'Compartilhe seu quarto',
+    'Get a link friends can open to visit your room and see your games. They can look, not change anything. Your notes, prices and accounts are not shared':
+      'Pegue um link que seus amigos podem abrir para visitar seu quarto e ver seus jogos. Eles podem olhar, não mudar nada. Suas notas, preços e contas não são compartilhados',
+    'Share a link to my room': 'Compartilhar um link do meu quarto',
+    'Copy link': 'Copiar link',
+    'Stop sharing': 'Parar de compartilhar',
+    'Your name, shown to visitors:': 'Seu nome, mostrado aos visitantes:',
+    'Making your link': 'Criando seu link',
+    'Sharing isn’t set up in the helper yet': 'O compartilhamento ainda não está configurado no helper',
+    'Couldn’t make the link. Check the helper is up to date':
+      'Não foi possível criar o link. Confira se o helper está atualizado',
+    'Your room is shared. Send the link to a friend':
+      'Seu quarto está compartilhado. Envie o link para um amigo',
+    'Link copied': 'Link copiado',
+    'Stop sharing? The link will stop working': 'Parar de compartilhar? O link vai parar de funcionar',
+    'Visiting a room': 'Visitando um quarto',
+    '’s room': ': o quarto',
+    'My own shelf': 'Minha própria estante',
+    'Share a link to your room: friends can visit and see your games (Settings)':
+      'Compartilhe um link do seu quarto: amigos podem visitar e ver seus jogos (Configurações)',
   },
   tpl: {
     '{1} behind pace': '{1} de atraso',

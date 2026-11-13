@@ -1,0 +1,22 @@
+<!doctype html>
+<!-- Opens a shared room: fetches the owner's copy from the helper, keeps it for this tab only, then opens the
+     app in visiting mode (./?view=ID). See js/35-share-room.js. -->
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>My Gameshelf</title>
+<style>body{margin:0;min-height:100vh;display:grid;place-items:center;background:#0b0a10;color:#fff;font:18px system-ui,sans-serif;text-align:center}a{color:#b05cff}</style>
+</head><body><p id="msg">🎮 Opening the room…</p>
+<script>
+const id = new URLSearchParams(location.search).get('id') || '';
+const HELPER = 'https://gameshelf-barcode.spendraxapp.workers.dev';
+fetch(`${HELPER}/shelf?id=${encodeURIComponent(id)}`)
+  .then((r) => r.json())
+  .then((r) => {
+    if (!r.data) throw 0;
+    sessionStorage.setItem('view:' + id, JSON.stringify(r.data));
+    location.replace('./?view=' + encodeURIComponent(id));
+  })
+  .catch(() => {
+    document.getElementById('msg').innerHTML = 'This room isn’t shared anymore.<br><br><a href="./">Open My Gameshelf</a>';
+  });
+</script>
+</body></html>

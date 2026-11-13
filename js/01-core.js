@@ -3,7 +3,7 @@
 //   • the game list and settings, and saving them on the phone (localStorage)
 //   • a tiny event system: emit('change') after any edit, other files listen with on('change', …)
 //   • small helpers ($, esc, today, …) and caseHTML(), which draws one game case
-const VERSION = '4.7';
+const VERSION = '4.8';
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 
@@ -38,7 +38,21 @@ const RAWG_KEY = '7f3923520cce4d189f06b7a59ab3c8c1';
 const rawgKey = () => set.key || RAWG_KEY;
 const LEDS = ['#b05cff', '#00e5ff', '#ff3fa4', '#39ff88', '#ffb020', '#ff4646'];
 
+// Visiting someone's shared room (./?view=ID, opened by shelf.html): their games and room are read from
+// this tab's memory, and nothing is saved, so the visitor's own shelf on this phone is never touched.
+const VIEW = new URLSearchParams(location.search).get('view');
+let viewData = null;
+if (VIEW) {
+  try {
+    viewData = JSON.parse(sessionStorage.getItem('view:' + VIEW));
+  } catch {}
+  if (!viewData) location.replace('shelf.html?id=' + encodeURIComponent(VIEW));
+  viewData ||= {};
+  document.documentElement.classList.add('viewing');
+}
+
 const load = (k, d) => {
+  if (VIEW) return viewData[k] ?? d;
   try {
     return JSON.parse(localStorage.getItem(k)) ?? d;
   } catch {
@@ -46,6 +60,7 @@ const load = (k, d) => {
   }
 };
 const store = (k, v) => {
+  if (VIEW) return ((viewData[k] = v), true); // visiting: kept for this visit only
   try {
     localStorage.setItem(k, JSON.stringify(v));
     return true;

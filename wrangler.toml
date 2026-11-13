@@ -6,3 +6,8 @@ main = "tools/cloudflare-helper.js"
 compatibility_date = "2026-01-01"
 keep_vars = true   # keep anything set by hand in the dashboard
 workers_dev = true
+
+# Storage for shared rooms (js/35-share-room.js)
+[[kv_namespaces]]
+binding = "KV"
+id = "73b9c9a53ab64cc4853bf9a1808f3e87"

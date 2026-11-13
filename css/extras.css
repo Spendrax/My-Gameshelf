@@ -245,3 +245,29 @@
 .picks h4 { margin: 12px 0 4px; font-size: 13px; opacity: 0.8; }
 .g-facts.tro .prog { display: block; height: 6px; margin-top: 6px; border-radius: 3px; background: #ffffff1a; overflow: hidden; }
 .g-facts.tro .prog i { display: block; height: 100%; background: var(--led); }
+
+/* visiting someone's shared room: look, don't touch */
+.viewing #btnAdd, .viewing #btnSettings, .viewing #btnLook, .viewing #updBtn, .viewing #playChip,
+.viewing #gBody .quick, .viewing #gBody .actions, .viewing #gBody [data-t], .viewing #gBody [data-replay],
+.viewing #gBody .twin, .viewing #treats, .viewing #spin, .viewing #worthBtn, .viewing #yearBtn,
+.viewing #shelfBtn, .viewing .stepper button { display: none !important; }
+.visit-bar {
+  position: fixed;
+  z-index: 40;
+  left: 10px;
+  right: 10px;
+  bottom: calc(env(safe-area-inset-bottom) + 64px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 8px 8px 14px;
+  border-radius: 999px;
+  background: #15121df2;
+  border: 1px solid var(--led);
+  color: #fff;
+  font: 14px system-ui, sans-serif;
+  will-change: transform;
+}
+.visit-bar .btn { padding: 6px 12px; text-decoration: none; }
+#shLink { width: 100%; margin: 8px 0; }

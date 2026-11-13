@@ -240,6 +240,13 @@
   <button class="btn wide" id="sYears">📅 Find missing release years</button>
   <p class="dim small" id="sSkipTxt"></p>
   <button class="btn wide" id="sSkip">↩️ Let deleted games come back</button>
+  <h3>Share your room</h3>
+  <p class="dim small" id="shTxt">Get a link friends can open to visit your room and see your games. They can look, not change anything. Your notes, prices and accounts are not shared.</p>
+  <button class="btn primary wide" id="shOn">🔗 Share a link to my room</button>
+  <div id="shBox" hidden>
+    <input id="shLink" readonly>
+    <div class="two"><button class="btn primary" id="shCopy">Copy link</button><button class="btn" id="shOff">Stop sharing</button></div>
+  </div>
   <h3>Backup</h3>
   <p class="dim">Your games live only on this phone. Save a backup now and then.</p>
   <div class="row">
@@ -287,5 +294,6 @@
 <script src="js/32-tour.js"></script>
 <script src="js/33-picks.js"></script>
 <script src="js/34-trophies.js"></script>
+<script src="js/35-share-room.js"></script>
 </body>
 </html>
