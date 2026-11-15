@@ -8,7 +8,7 @@ CARD_EXTRAS.push((g) => {
   const [done, total, unit] = g.tro || [];
   if (!total) return '';
   const pct = Math.round((done / total) * 100);
-  return `<p class="g-facts tro">🏆 <b>${done} / ${total}${unit ? ' ' + unit : ''}</b> · ${pct}%${pct === 100 ? ' 🎉' : ''}
+  return `<p class="g-facts g-tro">🏆 <b>${done} / ${total}${unit ? ' ' + unit : ''}</b> · ${pct}%${pct === 100 ? ' 🎉' : ''}
     <i class="prog"><i style="width:${pct}%"></i></i></p>`;
 });
 

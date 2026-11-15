@@ -243,8 +243,8 @@
 
 /* picks and trophies */
 .picks h4 { margin: 12px 0 4px; font-size: 13px; opacity: 0.8; }
-.g-facts.tro .prog { display: block; height: 6px; margin-top: 6px; border-radius: 3px; background: #ffffff1a; overflow: hidden; }
-.g-facts.tro .prog i { display: block; height: 100%; background: var(--led); }
+.g-facts.g-tro .prog { display: block; height: 6px; margin-top: 6px; border-radius: 3px; background: #ffffff1a; overflow: hidden; }
+.g-facts.g-tro .prog i { display: block; height: 100%; background: var(--led); }
 
 /* visiting someone's shared room: look, don't touch */
 .viewing #btnAdd, .viewing #btnSettings, .viewing #btnLook, .viewing #updBtn, .viewing #playChip,
