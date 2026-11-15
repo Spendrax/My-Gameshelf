@@ -3,7 +3,7 @@
 //   • the game list and settings, and saving them on the phone (localStorage)
 //   • a tiny event system: emit('change') after any edit, other files listen with on('change', …)
 //   • small helpers ($, esc, today, …) and caseHTML(), which draws one game case
-const VERSION = '4.8';
+const VERSION = '4.9';
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 
@@ -51,8 +51,90 @@ if (VIEW) {
   document.documentElement.classList.add('viewing');
 }
 
+// A shared room comes from someone else (anyone can store anything at the helper), so before a visitor's
+// app uses it, every field is checked and rebuilt from scratch: known statuses, numbers as numbers, dates as
+// dates, covers as plain https links, and text without characters that could become code. Nothing else.
+const TXT = (s, n = 120) =>
+  String(s ?? '')
+    .replace(/[<>"`\\]/g, '')
+    .slice(0, n);
+const NUM = (x, max = 1e7) => (Number.isFinite(+x) ? Math.min(Math.max(+x, 0), max) : 0);
+const DAY = (s) => (/^\d{4}-\d{2}-\d{2}$/.test(s) ? s : '');
+const WORD = (s) => (/^[\w#.-]{0,30}$/.test(s) ? s : '');
+const LIST = (a, f) => (Array.isArray(a) ? a.slice(0, 50).map(f) : []);
+function cleanGames(list) {
+  return (Array.isArray(list) ? list.slice(0, 5000) : []).map((g = {}) => ({
+    id: /^[\w-]{1,40}$/.test(g.id) ? g.id : 'x' + Math.random().toString(36).slice(2),
+    title: TXT(g.title) || '?',
+    platform: TXT(g.platform, 40),
+    status: STATUS[g.status] ? g.status : 'backlog',
+    rating: Math.round(NUM(g.rating, 10)),
+    hours: NUM(g.hours, 1e5),
+    year: Math.round(NUM(g.year, 3000)) || '',
+    genres: LIST(g.genres, (x) => TXT(x, 30)),
+    tags: LIST(g.tags, (x) => TXT(x, 30)),
+    started: DAY(g.started),
+    finished: DAY(g.finished),
+    added: NUM(g.added, 1e14),
+    cover: /^https:\/\/[^\s"'()\\<>]{1,500}$/.test(g.cover) ? g.cover : '',
+    format: ['physical', 'digital'].includes(g.format) ? g.format : '',
+    facts: g.facts && {
+      beat: NUM(g.facts.beat, 1e4),
+      rush: NUM(g.facts.rush, 1e4),
+      full: NUM(g.facts.full, 1e4),
+      release: DAY(g.facts.release),
+      at: NUM(g.facts.at, 1e14),
+    },
+    tro: Array.isArray(g.tro)
+      ? [NUM(g.tro[0]), NUM(g.tro[1]), g.tro[2] === 'G' ? 'G' : undefined]
+      : undefined,
+    merged: LIST(g.merged, (p = {}) => ({ platform: TXT(p.platform, 40), hours: NUM(p.hours, 1e5) })),
+    beatenOn: LIST(g.beatenOn, (d) => DAY(d) || 'past'),
+  }));
+}
+function cleanSet(s = {}) {
+  const look = Object.entries(s.look || {}).reduce((a, [k, v]) => {
+    if (k === 'loc' || !/^\w{1,20}$/.test(k)) return a; // never someone's location
+    a[k] =
+      k === 'sign' || k === 'fname' ? TXT(v, 24) : Array.isArray(v) ? LIST(v, WORD) : WORD(String(v ?? ''));
+    return a;
+  }, {});
+  const ach = s.ach || {};
+  return {
+    pet: TXT(s.pet, 24) || 'Byte',
+    led: /^#[0-9a-f]{3,8}$/i.test(s.led) ? s.led : '#b05cff',
+    goal: Math.round(NUM(s.goal, 999)) || 12,
+    look,
+    rackOpen: Object.keys(s.rackOpen || {}).reduce(
+      (a, k) => (STATUS[k] ? ((a[k] = !!s.rackOpen[k]), a) : a),
+      {},
+    ),
+    ach: {
+      pets: NUM(ach.pets),
+      feeds: NUM(ach.feeds),
+      owl: !!ach.owl,
+      done: LIST(ach.done, WORD),
+      keep: LIST(ach.keep, (x) => (/^\w+:[\w-]*$/.test(x) ? x : '')),
+    },
+    log: Object.keys(s.log || {}).reduce((a, d) => (DAY(d) ? ((a[d] = NUM(s.log[d], 1440)), a) : a), {}),
+    steamSynced: NUM(s.steamSynced, 1e14),
+    psnSynced: NUM(s.psnSynced, 1e14),
+    xboxSynced: NUM(s.xboxSynced, 1e14),
+    nsSynced: NUM(s.nsSynced, 1e14),
+    owner: TXT(s.owner, 30),
+    toured: true,
+    seen: VERSION,
+    lang: 'auto',
+  };
+}
+
 const load = (k, d) => {
-  if (VIEW) return viewData[k] ?? d;
+  if (VIEW)
+    return k === 'gr.games'
+      ? cleanGames(viewData[k])
+      : k === 'gr.set'
+        ? cleanSet(viewData[k])
+        : (viewData[k] ?? d);
   try {
     return JSON.parse(localStorage.getItem(k)) ?? d;
   } catch {

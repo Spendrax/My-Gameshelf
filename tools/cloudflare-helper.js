@@ -417,7 +417,7 @@ async function gameDeals({ games = [], country = 'US', all = false }, env) {
   return { deals };
 }
 
-const HELPER_VERSION = 12;
+const HELPER_VERSION = 13;
 
 // Counts requests per connection over the last minute (kept in this server's memory, so it's a soft limit)
 const recent = new Map();
@@ -577,7 +577,9 @@ export default {
         id = code(10);
         key = code(24);
       }
-      await env.KV.put('shelf:' + id, JSON.stringify({ key, data: body.data, at: Date.now() }));
+      await env.KV.put('shelf:' + id, JSON.stringify({ key, data: body.data, at: Date.now() }), {
+        expirationTtl: 180 * 86400, // forgotten links disappear after 6 months without an update
+      });
       return reply({ id, key });
     }
 

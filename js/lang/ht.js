@@ -580,6 +580,9 @@ LANG.ht = {
     'My own shelf': 'Pwòp etajè mwen',
     'Share a link to your room: friends can visit and see your games (Settings)':
       'Pataje yon lyen pou chanm ou: zanmi ou ka vizite l epi wè jwèt ou yo (Paramèt)',
+    'Link to your room': 'Lyen pou chanm ou',
+    'Safer shared rooms, smarter skipping of system apps and demos, bigger buttons':
+      'Chanm pataje pi an sekirite, app sistèm ak demo pi byen rekonèt, bouton pi gwo',
   },
   tpl: {
     '{1} behind pace': '{1} an reta',

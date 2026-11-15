@@ -587,6 +587,9 @@ LANG.de = {
     'My own shelf': 'Mein eigenes Regal',
     'Share a link to your room: friends can visit and see your games (Settings)':
       'Teile einen Link zu deinem Zimmer: Freunde können es besuchen und deine Spiele sehen (Einstellungen)',
+    'Link to your room': 'Link zu deinem Zimmer',
+    'Safer shared rooms, smarter skipping of system apps and demos, bigger buttons':
+      'Sicherere geteilte Zimmer, bessere Erkennung von System-Apps und Demos, größere Knöpfe',
   },
   tpl: {
     '{1} behind pace': '{1} hinter dem Plan',

@@ -21,69 +21,78 @@ const STEAM_ERRORS = {
   'no-key': 'The helper is missing its Steam key (STEAM_KEY in Cloudflare).',
 };
 
-// System apps and tools that accounts list like games: never added by a sync
+// System apps and tools that accounts list like games: never added by a sync.
+// Matched against the WHOLE name (so "Coffee Shop Tycoon" or "YouTubers Life" are never caught), plus a few
+// endings that only tools have ("… Soundtrack", "… Dedicated Server").
+const APP_NAMES = [
+  'e ?shop',
+  'nintendo e ?shop',
+  'pok[eé]mon bank',
+  'pok[eé] ?transporter',
+  'pok[eé]mon home',
+  'system settings',
+  'system transfer',
+  'data management',
+  'data transfer',
+  'mii maker',
+  'mii channel',
+  'nintendo 3ds camera',
+  'nintendo 3ds sound',
+  'internet browser',
+  'nintendo video',
+  'activity log',
+  'health (and|&) safety information',
+  '(nintendo switch )?parental controls',
+  'nintendo network id settings',
+  'wii u chat',
+  'wii u menu',
+  'nintendo tvii',
+  'tvii',
+  'theme shop',
+  'download play',
+  'miiverse',
+  'youtube',
+  'netflix',
+  'hulu',
+  'disney\\+',
+  'crunchyroll',
+  'twitch',
+  'spotify',
+  '(amazon )?prime video',
+  'plex',
+  'steamvr',
+  'wallpaper engine',
+  'swapnote',
+  'nintendo zone viewer',
+  'nintendo zone',
+  'nintendo letter box',
+  'nintendo 3ds guide.*',
+  'nintendo 3ds image share',
+  'nintendo show 3d',
+  'nintendo anime channel',
+  'friend list',
+  'game notes',
+  'notifications',
+  'home menu',
+  'miitomo',
+  'steamworks common redistributables',
+  'steam linux runtime.*',
+  'proton( experimental| [\\d.]+| hotfix)?',
+];
+const notAGame = (name) =>
+  NOT_A_GAME.test(
+    String(name || '')
+      .replace(/[™®©]/g, '')
+      .trim(),
+  );
 const NOT_A_GAME = new RegExp(
-  [
-    'e ?shop',
-    'pok[eé]mon bank',
-    'pok[eé] ?transporter',
-    'pok[eé]mon home',
-    'system settings',
-    'system transfer',
-    'data (transfer|management)',
-    'mii maker',
-    'nintendo 3ds (camera|sound)',
-    'internet browser',
-    'nintendo video',
-    'activity log',
-    'health (and|&) safety',
-    'parental controls',
-    'nintendo network id',
-    'wii u (chat|menu)',
-    'tvii',
-    'theme shop',
-    'swapnote',
-    'nintendo zone',
-    'nintendo letter box',
-    'nintendo 3ds guide',
-    'nintendo 3ds image share',
-    'nintendo show 3d',
-    'nintendo anime channel',
-    'friend list',
-    'game notes',
-    'notifications',
-    'home menu',
-    'miitomo',
-    'nintendo switch online app',
-    'nintendo account',
-    'pok[eé]mon dream radar app',
-    'download play',
-    'miiverse',
-    'youtube',
-    'netflix',
-    'hulu',
-    'disney\\+',
-    'crunchyroll',
-    'twitch',
-    'spotify',
-    'prime video',
-    'plex',
-    'steamvr',
-    'proton \\d',
-    'steam linux runtime',
-    'steamworks',
-    'wallpaper engine',
-    'soundtrack',
-    'dedicated server',
-    'benchmark',
-    'media player',
-    'web browser',
-  ].join('|'),
+  `^(${APP_NAMES.join('|')})$|\\s(soundtrack|ost|dedicated server|benchmark|sdk|editor)$`,
   'i',
 );
 
 // Demos ("Hades Demo", "Pokémon Scarlet - Demo", "… Free Trial"): their hours go to the full game
-const DEMO = /\s*[-–—:(\[]*\s*\b(free )?(demo|trial)( version| edition)?\b[)\]]*\s*$/i;
+const DEMO =
+  /(\s*[-–—:(\[]\s*(free )?(demo|trial)( version| edition)?[)\]]?|\s+(free )?demo( version)?|\s+free trial)\s*$/i;
 const fullGameOf = (title) => {
   const base = sameTitle(title.replace(DEMO, ''));
   return games.find((g) => sameTitle(g.title) === base && !DEMO.test(g.title));
@@ -127,7 +136,7 @@ function importGames(items, { field, platform, sameKind, all }) {
   const skipped = new Set((set.skip || []).flatMap((x) => x.keys));
   for (const s of items) {
     if (skipped.has(`${field}:${s.id}`)) continue;
-    if (NOT_A_GAME.test(s.name || '')) continue;
+    if (notAGame(s.name)) continue;
     if (DEMO.test(s.name || '') && !linked.has(s.id)) {
       demos.push(s); // after the full games, which may arrive in this same sync
       continue;
@@ -200,7 +209,7 @@ function importGames(items, { field, platform, sameKind, all }) {
   }
   // system apps a sync brought in before this filter existed (left alone if you rated them or wrote notes)
   const junk = games.reduce(
-    (a, g) => (g[field] && NOT_A_GAME.test(g.title) && !g.rating && !g.notes ? a.concat(g.id) : a),
+    (a, g) => (g[field] && notAGame(g.title) && !g.rating && !g.notes ? a.concat(g.id) : a),
     [],
   );
   if (junk.length) {

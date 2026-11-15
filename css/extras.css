@@ -271,3 +271,7 @@
 }
 .visit-bar .btn { padding: 6px 12px; text-decoration: none; }
 #shLink { width: 100%; margin: 8px 0; }
+
+/* bigger tap targets (at least 36px) for fingers */
+.chips button, .grp-h { min-height: 36px; }
+.bowl { min-width: 40px; min-height: 36px; }

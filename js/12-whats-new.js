@@ -5,6 +5,10 @@
 
 const NEWS = [
   {
+    v: '4.9',
+    items: ['\u{1F6E1} Safer shared rooms, smarter skipping of system apps and demos, bigger buttons'],
+  },
+  {
     v: '4.8',
     items: ['\u{1F517} Share a link to your room: friends can visit and see your games (Settings)'],
   },

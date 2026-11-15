@@ -590,6 +590,9 @@ LANG.it = {
     'My own shelf': 'Il mio scaffale',
     'Share a link to your room: friends can visit and see your games (Settings)':
       'Condividi un link alla tua stanza: gli amici possono visitarla e vedere i tuoi giochi (Impostazioni)',
+    'Link to your room': 'Link alla tua stanza',
+    'Safer shared rooms, smarter skipping of system apps and demos, bigger buttons':
+      'Stanze condivise più sicure, app di sistema e demo riconosciute meglio, pulsanti più grandi',
   },
   tpl: {
     '{1} behind pace': '{1} di ritardo',

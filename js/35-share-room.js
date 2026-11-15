@@ -52,6 +52,7 @@ function sharedCopy() {
     })),
     'gr.set': {
       ...pick(set, SHARE_SET),
+      look: { ...set.look, loc: null }, // never your location (live weather)
       toured: true,
       seen: VERSION,
       lang: 'auto',
@@ -128,7 +129,15 @@ if (!VIEW) {
   on('change', () => {
     if (!set.share?.id) return;
     clearTimeout(shareT);
-    shareT = setTimeout(shareUpload, 5 * 60e3);
+    // a few minutes after you stop changing things, and at most every 30 minutes (Cloudflare's free
+    // storage allows 1,000 saves a day for everyone using your helper)
+    const wait = Math.max(5 * 60e3, (set.share.at || 0) + 30 * 60e3 - Date.now());
+    shareT = setTimeout(async () => {
+      if ((await shareUpload())?.id) {
+        set.share.at = Date.now();
+        saveSet();
+      }
+    }, wait);
   });
 } else {
   // Visiting: a banner with whose room this is, and a way to your own shelf

@@ -1,0 +1,10 @@
+const kv=new Map(); const KV={get:async(k,t)=>kv.has(k)?JSON.parse(kv.get(k)):null,put:async(k,v)=>kv.set(k,v),delete:async(k)=>kv.delete(k)};
+const w=(await import('../tools/cloudflare-helper.js')).default; const H={Origin:'https://spendrax.github.io'};
+const post=b=>w.fetch(new Request('https://x/share',{method:'POST',headers:H,body:JSON.stringify(b)}),{KV}).then(r=>r.json());
+const get=id=>w.fetch(new Request('https://x/shelf?id='+id,{headers:H}),{KV}).then(r=>r.json());
+const a=await post({data:{x:1}}); console.log('new', a.id.length, a.key.length);
+console.log('read', JSON.stringify((await get(a.id)).data));
+console.log('wrong key', JSON.stringify(await post({id:a.id,key:'nope',data:{x:9}})));
+console.log('update', (await post({id:a.id,key:a.key,data:{x:2}})).id===a.id, JSON.stringify((await get(a.id)).data));
+console.log('off', JSON.stringify(await post({id:a.id,key:a.key,off:true})), JSON.stringify(await get(a.id)));
+console.log('no kv', JSON.stringify(await w.fetch(new Request('https://x/shelf?id=1',{headers:H}),{}).then(r=>r.json())));

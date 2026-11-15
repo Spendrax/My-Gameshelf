@@ -587,6 +587,9 @@ LANG.es = {
     'My own shelf': 'Mi propio estante',
     'Share a link to your room: friends can visit and see your games (Settings)':
       'Comparte un enlace a tu cuarto: tus amigos pueden visitarlo y ver tus juegos (Ajustes)',
+    'Link to your room': 'Enlace a tu cuarto',
+    'Safer shared rooms, smarter skipping of system apps and demos, bigger buttons':
+      'Cuartos compartidos más seguros, mejor detección de apps del sistema y demos, botones más grandes',
   },
   tpl: {
     '{1} behind pace': '{1} de retraso',

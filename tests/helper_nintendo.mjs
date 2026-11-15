@@ -1,0 +1,11 @@
+const calls=[];
+globalThis.fetch=async(u,i={})=>{calls.push([String(u),i.headers]);
+ const J=o=>new Response(JSON.stringify(o),{status:200});
+ if(u.includes('session_token'))return J(String(i.body).includes('session_token_code=abc')?{session_token:'S1'}:{error:'invalid_grant'});
+ if(u.endsWith('/api/token'))return JSON.parse(i.body).session_token==='S1'?J({access_token:'A'}):new Response('{"error":"invalid_grant"}',{status:400});
+ if(u.includes('play_histories'))return J({playHistories:[{titleId:'01',titleName:'Zelda',platform:'Nintendo Switch',totalPlayedMinutes:600,lastPlayedAt:'2026-10-01T00:00:00Z',imageUrl:'i'},{titleId:'01',titleName:'Zelda',platform:'Nintendo Switch 2',totalPlayedMinutes:120},{titleId:'0004000000055D00',titleName:'Pokemon X',platform:'Nintendo 3DS',totalPlayedMinutes:3000,lastPlayedAt:'2026-11-01T00:00:00Z'}]});};
+const w=(await import('../tools/cloudflare-helper.js')).default;
+const go=b=>w.fetch(new Request('https://x/nintendo',{method:'POST',body:JSON.stringify(b),headers:{Origin:'https://spendrax.github.io'}}),{}).then(r=>r.json());
+console.log(JSON.stringify(await go({link:'npf5c38e31cd085304b://auth#session_token_code=abc&state=z',verifier:'v'})));
+console.log(JSON.stringify(await go({session:'S1'})), JSON.stringify(await go({session:'bad'})), JSON.stringify(await go({link:'npf…#session_token_code=old',verifier:'v'})));
+console.log(calls.find(c=>c[0].includes('play_histories'))[1]);
