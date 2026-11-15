@@ -51,15 +51,25 @@ const igdbImg = (size, id) => `https://images.igdb.com/igdb/image/upload/${size}
 const quoted = (q) => JSON.stringify(q); // the name in quotes, safely
 
 // Search results, shaped like RAWG's answer so the app reads both the same way
+// IGDB game types kept in searches: main game, standalone expansion, remake, remaster, expanded game, port
+const GAME_TYPES = '0,4,8,9,10,11';
+
 async function igdbSearch(q, env) {
   const list = await igdb(
-    // only real games: no DLC, expansions, seasons or special editions (those have a parent game)
-    `search ${quoted(q)}; fields name,first_release_date,cover.image_id,platforms.name,genres.name,total_rating_count; where parent_game = null & version_parent = null; limit 30;`,
+    // only real games: main games, remakes, remasters, ports and standalone expansions (IGDB game_type);
+    // no DLC, bundles, mods, episodes, seasons, packs, updates, or special editions (version_parent)
+    `search ${quoted(q)}; fields name,first_release_date,cover.image_id,platforms.name,genres.name,total_rating_count; where game_type = (${GAME_TYPES}) & version_parent = null; limit 30;`,
     env,
   );
-  // the best-known games first (most ratings), then keep 10
+  // the best-known games first (most ratings), but games out in the last year (or coming) always make the
+  // list: a brand-new remake has no ratings yet
   list.sort((a, b) => (b.total_rating_count || 0) - (a.total_rating_count || 0));
-  return list.slice(0, 10).map((g) => ({
+  const yearAgo = Date.now() / 1000 - 365 * 86400;
+  const fresh = list.filter((g) => !g.first_release_date || g.first_release_date > yearAgo);
+  const top = [
+    ...new Set([...list.slice(0, 10 - Math.min(fresh.length, 4)), ...fresh.slice(0, 4), ...list]),
+  ].slice(0, 10);
+  return top.map((g) => ({
     name: g.name,
     igdb: g.id,
     released: g.first_release_date ? new Date(g.first_release_date * 1000).toISOString().slice(0, 10) : '',
@@ -304,7 +314,7 @@ async function gameFacts({ games = [] }, env) {
     list.map(async (g) => {
       if (g.igdb || !g.name) return;
       const r = await igdb(
-        `search ${quoted(g.name)}; fields id; where parent_game = null & version_parent = null; limit 1;`,
+        `search ${quoted(g.name)}; fields id; where game_type = (${GAME_TYPES}) & version_parent = null; limit 1;`,
         env,
       );
       g.igdb = r[0]?.id;
@@ -417,7 +427,7 @@ async function gameDeals({ games = [], country = 'US', all = false }, env) {
   return { deals };
 }
 
-const HELPER_VERSION = 14;
+const HELPER_VERSION = 15;
 
 // Counts requests per connection over the last minute (kept in this server's memory, so it's a soft limit)
 const recent = new Map();

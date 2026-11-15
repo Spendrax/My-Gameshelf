@@ -13,4 +13,5 @@ node tests/files_exist.mjs       # the offline copy has every file it needs
 node tests/helper_share.mjs      # helper: shared rooms (save, update, wrong key, stop)
 node tests/helper_prices.mjs     # helper: library worth (Steam price first, console names)
 node tests/helper_nintendo.mjs   # helper: Nintendo games and hours
+node tests/helper_search.mjs     # helper: search finds remakes and brand-new games
 ```
