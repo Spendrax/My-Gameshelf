@@ -9,6 +9,7 @@ const PHOTOS = 'gs-photos';
 // Moves new photos (data: pictures) out of the game list into the photo storage, and forgets unused ones
 async function keepPhotos() {
   if (!('caches' in window) || !navigator.serviceWorker?.controller) return; // the offline helper shows them
+  if (VIEW) return; // visiting someone's room: their list must never clean up YOUR photos
   const c = await caches.open(PHOTOS);
   let moved = 0;
   for (const g of games) {

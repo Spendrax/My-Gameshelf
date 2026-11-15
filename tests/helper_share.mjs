@@ -3,6 +3,9 @@ const w=(await import('../tools/cloudflare-helper.js')).default; const H={Origin
 const post=b=>w.fetch(new Request('https://x/share',{method:'POST',headers:H,body:JSON.stringify(b)}),{KV}).then(r=>r.json());
 const get=id=>w.fetch(new Request('https://x/shelf?id='+id,{headers:H}),{KV}).then(r=>r.json());
 const a=await post({data:{x:1}}); console.log('new', a.id.length, a.key.length);
+const L=await post({data:{'gr.set':{look:{kind:'cat',loc:{lat:45.5,lon:-73.6,name:'Montréal'}}}}});
+const read=(await get(L.id)).data['gr.set'].look; console.log('location stripped', read.loc===null && read.kind==='cat');
+if (read.loc!==null) process.exit(1);
 console.log('read', JSON.stringify((await get(a.id)).data));
 console.log('wrong key', JSON.stringify(await post({id:a.id,key:'nope',data:{x:9}})));
 console.log('update', (await post({id:a.id,key:a.key,data:{x:2}})).id===a.id, JSON.stringify((await get(a.id)).data));

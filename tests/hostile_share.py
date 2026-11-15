@@ -12,6 +12,7 @@ game.update({
     'tro': [BAD, BAD, BAD], 'merged': [{'platform': BAD, 'hours': BAD}],
 })
 data = {
+    'gr.weather': {'temp': BAD, 'weather': BAD, 'lat': 45.5},
     'gr.games': [game, dict(game, id='b', status='finished')],
     'gr.set': {'pet': BAD, 'owner': BAD, 'led': 'red;background:url(x)', 'goal': BAD,
                'look': {'kind': BAD, 'sign': BAD, 'fname': BAD, 'wall': BAD, 'loc': {'lat': 45.5, 'lon': -73.6, 'name': 'Montréal'}, 'hide': [BAD]},
@@ -38,4 +39,5 @@ with sync_playwright() as p:
     print('pwned', r[0], 'inline scripts', r[1], 'handlers', r[2], 'loc', r[3], 'games', r[4], 'status', r[5], 'led', r[6])
     print('errors', errs)
     assert r[0] == 0 and r[2] == 0 and r[3] == 'null', 'UNSAFE'
+    assert pg.evaluate("live") is None, 'shared weather was used'
     print('SAFE')

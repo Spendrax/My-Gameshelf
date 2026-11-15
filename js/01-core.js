@@ -67,7 +67,7 @@ function cleanGames(list) {
     id: /^[\w-]{1,40}$/.test(g.id) ? g.id : 'x' + Math.random().toString(36).slice(2),
     title: TXT(g.title) || '?',
     platform: TXT(g.platform, 40),
-    status: STATUS[g.status] ? g.status : 'backlog',
+    status: Object.hasOwn(STATUS, g.status) ? g.status : 'backlog',
     rating: Math.round(NUM(g.rating, 10)),
     hours: NUM(g.hours, 1e5),
     year: Math.round(NUM(g.year, 3000)) || '',
@@ -106,7 +106,7 @@ function cleanSet(s = {}) {
     goal: Math.round(NUM(s.goal, 999)) || 12,
     look,
     rackOpen: Object.keys(s.rackOpen || {}).reduce(
-      (a, k) => (STATUS[k] ? ((a[k] = !!s.rackOpen[k]), a) : a),
+      (a, k) => (Object.hasOwn(STATUS, k) ? ((a[k] = !!s.rackOpen[k]), a) : a),
       {},
     ),
     ach: {
@@ -129,12 +129,7 @@ function cleanSet(s = {}) {
 }
 
 const load = (k, d) => {
-  if (VIEW)
-    return k === 'gr.games'
-      ? cleanGames(viewData[k])
-      : k === 'gr.set'
-        ? cleanSet(viewData[k])
-        : (viewData[k] ?? d);
+  if (VIEW) return k === 'gr.games' ? cleanGames(viewData[k]) : k === 'gr.set' ? cleanSet(viewData[k]) : d; // nothing else from a shared copy is used
   try {
     return JSON.parse(localStorage.getItem(k)) ?? d;
   } catch {

@@ -417,7 +417,7 @@ async function gameDeals({ games = [], country = 'US', all = false }, env) {
   return { deals };
 }
 
-const HELPER_VERSION = 13;
+const HELPER_VERSION = 14;
 
 // Counts requests per connection over the last minute (kept in this server's memory, so it's a soft limit)
 const recent = new Map();
@@ -553,6 +553,7 @@ export default {
       if (!env.KV) return reply({ error: 'no-kv' }, 500);
       if (url.pathname === '/shelf') {
         const d = await env.KV.get('shelf:' + (url.searchParams.get('id') || ''), 'json');
+        if (d?.data?.['gr.set']?.look) d.data['gr.set'].look.loc = null; // never someone's location
         return d ? reply({ data: d.data, at: d.at }) : reply({ error: 'gone' }, 404);
       }
       const text = await request.text();
@@ -577,6 +578,7 @@ export default {
         id = code(10);
         key = code(24);
       }
+      if (body.data?.['gr.set']?.look) body.data['gr.set'].look.loc = null; // never someone's location
       await env.KV.put('shelf:' + id, JSON.stringify({ key, data: body.data, at: Date.now() }), {
         expirationTtl: 180 * 86400, // forgotten links disappear after 6 months without an update
       });
