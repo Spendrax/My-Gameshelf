@@ -119,7 +119,7 @@ function renderGoals() {
           ? `${-diff} behind pace`
           : 'Right on pace';
 
-  $('#goalsBody').innerHTML = `<h2>GOALS</h2><div class="board">
+  $('#goalsBody').innerHTML = `<h2>GOALS</h2><div class="board">${extras(GOALS_FIRST)}
     <div class="card"><h3>${year} challenge</h3>
       <div class="ring">
         <svg width="124" height="124" viewBox="0 0 124 124" aria-hidden="true">

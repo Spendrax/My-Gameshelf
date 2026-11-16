@@ -1,4 +1,4 @@
-/* Styles for the newer parts: countdowns and sales, the play timer chip, streak, treats game,
+/* Styles for the newer parts: countdowns and sales, the play timer, streak, treats game,
    year in review, merging, and dragging games between sections. */
 
 /* little tags on a case: "12 d" until release, "-50%" on sale */
@@ -48,34 +48,6 @@
   margin-top: 12px;
 }
 
-/* the timer / streak chip */
-.play-chip {
-  position: fixed;
-  z-index: 30;
-  left: 12px;
-  bottom: calc(env(safe-area-inset-bottom) + 74px);
-  max-width: calc(100vw - 110px);
-  padding: 8px 14px;
-  border: 1px solid #ffffff22;
-  border-radius: 999px;
-  background: #15121dee;
-  color: #fff;
-  font:
-    600 14px system-ui,
-    sans-serif;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  box-shadow: 0 4px 14px #0008;
-}
-.play-chip.on {
-  border-color: var(--led);
-  box-shadow: 0 0 14px var(--led);
-}
-.play-chip span {
-  margin-left: 6px;
-  color: #ff6b6b;
-}
 
 /* streak card */
 .streak {
@@ -247,7 +219,7 @@
 .g-facts.g-tro .prog i { display: block; height: 100%; background: var(--led); }
 
 /* visiting someone's shared room: look, don't touch */
-.viewing #btnAdd, .viewing #btnSettings, .viewing #btnLook, .viewing #updBtn, .viewing #playChip,
+.viewing #btnAdd, .viewing #btnSettings, .viewing #btnLook, .viewing #updBtn,
 .viewing #gBody .quick, .viewing #gBody .actions, .viewing #gBody [data-t], .viewing #gBody [data-replay],
 .viewing #gBody .twin, .viewing #treats, .viewing #spin, .viewing #worthBtn, .viewing #yearBtn,
 .viewing #shelfBtn, .viewing .stepper button { display: none !important; }
@@ -280,4 +252,11 @@
 #dlgPlay .list { max-height: 55vh; overflow: auto; margin-top: 10px; }
 #dlgPlay .lrow { cursor: pointer; }
 #dlgPlay .lrow small { margin-left: auto; white-space: nowrap; }
-.play-chip small { margin-left: 6px; opacity: 0.85; }
+
+/* the play timer card on the Goals wall */
+.timer.on { border-color: var(--led); box-shadow: 0 0 16px color-mix(in srgb, var(--led) 45%, transparent); }
+.timer-now { display: flex; align-items: center; gap: 12px; margin: 6px 0 12px; }
+.timer-now .case { width: 54px; flex: none; }
+.timer-now b { display: block; }
+#timerClock { font: 700 34px/1.2 ui-monospace, monospace; color: var(--led); }
+.viewing .timer { display: none; }

@@ -594,6 +594,10 @@ LANG.fr = {
     'Start a timer': 'Lancer un chrono',
     'What are you playing': 'À quoi tu joues',
     'Search for the game you’re playing': 'Cherche le jeu auquel tu joues',
+    'Play timer': 'Chrono de jeu',
+    'Stop and add the time': 'Arrêter et ajouter le temps',
+    "Pick what you're playing: the time is added to its hours when you stop":
+      'Choisis ton jeu : le temps s’ajoute à ses heures quand tu arrêtes',
   },
   tpl: {
     '{1} behind pace': '{1} de retard',

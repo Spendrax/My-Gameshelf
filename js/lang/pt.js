@@ -595,6 +595,10 @@ LANG.pt = {
     'Start a timer': 'Iniciar um cronômetro',
     'What are you playing': 'O que você está jogando',
     'Search for the game you’re playing': 'Busque o jogo que você está jogando',
+    'Play timer': 'Cronômetro de jogo',
+    'Stop and add the time': 'Parar e somar o tempo',
+    "Pick what you're playing: the time is added to its hours when you stop":
+      'Escolha o que está jogando: o tempo é somado às horas quando você para',
   },
   tpl: {
     '{1} behind pace': '{1} de atraso',

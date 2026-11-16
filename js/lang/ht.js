@@ -587,6 +587,10 @@ LANG.ht = {
     'Start a timer': 'Lanse yon kwonomèt',
     'What are you playing': 'Kisa w ap jwe',
     'Search for the game you’re playing': 'Chèche jwèt w ap jwe a',
+    'Play timer': 'Kwonomèt jwèt',
+    'Stop and add the time': 'Kanpe epi ajoute tan an',
+    "Pick what you're playing: the time is added to its hours when you stop":
+      'Chwazi jwèt w ap jwe a: tan an ajoute nan èdtan li lè w kanpe',
   },
   tpl: {
     '{1} behind pace': '{1} an reta',

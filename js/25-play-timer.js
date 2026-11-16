@@ -1,7 +1,8 @@
 'use strict';
 // PLAY TIMER, STREAK & BUDDY TIME
-//   • Play timer: "⏱ Start playing" on a game card. A chip shows the time while you play; stop it and the
-//     hours are added to the game. It keeps counting if you close the app (set.timer = { id, start }).
+//   • Play timer: the first card on the Goals wall (pick a game, Start, Stop), or "⏱ Start playing" on a game
+//     card. Stopping adds the hours to the game. It keeps counting while you use the rest of the app, and
+//     if you close it (set.timer = { id, start }).
 //   • Play log & streak: every day you play (timer, +1 h, more hours typed in, or hours from a sync) is
 //     written in set.log ({ 'YYYY-MM-DD': minutes }). Days in a row = your streak, shown on the Goals wall.
 //   • Your buddy cheers you on while the timer runs (and tells you when it's late).
@@ -19,7 +20,7 @@ on('played', (minutes) => {
   const old = dayKey(400);
   for (const k in set.log) if (k < old) delete set.log[k];
   saveSet();
-  drawChip();
+  drawTimer();
 });
 
 // Days in a row with some play, up to today (or yesterday, if you haven't played yet today)
@@ -59,7 +60,7 @@ function startTimer(g) {
     save();
   }
   saveSet();
-  drawChip();
+  drawTimer();
   if (pet.sleeping) wake();
   petClass('cheer', 1200);
   say(`Have fun with ${g.title}! 🎮`);
@@ -70,7 +71,7 @@ function stopTimer() {
   let m = mins();
   set.timer = null;
   saveSet();
-  drawChip();
+  drawTimer();
   if (!g || m < 1) return toast('Timer stopped');
   if (m > 12 * 60 && !confirm(`The timer ran ${clock(m)}. Add it all?`)) m = 0;
   const h = Math.round(m / 6) / 10;
@@ -82,25 +83,29 @@ function stopTimer() {
   toast(`+${h} h on ${g.title}`);
 }
 
-// A chip at the bottom left, on every wall: the running timer (tap to stop), or "⏱ Play" to pick a game and
-// start one (with your streak next to it). It keeps counting while you swipe around or close the app.
-const chip = document.createElement('button');
-chip.id = 'playChip';
-chip.className = 'play-chip';
-document.body.append(chip);
-function drawChip() {
+// The timer card, first on the Goals wall: a game to pick and Start, or the running clock and Stop
+const drawTimer = () => renderWalls();
+GOALS_FIRST.push(() => {
   const g = byId(set.timer?.id);
-  const s = streak();
-  chip.hidden = !games.length;
-  chip.classList.toggle('on', !!g);
-  chip.innerHTML = g
-    ? `⏱ ${esc(g.title)} <b>${ticker(mins())}</b> <span aria-label="Stop">■</span>`
-    : `⏱ Play${s >= 2 ? ` <small>🔥 ${s}</small>` : ''}`;
-  chip.title = g ? 'Stop the timer' : 'Start a timer';
-}
-chip.onclick = () => (set.timer ? stopTimer() : pickToPlay());
+  if (!games.length) return '';
+  return g
+    ? `<div class="card timer on"><h3>⏱ Play timer</h3>
+        <div class="timer-now">${caseHTML(g)}<div><b>${esc(g.title)}</b><span id="timerClock">${ticker(mins())}</span></div></div>
+        <button class="btn primary wide" id="timerStop">■ Stop and add the time</button></div>`
+    : `<div class="card timer"><h3>⏱ Play timer</h3>
+        <p class="dim small">Pick what you're playing: the time is added to its hours when you stop.</p>
+        <button class="btn primary wide" id="timerPick">▶ Start a timer</button></div>`;
+});
+$('#view-goals').addEventListener(
+  'click',
+  (e) => {
+    if (e.target.closest('#timerPick')) pickToPlay();
+    if (e.target.closest('#timerStop')) stopTimer();
+  },
+  true,
+);
 
-/* ---------- Picking what to play (from the chip) ---------- */
+/* ---------- Picking what to play (from the Goals card) ---------- */
 
 const dlgPlay = document.createElement('dialog');
 dlgPlay.id = 'dlgPlay';
@@ -150,15 +155,16 @@ $('#pList').addEventListener(
   },
   true,
 );
-// the running timer ticks every second: on the chip, and on the open game card's Stop button
+// the running timer ticks every second: on the Goals card, and on the open game card's Stop button
 setInterval(() => {
   if (!set.timer || document.hidden) return;
-  drawChip();
+  const clockEl = $('#timerClock');
+  if (clockEl) clockEl.textContent = ticker(mins());
   const stop = $('#gBody [data-t="stop"]');
   if (stop) stop.textContent = `■ Stop timer (${ticker(mins())})`;
 }, 1000);
 if (set.timer && !byId(set.timer.id)) set.timer = null;
-drawChip();
+renderWalls();
 
 // On the game card
 CARD_EXTRAS.push((g) =>

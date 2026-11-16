@@ -594,6 +594,10 @@ LANG.es = {
     'Start a timer': 'Iniciar un temporizador',
     'What are you playing': '¿A qué estás jugando',
     'Search for the game you’re playing': 'Busca el juego al que estás jugando',
+    'Play timer': 'Temporizador de juego',
+    'Stop and add the time': 'Detener y sumar el tiempo',
+    "Pick what you're playing: the time is added to its hours when you stop":
+      'Elige a qué juegas: el tiempo se suma a sus horas al detener',
   },
   tpl: {
     '{1} behind pace': '{1} de retraso',

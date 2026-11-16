@@ -208,6 +208,7 @@ const CASE_BADGES = [];
 const CARD_EXTRAS = [];
 const STATS_EXTRAS = [];
 const GOALS_EXTRAS = [];
+const GOALS_FIRST = []; // cards at the top of the Goals wall (the play timer)
 const extras = (list, g) => list.reduce((h, f) => h + f(g), '');
 
 function caseHTML(g, cls = '') {

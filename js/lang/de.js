@@ -594,6 +594,10 @@ LANG.de = {
     'Start a timer': 'Timer starten',
     'What are you playing': 'Was spielst du',
     'Search for the game you’re playing': 'Such das Spiel, das du spielst',
+    'Play timer': 'Spieltimer',
+    'Stop and add the time': 'Stoppen und Zeit hinzufügen',
+    "Pick what you're playing: the time is added to its hours when you stop":
+      'Wähl, was du spielst: Die Zeit wird beim Stoppen zu den Stunden addiert',
   },
   tpl: {
     '{1} behind pace': '{1} hinter dem Plan',

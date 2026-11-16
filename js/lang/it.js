@@ -597,6 +597,10 @@ LANG.it = {
     'Start a timer': 'Avvia un timer',
     'What are you playing': 'A cosa stai giocando',
     'Search for the game you’re playing': 'Cerca il gioco a cui stai giocando',
+    'Play timer': 'Timer di gioco',
+    'Stop and add the time': 'Ferma e aggiungi il tempo',
+    "Pick what you're playing: the time is added to its hours when you stop":
+      'Scegli a cosa giochi: il tempo si aggiunge alle ore quando fermi',
   },
   tpl: {
     '{1} behind pace': '{1} di ritardo',
