@@ -18,7 +18,7 @@ with sync_playwright() as p:
     print('card:', pg.inner_text('#gBody').replace('\n',' | ')[:400])
     # timer
     pg.click('[data-t=start]'); pg.evaluate("set.timer.start-=90*60e3"); pg.click('[data-t=stop]'); pg.wait_for_timeout(200)
-    print('after timer:', pg.evaluate("[byId('a').hours, set.log[today()], streak(), $('#playChip').hidden]"))
+    print('after timer:', pg.evaluate("[byId('a').hours, set.log[today()], streak(), $('#timerClock') === null]"))
     # merge
     pg.on('dialog', lambda d: d.accept())
     pg.click('[data-merge=b]'); pg.wait_for_timeout(200)
