@@ -583,6 +583,10 @@ LANG.ht = {
     'Link to your room': 'Lyen pou chanm ou',
     'Safer shared rooms, smarter skipping of system apps and demos, bigger buttons':
       'Chanm pataje pi an sekirite, app sistèm ak demo pi byen rekonèt, bouton pi gwo',
+    Play: 'Jwe',
+    'Start a timer': 'Lanse yon kwonomèt',
+    'What are you playing': 'Kisa w ap jwe',
+    'Search for the game you’re playing': 'Chèche jwèt w ap jwe a',
   },
   tpl: {
     '{1} behind pace': '{1} an reta',

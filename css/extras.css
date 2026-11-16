@@ -275,3 +275,9 @@
 /* bigger tap targets (at least 36px) for fingers */
 .chips button, .grp-h { min-height: 36px; }
 .bowl { min-width: 40px; min-height: 36px; }
+
+/* picking a game for the timer */
+#dlgPlay .list { max-height: 55vh; overflow: auto; margin-top: 10px; }
+#dlgPlay .lrow { cursor: pointer; }
+#dlgPlay .lrow small { margin-left: auto; white-space: nowrap; }
+.play-chip small { margin-left: 6px; opacity: 0.85; }

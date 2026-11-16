@@ -82,7 +82,8 @@ function stopTimer() {
   toast(`+${h} h on ${g.title}`);
 }
 
-// A chip at the bottom of the screen: the running timer, else your streak
+// A chip at the bottom left, on every wall: the running timer (tap to stop), or "⏱ Play" to pick a game and
+// start one (with your streak next to it). It keeps counting while you swipe around or close the app.
 const chip = document.createElement('button');
 chip.id = 'playChip';
 chip.className = 'play-chip';
@@ -90,14 +91,65 @@ document.body.append(chip);
 function drawChip() {
   const g = byId(set.timer?.id);
   const s = streak();
-  chip.hidden = !g && s < 2;
+  chip.hidden = !games.length;
   chip.classList.toggle('on', !!g);
   chip.innerHTML = g
     ? `⏱ ${esc(g.title)} <b>${ticker(mins())}</b> <span aria-label="Stop">■</span>`
-    : `🔥 ${s} days`;
-  chip.title = g ? 'Stop the timer' : 'Play streak';
+    : `⏱ Play${s >= 2 ? ` <small>🔥 ${s}</small>` : ''}`;
+  chip.title = g ? 'Stop the timer' : 'Start a timer';
 }
-chip.onclick = () => (set.timer ? stopTimer() : go(WALLS.goals));
+chip.onclick = () => (set.timer ? stopTimer() : pickToPlay());
+
+/* ---------- Picking what to play (from the chip) ---------- */
+
+const dlgPlay = document.createElement('dialog');
+dlgPlay.id = 'dlgPlay';
+dlgPlay.innerHTML = `<div class="sheet-h"><h2>What are you playing?</h2><button class="x" data-close aria-label="Close">✕</button></div>
+  <input id="pQ" type="search" placeholder="Find a game" autocomplete="off">
+  <div class="list" id="pList"></div>`;
+document.body.append(dlgPlay);
+dlgPlay.addEventListener('click', (e) => e.target === dlgPlay && dlgPlay.close());
+
+// Games you're playing first (most recently played on top), then the rest when you search
+function drawPlayList() {
+  const q = $('#pQ').value.trim().toLowerCase();
+  const now = ['playing', 'onoff', 'paused'];
+  const list = games
+    .reduce(
+      (a, g) => ((q ? g.title.toLowerCase().includes(q) : now.includes(g.status)) ? a.concat(g) : a),
+      [],
+    )
+    .sort(
+      (a, b) =>
+        now.includes(b.status) - now.includes(a.status) ||
+        (b.lastPlayed || b.updated || 0) - (a.lastPlayed || a.updated || 0),
+    )
+    .slice(0, 30);
+  $('#pList').innerHTML =
+    list.reduce(
+      (h, g) =>
+        h +
+        `<div class="lrow" role="button" data-play="${g.id}">${caseHTML(g)}<span>${esc(g.title)}</span><small class="dim">${esc(g.platform || '')}</small></div>`,
+      '',
+    ) || `<p class="dim">${q ? 'No game matches.' : 'Search for the game you’re playing.'}</p>`;
+}
+function pickToPlay() {
+  $('#pQ').value = '';
+  drawPlayList();
+  dlgPlay.showModal();
+}
+$('#pQ').oninput = drawPlayList;
+$('#pList').addEventListener(
+  'click',
+  (e) => {
+    const g = byId(e.target.closest('[data-play]')?.dataset.play);
+    e.stopPropagation(); // the case inside shouldn't open the game
+    if (!g) return;
+    dlgPlay.close();
+    startTimer(g);
+  },
+  true,
+);
 // the running timer ticks every second: on the chip, and on the open game card's Stop button
 setInterval(() => {
   if (!set.timer || document.hidden) return;

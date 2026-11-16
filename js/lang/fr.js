@@ -590,6 +590,10 @@ LANG.fr = {
     'Link to your room': 'Lien vers ta chambre',
     'Safer shared rooms, smarter skipping of system apps and demos, bigger buttons':
       'Chambres partagées plus sûres, apps système et démos mieux reconnues, boutons plus grands',
+    Play: 'Jouer',
+    'Start a timer': 'Lancer un chrono',
+    'What are you playing': 'À quoi tu joues',
+    'Search for the game you’re playing': 'Cherche le jeu auquel tu joues',
   },
   tpl: {
     '{1} behind pace': '{1} de retard',

@@ -590,6 +590,10 @@ LANG.de = {
     'Link to your room': 'Link zu deinem Zimmer',
     'Safer shared rooms, smarter skipping of system apps and demos, bigger buttons':
       'Sicherere geteilte Zimmer, bessere Erkennung von System-Apps und Demos, größere Knöpfe',
+    Play: 'Spielen',
+    'Start a timer': 'Timer starten',
+    'What are you playing': 'Was spielst du',
+    'Search for the game you’re playing': 'Such das Spiel, das du spielst',
   },
   tpl: {
     '{1} behind pace': '{1} hinter dem Plan',

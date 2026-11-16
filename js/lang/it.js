@@ -593,6 +593,10 @@ LANG.it = {
     'Link to your room': 'Link alla tua stanza',
     'Safer shared rooms, smarter skipping of system apps and demos, bigger buttons':
       'Stanze condivise più sicure, app di sistema e demo riconosciute meglio, pulsanti più grandi',
+    Play: 'Gioca',
+    'Start a timer': 'Avvia un timer',
+    'What are you playing': 'A cosa stai giocando',
+    'Search for the game you’re playing': 'Cerca il gioco a cui stai giocando',
   },
   tpl: {
     '{1} behind pace': '{1} di ritardo',

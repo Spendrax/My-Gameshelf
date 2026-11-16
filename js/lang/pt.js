@@ -591,6 +591,10 @@ LANG.pt = {
     'Link to your room': 'Link do seu quarto',
     'Safer shared rooms, smarter skipping of system apps and demos, bigger buttons':
       'Quartos compartilhados mais seguros, apps do sistema e demos melhor reconhecidos, botões maiores',
+    Play: 'Jogar',
+    'Start a timer': 'Iniciar um cronômetro',
+    'What are you playing': 'O que você está jogando',
+    'Search for the game you’re playing': 'Busque o jogo que você está jogando',
   },
   tpl: {
     '{1} behind pace': '{1} de atraso',
