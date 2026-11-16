@@ -33,7 +33,7 @@ let TPL = [];
 
 // Emoji, spaces and end punctuation around a phrase ("🏆 Today", "Change…", "Nice!") are kept as they are
 const EDGES =
-  /^([\s\p{Extended_Pictographic}️‍…!?.:,·⟳∞✕✋▶—-]*)(.*?)([\s\p{Extended_Pictographic}️‍…!?.:,·⟳∞✕✋▶—-]*)$/su;
+  /^([\s\p{Extended_Pictographic}️‍…!?.:,·⟳∞✕✋▶■—-]*)(.*?)([\s\p{Extended_Pictographic}️‍…!?.:,·⟳∞✕✋▶■—-]*)$/su;
 const trCache = new Map();
 
 function tr(text) {

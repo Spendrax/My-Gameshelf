@@ -45,7 +45,9 @@ function bestStreak() {
 /* ---------- The timer ---------- */
 
 const mins = () => (set.timer ? (Date.now() - set.timer.start) / 6e4 : 0);
-const clock = (m) => `${Math.floor(m / 60)}:${String(Math.floor(m % 60)).padStart(2, '0')}`;
+const two = (n) => String(Math.floor(n)).padStart(2, '0');
+const clock = (m) => `${Math.floor(m / 60)}:${two(m % 60)}`; // 1:05 (hours:minutes)
+const ticker = (m) => `${clock(m)}:${two((m * 60) % 60)}`; // 1:05:42, for the running timer
 
 function startTimer(g) {
   if (set.timer) stopTimer();
@@ -91,19 +93,25 @@ function drawChip() {
   chip.hidden = !g && s < 2;
   chip.classList.toggle('on', !!g);
   chip.innerHTML = g
-    ? `⏱ ${esc(g.title)} <b>${clock(mins())}</b> <span aria-label="Stop">■</span>`
+    ? `⏱ ${esc(g.title)} <b>${ticker(mins())}</b> <span aria-label="Stop">■</span>`
     : `🔥 ${s} days`;
   chip.title = g ? 'Stop the timer' : 'Play streak';
 }
 chip.onclick = () => (set.timer ? stopTimer() : go(WALLS.goals));
-setInterval(() => set.timer && drawChip(), 15e3);
+// the running timer ticks every second: on the chip, and on the open game card's Stop button
+setInterval(() => {
+  if (!set.timer || document.hidden) return;
+  drawChip();
+  const stop = $('#gBody [data-t="stop"]');
+  if (stop) stop.textContent = `■ Stop timer (${ticker(mins())})`;
+}, 1000);
 if (set.timer && !byId(set.timer.id)) set.timer = null;
 drawChip();
 
 // On the game card
 CARD_EXTRAS.push((g) =>
   set.timer?.id === g.id
-    ? `<button class="btn primary wide" data-t="stop">■ Stop timer (${clock(mins())})</button>`
+    ? `<button class="btn primary wide" data-t="stop">■ Stop timer (${ticker(mins())})</button>`
     : `<button class="btn wide" data-t="start">⏱ Start playing</button>`,
 );
 $('#gBody').addEventListener('click', (e) => {
